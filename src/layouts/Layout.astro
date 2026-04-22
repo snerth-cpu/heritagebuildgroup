@@ -1,0 +1,83 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Heritage Build Group',
+  description = 'Full-service construction company specializing in commercial and residential projects. Quality craftsmanship, on time and on budget.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <!-- Nav -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-[#111111]/95 backdrop-blur-sm border-b border-white/10">
+      <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-3">
+          <span class="text-[#F5F5F3] font-black text-xl tracking-tight">HERITAGE <span class="text-[#A1A1AA]">BUILD GROUP</span></span>
+        </a>
+        <nav class="hidden md:flex items-center gap-8">
+          <a href="#services" class="text-[#A1A1AA] hover:text-[#F5F5F3] text-sm font-medium transition-colors">Services</a>
+          <a href="#projects" class="text-[#A1A1AA] hover:text-[#F5F5F3] text-sm font-medium transition-colors">Projects</a>
+          <a href="#about" class="text-[#A1A1AA] hover:text-[#F5F5F3] text-sm font-medium transition-colors">About</a>
+          <a href="#contact" class="bg-[#F5F5F3] hover:bg-white text-[#111111] text-sm font-bold px-5 py-2.5 transition-colors">
+            Get a Quote
+          </a>
+        </nav>
+        <!-- Mobile menu button -->
+        <button id="menu-btn" class="md:hidden text-[#F5F5F3]">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+      <!-- Mobile menu -->
+      <div id="mobile-menu" class="hidden md:hidden bg-[#111111] border-t border-white/10 px-6 py-4 space-y-3">
+        <a href="#services" class="block text-[#A1A1AA] hover:text-[#F5F5F3] text-sm font-medium transition-colors py-2">Services</a>
+        <a href="#projects" class="block text-[#A1A1AA] hover:text-[#F5F5F3] text-sm font-medium transition-colors py-2">Projects</a>
+        <a href="#about" class="block text-[#A1A1AA] hover:text-[#F5F5F3] text-sm font-medium transition-colors py-2">About</a>
+        <a href="#contact" class="block bg-[#F5F5F3] text-[#111111] text-sm font-bold px-5 py-2.5 text-center transition-colors mt-2">Get a Quote</a>
+      </div>
+    </header>
+
+    <slot />
+
+    <!-- Footer -->
+    <footer class="bg-[#111111] text-[#A1A1AA] py-12 mt-0">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div>
+            <span class="text-[#F5F5F3] font-black text-lg tracking-tight">HERITAGE <span class="text-[#A1A1AA]">BUILD GROUP</span></span>
+            <p class="text-sm mt-2 max-w-xs">Quality construction you can count on. Built to last.</p>
+          </div>
+          <div class="flex flex-col gap-2 text-sm">
+            <a href="mailto:scott@heritagebuildgroup.com" class="hover:text-[#F5F5F3] transition-colors">scott@heritagebuildgroup.com</a>
+            <a href="#contact" class="hover:text-[#F5F5F3] transition-colors">Get a Quote →</a>
+          </div>
+        </div>
+        <div class="border-t border-white/10 mt-8 pt-8 text-xs text-center">
+          © {new Date().getFullYear()} Heritage Build Group. All rights reserved.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      const btn = document.getElementById('menu-btn');
+      const menu = document.getElementById('mobile-menu');
+      btn?.addEventListener('click', () => menu?.classList.toggle('hidden'));
+      menu?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => menu.classList.add('hidden')));
+    </script>
+  </body>
+</html>
