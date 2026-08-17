@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import { Footer, Header } from "@/components/site-shell";
 import { JsonLd } from "@/components/seo";
+import { GA_MEASUREMENT_ID } from "@/lib/analytics";
 import { absoluteUrl, HOME_DESCRIPTION, HOME_TITLE, localBusinessSchema, SITE_NAME, SITE_URL, SOCIAL_IMAGE } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -20,5 +22,15 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body><JsonLd data={localBusinessSchema} /><Header /><main>{children}</main><Footer /></body></html>;
+  return (
+    <html lang="en">
+      <body>
+        <JsonLd data={localBusinessSchema} />
+        <Header />
+        <main>{children}</main>
+        <Footer />
+        <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />
+      </body>
+    </html>
+  );
 }
