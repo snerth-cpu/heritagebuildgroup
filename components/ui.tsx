@@ -12,7 +12,7 @@ const projectImages: Record<string, { src: string; alt: string; position?: strin
   siding: { src: "/images/05_installation_close.jpeg", alt: "Crew installing vertical black metal siding" },
   detail: { src: "/images/06_installation_facade.jpeg", alt: "Vertical metal siding installation at the front facade" },
   roof: { src: "/images/07_near_complete_roof_siding.jpeg", alt: "Near-complete metal roofing and coordinated metal siding" },
-  commercial: { src: "/images/01_finished_exterior_hero.jpeg", alt: "Completed black exterior with vertical metal siding and coordinated trim" },
+  commercial: { src: "/images/01_finished_exterior_hero.jpeg", alt: "Completed large-scale black metal exterior with vertical metal siding, metal roofing, and coordinated trim" },
   progress: { src: "/images/04_installation_wide_panels.jpeg", alt: "Exterior metal installation in progress" },
   teamwork: { src: "/images/05_installation_close.jpeg", alt: "Installation crew working on the metal exterior" },
 };
