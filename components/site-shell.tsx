@@ -12,7 +12,7 @@ const nav = [
 
 export function Mark({ compact = false }: { compact?: boolean }) {
   return <span className={`brand ${compact ? "brand--compact" : ""}`} aria-label="Heritage Build Group">
-    <Image className="brand__image" src={compact ? "/brand/hbg-monogram.png" : "/brand/hbg-primary.png"} width={compact ? 48 : 92} height={compact ? 48 : 92} alt="Heritage Build Group" priority />
+    <Image className="brand__image" src={compact ? "/brand/hbg-monogram.png" : "/brand/hbg-primary.png"} width={compact ? 48 : 92} height={compact ? 48 : 92} alt="Heritage Build Group logo" priority />
   </span>;
 }
 

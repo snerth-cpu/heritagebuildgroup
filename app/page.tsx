@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { AssetPanel, Button } from "@/components/ui";
 import { BeforeAfter } from "@/components/before-after";
-import { pageMetadata, ESTIMATE_HREF } from "@/lib/seo";
+import { pageMetadata, ESTIMATE_HREF, HOME_TITLE, HOME_DESCRIPTION } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "Pittsburgh-Area Metal Roofing & Siding Contractor",
-  description: "Heritage Build Group LLC is a Pittsburgh-area contractor for residential and commercial metal roofing, standing seam roofs, and metal siding across Greater Pittsburgh and Western Pennsylvania.",
+  title: HOME_TITLE,
+  description: HOME_DESCRIPTION,
   path: "/",
+  absoluteTitle: true,
 });
 
 const services = [

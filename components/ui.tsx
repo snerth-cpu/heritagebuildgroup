@@ -3,15 +3,15 @@ import Link from "next/link";
 import Image from "next/image";
 
 const projectImages: Record<string, { src: string; alt: string; position?: string }> = {
-  hero: { src: "/images/01_finished_exterior_hero.jpeg", alt: "Completed Heritage Build Group black metal exterior", position: "center 55%" },
+  hero: { src: "/images/01_finished_exterior_hero.jpeg", alt: "Completed black metal roofing and vertical metal siding by Heritage Build Group", position: "center 55%" },
   finished: { src: "/images/01_finished_exterior_hero.jpeg", alt: "Finished black metal roofing and siding exterior" },
-  after: { src: "/images/01_finished_exterior_hero.jpeg", alt: "Completed dark metal exterior after renovation" },
-  before: { src: "/images/02_before_front.jpeg", alt: "Building exterior before metal renovation" },
+  after: { src: "/images/01_finished_exterior_hero.jpeg", alt: "Completed metal roofing and metal siding after renovation" },
+  before: { src: "/images/02_before_front.jpeg", alt: "Building exterior before metal roofing and siding renovation" },
   prep: { src: "/images/03_before_side_roof.jpeg", alt: "Existing side wall and roof during exterior preparation" },
   installation: { src: "/images/04_installation_wide_panels.jpeg", alt: "Metal siding panels staged during installation" },
   siding: { src: "/images/05_installation_close.jpeg", alt: "Crew installing vertical black metal siding" },
   detail: { src: "/images/06_installation_facade.jpeg", alt: "Vertical metal siding installation at the front facade" },
-  roof: { src: "/images/07_near_complete_roof_siding.jpeg", alt: "Near-complete coordinated metal roofing and siding" },
+  roof: { src: "/images/07_near_complete_roof_siding.jpeg", alt: "Near-complete metal roofing and coordinated metal siding" },
   commercial: { src: "/images/01_finished_exterior_hero.jpeg", alt: "Completed black exterior with vertical metal siding and coordinated trim" },
   progress: { src: "/images/04_installation_wide_panels.jpeg", alt: "Exterior metal installation in progress" },
   teamwork: { src: "/images/05_installation_close.jpeg", alt: "Installation crew working on the metal exterior" },
