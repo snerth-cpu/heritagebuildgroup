@@ -1,5 +1,108 @@
-import Link from "next/link"; import { AssetPanel, ProjectCTA } from "@/components/ui";
-import { BreadcrumbJsonLd, JsonLd } from "@/components/seo"; import { absoluteUrl, pageMetadata } from "@/lib/seo"; import { completeExteriorTransformation as project } from "@/lib/projects";
-const stages=[["01","Existing building / before","before"],["02","Exterior preparation","prep"],["03","Installation","installation"],["04","Metal siding installation","siding"],["05","Roofing + siding","roof"],["06","Finished exterior","after"]];
-export const metadata=pageMetadata({title:"Complete Metal Roofing & Siding Transformation",description:"See a genuine Heritage Build Group exterior renovation progress from existing conditions through metal roofing, vertical metal siding, trim, and completion.",path:"/projects/complete-metal-exterior-transformation"});
-export default function Page(){return <><BreadcrumbJsonLd items={[{name:"Home",url:absoluteUrl("/")},{name:"Projects",url:absoluteUrl("/projects")},{name:project.title,url:absoluteUrl(`/projects/${project.slug}`)}]}/><JsonLd data={{"@context":"https://schema.org","@type":"CreativeWork",name:project.title,description:project.description,url:absoluteUrl(`/projects/${project.slug}`),creator:{"@id":`${absoluteUrl("/")}#business`},image:project.images.map((image)=>absoluteUrl(`/images/${image}`)),about:project.services.map((service)=>service.name)}}/><section className="case-hero"><AssetPanel kind="after"/><div className="wrap"><p className="eyebrow">PROJECT CASE STUDY</p><h1>COMPLETE METAL<br/>EXTERIOR TRANSFORMATION</h1><p>Metal Roofing • Metal Siding • Exterior Renovation</p></div></section><section className="case-intro wrap"><p className="eyebrow">THE PROJECT</p><div><p className="lead">A complete exterior transformation using dark vertical metal siding, coordinated metal roofing, contrasting architectural trim, and custom exterior details.</p><nav className="inline-links" aria-label="Services shown in this project">{project.services.map((service)=><Link href={service.href} key={service.href}>{service.name}</Link>)}</nav></div></section><section className="story wrap">{stages.map(([n,title,kind],i)=><article className={i%2?"story__item story__item--reverse":"story__item"} key={n}><AssetPanel kind={kind}/><div><span>{n} / 06</span><h2>{title}</h2><p>{i===0?"The original exterior established the conditions and proportions the renovation needed to resolve.":i===5?"The finished envelope brings roofing, siding, trim, and openings into one cohesive architectural expression.":"Progress photography reveals the sequencing, field coordination, and detail work behind the finished exterior."}</p></div></article>)}</section><section className="project-taxonomy wrap"><p className="eyebrow">PROJECT INFORMATION</p><div><p><strong>Services documented</strong><br/>Metal roofing, metal siding, exterior renovation</p><p><strong>Location</strong><br/>Not published—the project location has not been provided.</p><p><strong>Materials</strong><br/>Specific product and manufacturer information has not been provided.</p></div></section><ProjectCTA/></>}
+import Link from "next/link";
+import { AssetPanel, ProjectCTA } from "@/components/ui";
+import { BreadcrumbJsonLd, JsonLd } from "@/components/seo";
+import { absoluteUrl, pageMetadata } from "@/lib/seo";
+import { completeExteriorTransformation as project } from "@/lib/projects";
+
+const stages = [
+  ["01", "Existing building / before", "before"],
+  ["02", "Exterior preparation", "prep"],
+  ["03", "Installation", "installation"],
+  ["04", "Metal siding installation", "siding"],
+  ["05", "Roofing + siding", "roof"],
+  ["06", "Finished exterior", "after"],
+];
+
+export const metadata = pageMetadata({
+  title: "Complete Metal Roofing & Siding Transformation",
+  description: "See a genuine Heritage Build Group exterior renovation progress from existing conditions through metal roofing, vertical metal siding, trim, and completion.",
+  path: "/projects/complete-metal-exterior-transformation",
+});
+
+export default function Page() {
+  return (
+    <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: absoluteUrl("/") },
+          { name: "Projects", url: absoluteUrl("/projects") },
+          { name: project.title, url: absoluteUrl(`/projects/${project.slug}`) },
+        ]}
+      />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "CreativeWork",
+          name: project.title,
+          description: project.description,
+          url: absoluteUrl(`/projects/${project.slug}`),
+          creator: { "@id": `${absoluteUrl("/")}#business` },
+          image: project.images.map((image) => absoluteUrl(`/images/${image}`)),
+          about: project.services.map((service) => service.name),
+        }}
+      />
+      <section className="case-hero">
+        <AssetPanel kind="after" />
+        <div className="wrap">
+          <p className="eyebrow">PROJECT CASE STUDY</p>
+          <h1>
+            COMPLETE METAL
+            <br />
+            EXTERIOR TRANSFORMATION
+          </h1>
+          <p>Metal Roofing • Metal Siding • Exterior Renovation</p>
+        </div>
+      </section>
+      <section className="case-intro wrap">
+        <p className="eyebrow">THE PROJECT</p>
+        <div>
+          <p className="lead">A full exterior update using dark vertical metal siding, matching metal roofing, contrasting trim, and custom details.</p>
+          <nav className="inline-links" aria-label="Services shown in this project">
+            {project.services.map((service) => (
+              <Link href={service.href} key={service.href}>{service.name}</Link>
+            ))}
+          </nav>
+        </div>
+      </section>
+      <section className="story wrap">
+        {stages.map(([n, title, kind], i) => (
+          <article className={i % 2 ? "story__item story__item--reverse" : "story__item"} key={n}>
+            <AssetPanel kind={kind} />
+            <div>
+              <span>{n} / 06</span>
+              <h2>{title}</h2>
+              <p>
+                {i === 0
+                  ? "This is how the building looked before the metal roofing and siding went on."
+                  : i === 5
+                    ? "The finished exterior brings roofing, siding, trim, and openings together as one look."
+                    : "These photos show the install in progress—the order of work, the coordination, and the details."}
+              </p>
+            </div>
+          </article>
+        ))}
+      </section>
+      <section className="project-taxonomy wrap">
+        <p className="eyebrow">PROJECT INFORMATION</p>
+        <div>
+          <p>
+            <strong>Services documented</strong>
+            <br />
+            Metal roofing, metal siding, exterior renovation
+          </p>
+          <p>
+            <strong>Location</strong>
+            <br />
+            Not published—the project location has not been provided.
+          </p>
+          <p>
+            <strong>Materials</strong>
+            <br />
+            Specific product and manufacturer information has not been provided.
+          </p>
+        </div>
+      </section>
+      <ProjectCTA />
+    </>
+  );
+}

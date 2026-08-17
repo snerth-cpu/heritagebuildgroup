@@ -33,8 +33,8 @@ export function PageHero({ kicker, title, copy, kind = "detail" }: { kicker: str
   return <section className="page-hero"><div className="wrap page-hero__grid"><div><p className="eyebrow">{kicker}</p><h1>{title}</h1><p>{copy}</p><Button href={ESTIMATE_HREF}>REQUEST AN ESTIMATE</Button></div><AssetPanel kind={kind} /></div></section>;
 }
 export function Process() {
-  return <section className="process wrap"><SectionHead kicker="HOW WE WORK" title="CONTROL AT EVERY STAGE." />
-    <div className="process__grid">{[["01","Planning","A defined scope starts with the property, performance needs, and architectural priorities."],["02","Materials","Systems and details selected for durability, compatibility, and a cohesive finished exterior."],["03","Installation","Experienced crews work to clear project standards with attention to transitions and trim."],["04","Communication","Professional management and one point of contact from estimate through completion."]].map(([n,t,c])=><article key={n}><span>{n}</span><h3>{t}</h3><p>{c}</p></article>)}</div>
+  return <section className="process wrap"><SectionHead kicker="HOW WE WORK" title="CLEAR STEPS FROM START TO FINISH." />
+    <div className="process__grid">{[["01","Planning","A clear scope starts with the property, what needs to last, and how you want it to look."],["02","Materials","Materials and details chosen to last, fit the building, and look right when the job is done."],["03","Installation","Experienced crews install to a clear standard, with care at edges, transitions, and trim."],["04","Communication","One point of contact and clear updates from estimate through completion."]].map(([n,t,c])=><article key={n}><span>{n}</span><h3>{t}</h3><p>{c}</p></article>)}</div>
   </section>;
 }
-export function ProjectCTA() { return <section className="cta-band"><div className="wrap"><p className="eyebrow">YOUR PROPERTY. YOUR PROJECT.</p><h2>LET’S BUILD A BETTER EXTERIOR.</h2><Button href={ESTIMATE_HREF} light>REQUEST AN ESTIMATE</Button></div></section>; }
+export function ProjectCTA() { return <section className="cta-band"><div className="wrap"><p className="eyebrow">YOUR PROPERTY. YOUR PROJECT.</p><h2>LET’S TALK ABOUT YOUR PROJECT.</h2><Button href={ESTIMATE_HREF} light>REQUEST AN ESTIMATE</Button></div></section>; }
