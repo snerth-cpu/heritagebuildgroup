@@ -31,5 +31,5 @@ export function Header() {
 
 export function Footer() {
   return <footer className="footer"><div className="footer__top wrap"><Mark /><div><p className="eyebrow">RESIDENTIAL + COMMERCIAL • WESTERN PENNSYLVANIA</p><p>Serving Greater Pittsburgh, Cranberry Township, Butler County, and Mercer County.</p><p className="footer__contact"><a href={BUSINESS_PHONE_HREF}>{BUSINESS_PHONE}</a><a href={`mailto:${BUSINESS_EMAIL}`}>{BUSINESS_EMAIL}</a></p><nav className="footer__links" aria-label="Footer service links"><Link href="/metal-roofing">Metal Roofing</Link><Link href="/metal-siding">Metal Siding</Link><Link href="/commercial">Commercial Exteriors</Link><Link href="/service-areas">Service Areas</Link><Link href="/projects">Projects</Link></nav></div><Link className="arrow-link" href={ESTIMATE_HREF}>START A PROJECT <span>↗</span></Link></div>
-    <div className="footer__bottom wrap"><p>© {new Date().getFullYear()} {LEGAL_NAME}</p><p>Built around the project.</p></div></footer>;
+    <div className="footer__bottom wrap"><p>© {new Date().getFullYear()} {LEGAL_NAME}</p><p>PA Registered & Fully Insured · PA HIC #PA223621</p><p>Built around the project.</p></div></footer>;
 }

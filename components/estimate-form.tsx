@@ -68,6 +68,7 @@ export function EstimateForm() {
     <div id="estimate-form" className="estimate-form jobber-embed">
       <div id={JOBBER_CONTAINER_ID} />
       <p className="form-note">Submitted information will only be used to respond to your estimate request. It will not be sold or shared for marketing purposes.</p>
+      <p className="form-note">PA Registered & Fully Insured</p>
     </div>
   );
 }
