@@ -26,7 +26,7 @@ export function SectionHead({ kicker, title, copy }: { kicker: string; title: st
 export function AssetPanel({ kind = "finished", label, className = "" }: { kind?: string; label?: string; className?: string }) {
   const image = projectImages[kind] || projectImages.finished;
   return <div className={`asset-panel asset-panel--${kind} ${className}`}>
-    <Image src={image.src} alt={image.alt} fill sizes="(max-width: 800px) 100vw, 60vw" priority={kind === "hero"} style={{ objectPosition: image.position }} />{label && <span>{label}</span>}
+    <Image src={image.src} alt={image.alt} fill sizes={kind === "hero" ? "100vw" : "(max-width: 800px) 100vw, 60vw"} priority={kind === "hero"} style={{ objectPosition: image.position }} />{label && <span>{label}</span>}
   </div>;
 }
 export function PageHero({ kicker, title, copy, kind = "detail" }: { kicker: string; title: string; copy: string; kind?: string }) {
