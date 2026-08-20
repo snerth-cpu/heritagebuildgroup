@@ -16,6 +16,7 @@ export default function Page() {
         title="METAL SIDING THAT LOOKS CLEAN AND LASTS."
         copy="Metal siding for homes—including board-and-batten—and wall panels for commercial buildings across Pittsburgh and Western Pennsylvania."
         kind="siding"
+        contain
       />
       <section className="editorial wrap">
         <SectionHead kicker="THE WALLS" title="THE DETAILS MAKE THE WHOLE WALL." />
@@ -30,7 +31,8 @@ export default function Page() {
             <p>Metal siding can be a full exterior update or one part of a larger project. We start with what is already there and figure out how roofing, siding, and trim should work together.</p>
           </div>
         </div>
-        <AssetPanel kind="detail" className="wide-visual" />
+        <AssetPanel kind="commercial" className="wide-visual" contain />
+        <AssetPanel kind="roof" className="wide-visual metal-siding-roof-photo" contain />
       </section>
       <section className="transformation">
         <div className="wrap">

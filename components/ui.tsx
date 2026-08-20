@@ -23,14 +23,19 @@ export function Button({ href, children, light = false }: { href: string; childr
 export function SectionHead({ kicker, title, copy }: { kicker: string; title: string; copy?: string }) {
   return <div className="section-head"><p className="eyebrow">{kicker}</p><h2>{title}</h2>{copy && <p className="section-copy">{copy}</p>}</div>;
 }
-export function AssetPanel({ kind = "finished", label, className = "" }: { kind?: string; label?: string; className?: string }) {
+export function AssetPanel({ kind = "finished", label, className = "", contain = false }: { kind?: string; label?: string; className?: string; contain?: boolean }) {
   const image = projectImages[kind] || projectImages.finished;
+  if (contain) {
+    return <div className={`asset-panel asset-panel--${kind} asset-panel--contain ${className}`}>
+      <Image className="asset-panel__photo" src={image.src} alt={image.alt} width={1024} height={768} sizes="(max-width: 800px) 100vw, 60vw" />{label && <span>{label}</span>}
+    </div>;
+  }
   return <div className={`asset-panel asset-panel--${kind} ${className}`}>
     <Image src={image.src} alt={image.alt} fill sizes={kind === "hero" ? "100vw" : "(max-width: 800px) 100vw, 60vw"} priority={kind === "hero"} style={{ objectPosition: image.position }} />{label && <span>{label}</span>}
   </div>;
 }
-export function PageHero({ kicker, title, copy, kind = "detail" }: { kicker: string; title: string; copy: string; kind?: string }) {
-  return <section className="page-hero"><div className="wrap page-hero__grid"><div><p className="eyebrow">{kicker}</p><h1>{title}</h1><p>{copy}</p><Button href={ESTIMATE_HREF}>REQUEST AN ESTIMATE</Button></div><AssetPanel kind={kind} /></div></section>;
+export function PageHero({ kicker, title, copy, kind = "detail", contain = false }: { kicker: string; title: string; copy: string; kind?: string; contain?: boolean }) {
+  return <section className="page-hero"><div className="wrap page-hero__grid"><div><p className="eyebrow">{kicker}</p><h1>{title}</h1><p>{copy}</p><Button href={ESTIMATE_HREF}>REQUEST AN ESTIMATE</Button></div><AssetPanel kind={kind} contain={contain} /></div></section>;
 }
 export function Process() {
   return <section className="process wrap"><SectionHead kicker="HOW WE WORK" title="CLEAR STEPS FROM START TO FINISH." />
