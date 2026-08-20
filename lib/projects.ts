@@ -20,5 +20,5 @@ export const completeExteriorTransformation: ProjectRecord = {
     { name: "Metal Siding", href: "/metal-siding" },
     { name: "Exterior Renovation", href: "/commercial" },
   ],
-  images: ["01_finished_exterior_hero.jpeg", "02_before_front.jpeg", "03_before_side_roof.jpeg", "04_installation_wide_panels.jpeg", "05_installation_close.jpeg", "06_installation_facade.jpeg", "07_near_complete_roof_siding.jpeg"],
+  images: ["metal-exterior-wide.png", "02_before_front.jpeg", "03_before_side_roof.jpeg", "04_installation_wide_panels.jpeg", "05_installation_close.jpeg", "06_installation_facade.jpeg", "07_near_complete_roof_siding.jpeg"],
 };
