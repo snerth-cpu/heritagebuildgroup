@@ -8,6 +8,7 @@ export const BUSINESS_PHONE_HREF = "tel:+18148604979";
 export const BUSINESS_EMAIL = "scott@heritagebuildgroup.com";
 export const SOCIAL_IMAGE = "/images/metal-exterior-wide.png";
 export const ESTIMATE_HREF = "/estimate#estimate-form";
+export const CONTACT_HREF = "/contact";
 export const HOME_TITLE = "Metal Roofing & Siding Contractor Pittsburgh, PA | Heritage Build Group";
 export const HOME_DESCRIPTION = "Heritage Build Group is a Pittsburgh contractor for residential and commercial metal roofing and metal siding across Western Pennsylvania. Request an estimate.";
 

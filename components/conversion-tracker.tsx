@@ -22,6 +22,7 @@ function ctaLocation(anchor: Element) {
   if (anchor.closest("footer")) return "footer";
   if (anchor.closest("header")) return "header";
   if (anchor.closest(".estimate-contact") || anchor.closest(".estimate aside")) return "estimate_aside";
+  if (anchor.closest(".contact-options") || anchor.closest(".contact")) return "contact";
   return "other";
 }
 

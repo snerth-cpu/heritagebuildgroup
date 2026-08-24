@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import { ConversionTracker } from "@/components/conversion-tracker";
-import { Footer, Header } from "@/components/site-shell";
+import { Footer, Header, MobileContactCta } from "@/components/site-shell";
 import { JsonLd } from "@/components/seo";
 import { GA_MEASUREMENT_ID } from "@/lib/analytics";
 import { absoluteUrl, HOME_DESCRIPTION, HOME_TITLE, localBusinessSchema, SITE_NAME, SITE_URL, SOCIAL_IMAGE } from "@/lib/seo";
@@ -30,6 +30,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <Header />
         <main>{children}</main>
         <Footer />
+        <MobileContactCta />
         <ConversionTracker />
         <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />
       </body>

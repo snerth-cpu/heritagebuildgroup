@@ -8,7 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ["/service-areas/pittsburgh-pa", .9, "monthly"], ["/service-areas/cranberry-township-pa", .8, "monthly"],
     ["/service-areas/butler-county-pa", .8, "monthly"], ["/service-areas/mercer-county-pa", .8, "monthly"],
     ["/projects", .8, "monthly"], ["/projects/complete-metal-exterior-transformation", .7, "monthly"],
-    ["/about", .6, "yearly"], ["/estimate", .7, "yearly"],
+    ["/about", .6, "yearly"], ["/contact", .8, "yearly"], ["/estimate", .7, "yearly"],
   ] as const;
   return routes.map(([path, priority, changeFrequency]) => ({ url: absoluteUrl(path), lastModified: new Date(), changeFrequency, priority }));
 }
