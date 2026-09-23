@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Mark } from "@/components/brand-logo";
 import {
   BUSINESS_EMAIL,
   BUSINESS_PHONE,
@@ -42,6 +43,7 @@ export default function Page() {
   return (
     <section className="contact">
       <div className="wrap">
+        <Mark size="section" className="brand--ink" />
         <p className="eyebrow">FULL-SERVICE CONSTRUCTION • WESTERN PENNSYLVANIA</p>
         <h1>
           LET’S TALK ABOUT

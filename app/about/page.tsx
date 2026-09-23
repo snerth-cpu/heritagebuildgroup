@@ -1,4 +1,5 @@
 import { AssetPanel, Process, ProjectCTA } from "@/components/ui";
+import { Mark } from "@/components/brand-logo";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -13,6 +14,7 @@ export default function Page() {
     <>
       <section className="about-hero wrap">
         <div>
+          <Mark size="section" className="brand--ink" />
           <p className="eyebrow">FULL-SERVICE CONSTRUCTION</p>
           <h1>FROM THE FIRST PLAN TO A FINISHED BUILDING.</h1>
         </div>

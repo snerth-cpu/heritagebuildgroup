@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AssetPanel, ProjectCTA, SectionHead } from "@/components/ui";
+import { Mark } from "@/components/brand-logo";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -12,6 +13,7 @@ export default function Page() {
   return (
     <>
       <section className="simple-hero wrap">
+        <Mark size="section" className="brand--ink" />
         <p className="eyebrow">METAL EXTERIOR PROJECTS</p>
         <h1>REAL METAL<br />EXTERIOR PROJECTS.</h1>
         <p>Real photos of metal roofing, metal siding, finished exteriors, and the work in between.</p>
