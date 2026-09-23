@@ -20,7 +20,17 @@ export function ServiceAreaLinks({ heading = "Service areas", copy }: { heading?
 }
 
 export function ServiceLinks() {
-  return <nav className="inline-links" aria-label="Related exterior services"><Link href="/metal-roofing">Metal Roofing</Link><Link href="/metal-siding">Metal Siding</Link><Link href="/commercial">Commercial Exteriors</Link><Link href={ESTIMATE_HREF}>Request an Estimate</Link></nav>;
+  return (
+    <nav className="inline-links" aria-label="Related services">
+      <Link href="/pole-buildings">Pole Buildings</Link>
+      <Link href="/garages">Garages</Link>
+      <Link href="/additions">Additions</Link>
+      <Link href="/metal-roofing">Metal Roofing</Link>
+      <Link href="/metal-siding">Metal Siding</Link>
+      <Link href="/commercial">Commercial</Link>
+      <Link href={ESTIMATE_HREF}>Request an Estimate</Link>
+    </nav>
+  );
 }
 
 export function BreadcrumbJsonLd({ items }: { items: { name: string; url: string }[] }) {

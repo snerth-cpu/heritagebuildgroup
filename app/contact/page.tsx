@@ -8,9 +8,9 @@ import {
 } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "Contact Heritage Build Group",
+  title: "Contact HBG Construction",
   description:
-    "Call, email, or request an estimate from Heritage Build Group for residential and commercial metal roofing and siding projects in Western Pennsylvania.",
+    "Call, email, or request an estimate from HBG Construction for pole buildings, garages, additions, and metal exterior projects in Western Pennsylvania.",
   path: "/contact",
 });
 
@@ -42,7 +42,7 @@ export default function Page() {
   return (
     <section className="contact">
       <div className="wrap">
-        <p className="eyebrow">RESIDENTIAL + COMMERCIAL • WESTERN PENNSYLVANIA</p>
+        <p className="eyebrow">FULL-SERVICE CONSTRUCTION • WESTERN PENNSYLVANIA</p>
         <h1>
           LET’S TALK ABOUT
           <br />

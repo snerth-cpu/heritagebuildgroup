@@ -4,15 +4,15 @@ import { pageMetadata, serviceAreas, ESTIMATE_HREF } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "Metal Roofing & Siding Service Areas in Western PA",
-  description: "Heritage Build Group serves Greater Pittsburgh, Cranberry Township, Butler County, and Mercer County with residential and commercial metal exterior services.",
+  description: "HBG Construction serves Greater Pittsburgh, Cranberry Township, Butler County, Mercer County, and Erie County with metal roofing, siding, and building construction.",
   path: "/service-areas",
 });
 
 const descriptions = [
-  "Our primary market for standing seam metal roofing, metal siding, and commercial exterior projects.",
+  "Our primary market for standing seam metal roofing, metal siding, pole buildings, and commercial exterior projects.",
   "Metal roofing and siding for homes, commercial properties, and growing areas north of Pittsburgh.",
-  "Residential and commercial roofing and siding for suburban, small-town, and rural properties.",
-  "Durable metal roofing and siding for homes, businesses, and working buildings across Mercer County.",
+  "Residential and commercial roofing, siding, and post-frame work for suburban, small-town, and rural properties.",
+  "Durable metal roofing, siding, and buildings for homes, businesses, and working properties across Mercer County.",
 ];
 
 export default function Page() {
@@ -22,8 +22,8 @@ export default function Page() {
         <div className="wrap page-hero__grid">
           <div>
             <p className="eyebrow">WESTERN PENNSYLVANIA</p>
-            <h1>METAL EXTERIORS ACROSS THE REGION.</h1>
-            <p>Heritage Build Group installs metal roofing and metal siding for homes and commercial buildings across Greater Pittsburgh and nearby Western Pennsylvania markets.</p>
+            <h1>METAL EXTERIORS &amp; BUILDINGS ACROSS THE REGION.</h1>
+            <p>HBG Construction installs metal roofing and metal siding and builds pole buildings for homes and commercial properties across Greater Pittsburgh, Cranberry Township, Butler County, Mercer County, Erie County, and nearby Western Pennsylvania markets.</p>
             <Link className="button" href={ESTIMATE_HREF}>REQUEST AN ESTIMATE <span>↗</span></Link>
           </div>
           <AssetPanel kind="roof" />
@@ -44,17 +44,26 @@ export default function Page() {
               <strong>EXPLORE AREA ↗</strong>
             </Link>
           ))}
+          <div className="area-hub__listed">
+            <span>05</span>
+            <h2>Erie County</h2>
+            <p>Metal exteriors and post-frame construction for homes, barns, garages, and commercial properties across Erie County.</p>
+          </div>
         </div>
       </section>
       <section className="location-copy wrap">
         <div className="location-copy__intro">
           <p className="eyebrow">REGIONAL SCOPE</p>
-          <p className="lead">From Pittsburgh to homes and commercial buildings farther north, the work stays the same: durable metal, clean details, and clear communication.</p>
+          <p className="lead">From Pittsburgh to Erie County, the work stays the same: durable metal, clean details, solid buildings, and clear communication.</p>
         </div>
         <div className="location-copy__grid">
           <article>
             <h2>Residential metal exteriors</h2>
-            <p>Metal roofing and siding can last a long time and give a home a cleaner look. We plan the work around what is already there, the trim, and how the whole exterior should finish.</p>
+            <p>Metal roofing and siding—including residential board-and-batten—can last a long time and give a home a cleaner look. We plan the work around what is already there.</p>
+          </article>
+          <article>
+            <h2>Pole buildings and barns</h2>
+            <p>Post-frame buildings for barns, garages, workshops, storage, and light-commercial use are planned around how you use the property.</p>
           </article>
           <article>
             <h2>Commercial exterior projects</h2>

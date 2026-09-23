@@ -15,7 +15,7 @@ const stages = [
 
 export const metadata = pageMetadata({
   title: "Complete Metal Roofing & Siding Transformation",
-  description: "See a genuine Heritage Build Group exterior renovation progress from existing conditions through metal roofing, vertical metal siding, trim, and completion.",
+  description: "See a genuine HBG Construction exterior renovation progress from existing conditions through metal roofing, vertical metal siding, trim, and completion.",
   path: "/projects/complete-metal-exterior-transformation",
 });
 

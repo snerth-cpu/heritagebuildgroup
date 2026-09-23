@@ -9,7 +9,7 @@ import { absoluteUrl, HOME_DESCRIPTION, HOME_TITLE, localBusinessSchema, SITE_NA
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: { default: HOME_TITLE, template: "%s | Heritage Build Group" },
+  title: { default: HOME_TITLE, template: `%s | ${SITE_NAME}` },
   description: HOME_DESCRIPTION,
   applicationName: SITE_NAME,
   category: "Construction",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   creator: SITE_NAME,
   publisher: SITE_NAME,
   formatDetection: { telephone: false, email: false, address: false },
-  openGraph: { type: "website", locale: "en_US", siteName: SITE_NAME, url: SITE_URL, images: [{ url: absoluteUrl(SOCIAL_IMAGE), width: 1536, height: 1152, alt: "Completed black metal roofing and siding project by Heritage Build Group" }] },
+  openGraph: { type: "website", locale: "en_US", siteName: SITE_NAME, url: SITE_URL, images: [{ url: absoluteUrl(SOCIAL_IMAGE), width: 1536, height: 1152, alt: "Completed black metal roofing and siding project by HBG Construction" }] },
   twitter: { card: "summary_large_image", images: [absoluteUrl(SOCIAL_IMAGE)] },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
 };

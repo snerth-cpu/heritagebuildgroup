@@ -3,7 +3,12 @@ import { absoluteUrl } from "@/lib/seo";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes = [
-    ["/", 1, "weekly"], ["/metal-roofing", .9, "monthly"], ["/metal-siding", .9, "monthly"],
+    ["/", 1, "weekly"],
+    ["/buildings", .9, "monthly"],
+    ["/pole-buildings", .9, "monthly"],
+    ["/garages", .9, "monthly"],
+    ["/additions", .9, "monthly"],
+    ["/metal-roofing", .9, "monthly"], ["/metal-siding", .9, "monthly"],
     ["/commercial", .9, "monthly"], ["/service-areas", .9, "monthly"],
     ["/service-areas/pittsburgh-pa", .9, "monthly"], ["/service-areas/cranberry-township-pa", .8, "monthly"],
     ["/service-areas/butler-county-pa", .8, "monthly"], ["/service-areas/mercer-county-pa", .8, "monthly"],
