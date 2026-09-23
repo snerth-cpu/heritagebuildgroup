@@ -4,7 +4,7 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "Metal Siding Pittsburgh PA | Board & Batten for Homes",
-  description: "Residential metal board and batten and commercial metal wall systems in Pittsburgh, Cranberry Township, Butler County, and Mercer County, PA.",
+  description: "Residential metal board and batten and commercial metal wall systems in Pittsburgh, Cranberry Township, Butler County, Mercer County, and Erie County, PA.",
   path: "/metal-siding",
 });
 
@@ -43,7 +43,7 @@ export default function Page() {
               <h2 className="subhead">A residential profile, not an industrial panel</h2>
               <p>Commercial metal walls often use tight ribs or utility panels that look like a working building. Metal board-and-batten is different: wider vertical boards with distinct battens, closer to traditional wood board-and-batten. The wider spacing and matching trim keep it looking like a home.</p>
               <h2 className="subhead">Modern, contemporary, and modern-farmhouse homes</h2>
-              <p>It works on modern, contemporary, and modern-farmhouse houses—as a full exterior or an accent. Heritage Build Group installs metal board-and-batten siding in Pittsburgh and across Western Pennsylvania. We pick a manufacturer’s residential system for the house and install it carefully at openings, corners, the foundation, and the roof edge.</p>
+              <p>It works on modern, contemporary, and modern-farmhouse houses—as a full exterior or an accent. HBG Construction installs metal board-and-batten siding in Pittsburgh and across Western Pennsylvania. We pick a manufacturer’s residential system for the house and install it carefully at openings, corners, the foundation, and the roof edge.</p>
             </div>
           </div>
         </div>

@@ -4,7 +4,7 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "Metal Roofing Pittsburgh PA | Standing Seam Roofs",
-  description: "Premium standing seam metal roofing for homes and commercial properties in Pittsburgh, Cranberry Township, Butler County, and Mercer County, PA.",
+  description: "Premium standing seam metal roofing for homes and commercial properties in Pittsburgh, Cranberry Township, Butler County, Mercer County, and Erie County, PA.",
   path: "/metal-roofing",
 });
 

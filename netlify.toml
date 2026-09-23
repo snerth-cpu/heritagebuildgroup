@@ -1,0 +1,12 @@
+# Production hosting is on Vercel. This config makes Netlify Deploy Previews
+# (and the Header/Pages/Redirect PR checks) work for the Next.js App Router
+# after the Astro → Next.js migration.
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

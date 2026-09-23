@@ -23,4 +23,4 @@ For every future project page, provide only verified details:
 - Completion date, if approved for publication
 - Genuine project photography with descriptive captions
 
-Do not add reviews, ratings, licenses, certifications, awards, project counts, or years in business unless Heritage Build Group supplies and approves them.
+Do not add reviews, ratings, licenses, certifications, awards, project counts, or years in business unless HBG Construction supplies and approves them.

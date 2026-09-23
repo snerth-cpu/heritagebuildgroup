@@ -3,9 +3,9 @@ import { AssetPanel, PageHero, Process, ProjectCTA, SectionHead } from "@/compon
 import { JsonLd, ServiceAreaLinks } from "@/components/seo";
 import { ESTIMATE_HREF, SITE_URL, absoluteUrl, pageMetadata } from "@/lib/seo";
 
-const TITLE = "Commercial Metal Roofing & Siding Pittsburgh, PA | Heritage Build Group";
+const TITLE = "Commercial Metal Roofing & Siding Pittsburgh, PA | HBG Construction";
 const DESCRIPTION =
-  "Commercial metal roofing, siding, wall panels, and exterior renovations across Pittsburgh and Western Pennsylvania. Heritage installs and manages the work.";
+  "Commercial metal roofing, siding, wall panels, and exterior renovations across Pittsburgh and Western Pennsylvania. HBG Construction installs and manages the work.";
 const PAGE_PATH = "/commercial";
 
 export const metadata = pageMetadata({
@@ -19,7 +19,7 @@ const faqs = [
   {
     question: "Do you install commercial metal roofing and siding in Pittsburgh?",
     answer:
-      "Yes. Heritage Build Group installs commercial metal roofing, metal siding, and wall panels in Pittsburgh and across Western Pennsylvania, including Cranberry Township, Butler County, and Mercer County.",
+      "Yes. HBG Construction installs commercial metal roofing, metal siding, and wall panels in Pittsburgh and across Western Pennsylvania, including Cranberry Township, Butler County, Mercer County, and Erie County.",
   },
   {
     question: "Do you work on existing buildings and new construction?",
@@ -29,7 +29,7 @@ const faqs = [
   {
     question: "Are you a metal manufacturer?",
     answer:
-      "No. Heritage Build Group is the contractor, installer, and project manager. We choose and install metal roofing and wall panels suited to the building; we do not manufacture the panels.",
+      "No. HBG Construction is the contractor, installer, and project manager. We choose and install metal roofing and wall panels suited to the building; we do not manufacture the panels.",
   },
   {
     question: "What kinds of commercial properties do you serve?",
@@ -73,6 +73,7 @@ const serviceSchema = {
     { "@type": "City", name: "Cranberry Township", containedInPlace: { "@type": "State", name: "Pennsylvania" } },
     { "@type": "AdministrativeArea", name: "Butler County, Pennsylvania" },
     { "@type": "AdministrativeArea", name: "Mercer County, Pennsylvania" },
+    { "@type": "AdministrativeArea", name: "Erie County, Pennsylvania" },
     { "@type": "AdministrativeArea", name: "Western Pennsylvania" },
   ],
   audience: {
@@ -111,7 +112,7 @@ export default function Page() {
       <PageHero
         kicker="PITTSBURGH • WESTERN PENNSYLVANIA"
         title="COMMERCIAL METAL ROOFING AND SIDING."
-        copy="Heritage Build Group installs and manages commercial metal roofing, siding, and wall panels for existing buildings and new construction across Pittsburgh and Western Pennsylvania."
+        copy="HBG Construction installs and manages commercial metal roofing, siding, and wall panels for existing buildings and new construction across Pittsburgh and Western Pennsylvania."
         kind="commercial"
       />
 
@@ -120,7 +121,7 @@ export default function Page() {
           <p className="eyebrow">THE WALLS</p>
           <h2>Commercial metal siding and wall panels</h2>
           <p>
-            Vertical metal panels give commercial buildings a strong, clean wall. Heritage Build Group installs commercial metal siding and wall panels in Pittsburgh as the contractor on the job—layout, openings, corners, the bottom of the wall, and trim treated as one wall. We choose a manufacturer’s wall system for the building; we do not manufacture the panels.
+            Vertical metal panels give commercial buildings a strong, clean wall. HBG Construction installs commercial metal siding and wall panels in Pittsburgh as the contractor on the job—layout, openings, corners, the bottom of the wall, and trim treated as one wall. We choose a manufacturer’s wall system for the building; we do not manufacture the panels.
           </p>
           <nav className="inline-links" aria-label="Metal siding">
             <Link href="/metal-siding">Metal Siding</Link>
@@ -151,7 +152,7 @@ export default function Page() {
                 Metal siding for block buildings can completely change the look of a basic block exterior. It also gives owners a durable, low-maintenance finish. We plan the work around existing windows and doors, the roof, and how the property operates so the new metal looks and performs like a finished exterior—not a cover-up. When it makes sense, new metal roofing can be planned with the walls so the whole exterior updates together.
               </p>
               <p>
-                The photo is a completed Heritage Build Group project: a complete metal exterior update with dark vertical metal siding, matching metal roofing, and trim. It is shown as that work, not as a named client, location, or original wall material.
+                The photo is a completed HBG Construction project: a complete metal exterior update with dark vertical metal siding, matching metal roofing, and trim. It is shown as that work, not as a named client, location, or original wall material.
               </p>
               <nav className="inline-links" aria-label="Project photography">
                 <Link href="/projects">Projects</Link>
@@ -201,7 +202,7 @@ export default function Page() {
           <p className="lead">Commercial exterior work needs a clear scope, a plan for the order of work, and one person to call.</p>
           <div>
             <p>
-              Heritage Build Group is a commercial exterior contractor in Pittsburgh. We install the work and manage the project. Property owners, facility managers, developers, and general contractors get a written scope, a crew on the job, and one point of contact from estimate through completion.
+              HBG Construction is a commercial exterior contractor in Pittsburgh. We install the work and manage the project. Property owners, facility managers, developers, and general contractors get a written scope, a crew on the job, and one point of contact from estimate through completion.
             </p>
             <p>
               When roofing, siding, and trim overlap, planning them together keeps edges, drainage, and the look aligned. That matters on occupied buildings and on jobs where several trades share the same walls.
@@ -253,12 +254,12 @@ export default function Page() {
         heading="Service area"
         copy={
           <>
-            Heritage Build Group installs commercial metal roofing and siding across{" "}
+            HBG Construction installs commercial metal roofing and siding across{" "}
             <Link href="/service-areas/pittsburgh-pa" className="text-link">Pittsburgh</Link>,{" "}
             <Link href="/service-areas/cranberry-township-pa" className="text-link">Cranberry Township</Link>,{" "}
             <Link href="/service-areas/butler-county-pa" className="text-link">Butler County</Link>,{" "}
             <Link href="/service-areas/mercer-county-pa" className="text-link">Mercer County</Link>
-            , and Western Pennsylvania.
+            , Erie County, and Western Pennsylvania.
           </>
         }
       />

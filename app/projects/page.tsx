@@ -4,7 +4,7 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "Metal Roofing & Siding Projects",
-  description: "Explore genuine Heritage Build Group metal roofing, metal siding, and complete exterior project photography and case studies.",
+  description: "Explore genuine HBG Construction metal roofing, metal siding, and complete exterior project photography and case studies.",
   path: "/projects",
 });
 

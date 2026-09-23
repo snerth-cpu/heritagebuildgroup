@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 const projectImages: Record<string, { src: string; alt: string; position?: string }> = {
-  hero: { src: "/images/metal-exterior-wide.png", alt: "Completed commercial building with black vertical ribbed metal siding and metal roofing by Heritage Build Group", position: "center 55%" },
+  hero: { src: "/images/metal-exterior-wide.png", alt: "Completed commercial building with black vertical ribbed metal siding and metal roofing by HBG Construction", position: "center 55%" },
   finished: { src: "/images/metal-exterior-wide.png", alt: "Finished commercial building with black vertical ribbed metal siding and metal roofing" },
   after: { src: "/images/metal-exterior-wide.png", alt: "Completed metal roofing and vertical ribbed metal siding after renovation" },
   before: { src: "/images/02_before_front.jpeg", alt: "Building exterior before metal roofing and siding renovation" },
@@ -38,8 +38,8 @@ export function PageHero({ kicker, title, copy, kind = "detail", contain = false
   return <section className="page-hero"><div className="wrap page-hero__grid"><div><p className="eyebrow">{kicker}</p><h1>{title}</h1><p>{copy}</p><Button href={ESTIMATE_HREF}>REQUEST AN ESTIMATE</Button></div><AssetPanel kind={kind} contain={contain} /></div></section>;
 }
 export function Process() {
-  return <section className="process wrap"><SectionHead kicker="HOW WE WORK" title="CLEAR STEPS FROM START TO FINISH." />
-    <div className="process__grid">{[["01","Planning","A clear scope starts with the property, what needs to last, and how you want it to look."],["02","Materials","Materials and details chosen to last, fit the building, and look right when the job is done."],["03","Installation","Experienced crews install to a clear standard, with care at edges, transitions, and trim."],["04","Communication","One point of contact and clear updates from estimate through completion."]].map(([n,t,c])=><article key={n}><span>{n}</span><h3>{t}</h3><p>{c}</p></article>)}</div>
+  return <section className="process wrap"><SectionHead kicker="FULL-SERVICE CONSTRUCTION" title="FROM PLANNING TO COMPLETION." />
+    <div className="process__grid">{[["01","Planning","A clear scope starts with the property, what you need the building to do, and how you want it to look."],["02","Materials","Materials and details chosen to last, fit the structure, and look right when the job is done."],["03","Build","Experienced crews build to a clear standard, with care at structure, edges, transitions, and finish."],["04","Communication","One point of contact and clear updates from the first plan through completion."]].map(([n,t,c])=><article key={n}><span>{n}</span><h3>{t}</h3><p>{c}</p></article>)}</div>
   </section>;
 }
 export function ProjectCTA() { return <section className="cta-band"><div className="wrap"><p className="eyebrow">YOUR PROPERTY. YOUR PROJECT.</p><h2>LET’S TALK ABOUT YOUR PROJECT.</h2><Button href={ESTIMATE_HREF} light>REQUEST AN ESTIMATE</Button></div></section>; }
