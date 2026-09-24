@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AssetPanel, ProjectCTA, SectionHead } from "@/components/ui";
+import { Mark } from "@/components/brand-logo";
 import { pageMetadata, serviceAreas, ESTIMATE_HREF } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -21,6 +22,7 @@ export default function Page() {
       <section className="page-hero">
         <div className="wrap page-hero__grid">
           <div>
+            <Mark size="cta" className="brand--on-dark" />
             <p className="eyebrow">WESTERN PENNSYLVANIA</p>
             <h1>METAL EXTERIORS &amp; BUILDINGS ACROSS THE REGION.</h1>
             <p>HBG Construction installs metal roofing and metal siding and builds pole buildings for homes and commercial properties across Greater Pittsburgh, Cranberry Township, Butler County, Mercer County, Erie County, and nearby Western Pennsylvania markets.</p>

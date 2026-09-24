@@ -1,4 +1,5 @@
 import { EstimateForm } from "@/components/estimate-form";
+import { Mark } from "@/components/brand-logo";
 import { BUSINESS_EMAIL, BUSINESS_PHONE, BUSINESS_PHONE_HREF, pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -13,6 +14,7 @@ export default function Page() {
     <section className="estimate">
       <div className="wrap estimate__grid">
         <aside>
+          <Mark size="section" className="brand--ink" />
           <p className="eyebrow">FULL-SERVICE ESTIMATES</p>
           <h1>TELL US ABOUT<br />YOUR PROJECT.</h1>
           <p>Pole building, garage, addition, or metal exterior—tell us the property, the work you have in mind, and the timing. We’ll use that to figure out the next step.</p>
