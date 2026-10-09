@@ -19,13 +19,13 @@ export default function Page() {
         <p>Real photos of metal roofing, metal siding, finished exteriors, and the work in between.</p>
       </section>
       <section className="project-list wrap">
-        <SectionHead kicker="FEATURED PROJECT" title="COMPLETE METAL EXTERIOR TRANSFORMATION" />
+        <SectionHead kicker="FEATURED PROJECT" title="BLACK BOARD-AND-BATTEN BARN EXTERIOR" />
         <Link href="/projects/complete-metal-exterior-transformation" className="project-card">
           <AssetPanel kind="after" />
           <div>
-            <p className="eyebrow">METAL ROOFING • METAL SIDING • EXTERIOR RENOVATION</p>
-            <h2>A COMPLETE EXTERIOR UPDATE.</h2>
-            <p>See the prep, installation, and details behind this full exterior project.</p>
+            <p className="eyebrow">METAL SIDING • EXTERIOR RENOVATION</p>
+            <h2>FROM RED METAL TO BLACK BOARD-AND-BATTEN.</h2>
+            <p>True before photos, installation progress, and the finished barn exterior.</p>
             <span>VIEW CASE STUDY ↗</span>
           </div>
         </Link>
