@@ -1,7 +1,9 @@
+import Image from "next/image";
 import Link from "next/link";
 import { AssetPanel, Button } from "@/components/ui";
 import { BeforeAfter } from "@/components/before-after";
 import { Mark } from "@/components/brand-logo";
+import { barnProjectImages } from "@/lib/projects";
 import { pageMetadata, ESTIMATE_HREF, HOME_TITLE, HOME_DESCRIPTION } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -24,7 +26,34 @@ export default function Home() { return <>
 
   <section className="home-services wrap"><div className="home-heading"><p className="eyebrow">WHAT WE DO</p><h2>EXTERIOR &amp; BUILDING SERVICES</h2></div><div className="home-services__grid">{services.map(([title, copy, href, kind]) => <Link href={href} className="home-service" key={href}><AssetPanel kind={kind} /><div><h3>{title}</h3><p>{copy}</p><span>LEARN MORE ↗</span></div></Link>)}</div></section>
 
-  <section className="home-transformation"><div className="wrap"><div className="home-heading home-heading--split"><div><p className="eyebrow">FEATURED PROJECT</p><h2>BEFORE &amp; AFTER</h2></div><p>From aging red metal barn to a modern black board-and-batten exterior.</p></div><BeforeAfter /><Link className="simple-link" href="/projects/complete-metal-exterior-transformation">VIEW THE FULL PROJECT <span>↗</span></Link></div></section>
+  <section className="home-transformation"><div className="wrap"><div className="home-heading home-heading--split"><div><p className="eyebrow">FEATURED PROJECT</p><h2>BEFORE &amp; AFTER</h2></div><p>Metal roofing, vertical metal siding, trim, and details—finished as one project.</p></div><BeforeAfter /><Link className="simple-link" href="/projects/complete-metal-exterior-transformation">VIEW THE FULL PROJECT <span>↗</span></Link></div></section>
+
+  <section className="home-featured-projects wrap">
+    <div className="home-heading">
+      <div>
+        <p className="eyebrow">PROJECT SPOTLIGHT</p>
+        <h2>MORE RECENT WORK</h2>
+      </div>
+      <Link className="simple-link" href="/projects">VIEW ALL PROJECTS <span>↗</span></Link>
+    </div>
+    <Link href="/projects/black-board-and-batten-barn" className="project-card project-card--compact">
+      <div className="asset-panel">
+        <Image
+          src={barnProjectImages.afterHero.src}
+          alt={barnProjectImages.afterHero.alt}
+          fill
+          sizes="(max-width: 800px) 100vw, 60vw"
+          style={{ objectFit: "cover", objectPosition: "center 40%" }}
+        />
+      </div>
+      <div>
+        <p className="eyebrow">METAL SIDING • EXTERIOR RENOVATION</p>
+        <h2>FROM RED BARN TO BLACK BOARD-AND-BATTEN.</h2>
+        <p>A complete barn siding transformation with before, during, and after photography.</p>
+        <span>VIEW CASE STUDY ↗</span>
+      </div>
+    </Link>
+  </section>
 
   <section className="why wrap"><div className="home-heading"><div><Mark size="section" className="brand--ink" /><p className="eyebrow">WHY HBG</p><h2>STRAIGHTFORWARD FROM START TO FINISH.</h2></div></div><div className="why__grid"><article><span>01</span><h3>CLEAR PROPOSALS</h3><p>Know what is included before work begins.</p></article><article><span>02</span><h3>QUALITY INSTALLATION</h3><p>Experienced crews and a clear standard for the work.</p></article><article><span>03</span><h3>ONE POINT OF CONTACT</h3><p>Professional management from estimate through completion.</p></article></div></section>
 

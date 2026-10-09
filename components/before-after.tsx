@@ -11,10 +11,10 @@ type BeforeAfterProps = {
 };
 
 const defaults = {
-  beforeSrc: "/projects/black-board-and-batten-barn/01_BEFORE/before-red-barn-corner-angle.jpg",
-  afterSrc: "/projects/black-board-and-batten-barn/03_COMPLETED/completed-black-barn-corner-hero.jpg",
-  beforeAlt: "Existing red metal barn exterior with open wall sections before renovation",
-  afterAlt: "Completed barn with black board-and-batten metal siding by Heritage Build Group",
+  beforeSrc: "/images/02_before_front.jpeg",
+  afterSrc: "/images/metal-exterior-wide.png",
+  beforeAlt: "Building exterior before metal roofing and siding renovation",
+  afterAlt: "Completed metal roofing and vertical ribbed metal siding after renovation",
 };
 
 export function BeforeAfter({
@@ -26,22 +26,10 @@ export function BeforeAfter({
   const [position, setPosition] = useState(50);
 
   return (
-    <div className="before-after before-after--portrait" style={{ "--position": `${position}%` } as React.CSSProperties}>
-      <Image
-        src={afterSrc}
-        alt={afterAlt}
-        fill
-        sizes="(max-width: 800px) 100vw, 1240px"
-        style={{ objectFit: "cover", objectPosition: "center" }}
-      />
+    <div className="before-after" style={{ "--position": `${position}%` } as React.CSSProperties}>
+      <Image src={afterSrc} alt={afterAlt} fill sizes="(max-width: 800px) 100vw, 1240px" />
       <div className="before-after__before">
-        <Image
-          src={beforeSrc}
-          alt={beforeAlt}
-          fill
-          sizes="(max-width: 800px) 100vw, 1240px"
-          style={{ objectFit: "cover", objectPosition: "center" }}
-        />
+        <Image src={beforeSrc} alt={beforeAlt} fill sizes="(max-width: 800px) 100vw, 1240px" />
       </div>
       <span className="before-after__label before-after__label--before">BEFORE</span>
       <span className="before-after__label before-after__label--after">AFTER</span>
@@ -49,7 +37,7 @@ export function BeforeAfter({
         <span>‹ ›</span>
       </div>
       <input
-        aria-label="Compare the barn exterior before and after"
+        aria-label="Compare the exterior before and after"
         type="range"
         min="0"
         max="100"
