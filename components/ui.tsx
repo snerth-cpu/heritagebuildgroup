@@ -4,18 +4,18 @@ import Link from "next/link";
 import Image from "next/image";
 
 const projectImages: Record<string, { src: string; alt: string; position?: string }> = {
-  hero: { src: "/images/metal-exterior-wide.png", alt: "Completed commercial building with black vertical ribbed metal siding and metal roofing by HBG Construction", position: "center 55%" },
-  finished: { src: "/images/metal-exterior-wide.png", alt: "Finished commercial building with black vertical ribbed metal siding and metal roofing" },
-  after: { src: "/images/metal-exterior-wide.png", alt: "Completed metal roofing and vertical ribbed metal siding after renovation" },
-  before: { src: "/images/02_before_front.jpeg", alt: "Building exterior before metal roofing and siding renovation" },
-  prep: { src: "/images/03_before_side_roof.jpeg", alt: "Existing side wall and roof during exterior preparation" },
-  installation: { src: "/images/04_installation_wide_panels.jpeg", alt: "Metal siding panels staged during installation" },
-  siding: { src: "/images/metal-siding-front.png", alt: "Front view of commercial building with black vertical ribbed metal siding" },
-  detail: { src: "/images/metal-siding-front.png", alt: "Front facade of commercial building with black vertical ribbed metal siding" },
-  roof: { src: "/images/metal-roofing-roof.png", alt: "Angled view of corrugated metal roofing on a commercial building" },
-  commercial: { src: "/images/metal-exterior-wide.png", alt: "Completed large-scale commercial building with black vertical ribbed metal siding, metal roofing, and coordinated trim" },
-  progress: { src: "/images/04_installation_wide_panels.jpeg", alt: "Exterior metal installation in progress" },
-  teamwork: { src: "/images/05_installation_close.jpeg", alt: "Installation crew working on the metal exterior" },
+  hero: { src: "/projects/black-board-and-batten-barn/03_COMPLETED/completed-black-board-batten-hero-angle.jpeg", alt: "Completed barn with black board-and-batten-style metal siding by HBG Construction", position: "center 55%" },
+  finished: { src: "/projects/black-board-and-batten-barn/03_COMPLETED/completed-black-board-batten-hero-angle.jpeg", alt: "Finished barn with black vertical board-and-batten-style metal siding" },
+  after: { src: "/projects/black-board-and-batten-barn/03_COMPLETED/completed-black-board-batten-hero-angle.jpeg", alt: "Completed black board-and-batten metal siding after barn renovation" },
+  before: { src: "/projects/black-board-and-batten-barn/01_BEFORE/before-red-barn-front-angle.jpeg", alt: "Existing red metal barn exterior before HBG Construction siding renovation" },
+  prep: { src: "/projects/black-board-and-batten-barn/02_PROGRESS/progress-existing-siding-removed.jpeg", alt: "Existing barn exterior removed and framing exposed for new siding" },
+  installation: { src: "/projects/black-board-and-batten-barn/02_PROGRESS/progress-wide-installation-view.jpeg", alt: "Black metal siding installation progressing across the barn" },
+  siding: { src: "/projects/black-board-and-batten-barn/03_COMPLETED/completed-black-board-batten-gable.jpeg", alt: "Completed gable elevation with black board-and-batten-style metal siding" },
+  detail: { src: "/projects/black-board-and-batten-barn/03_COMPLETED/completed-black-board-batten-gable.jpeg", alt: "Finished vertical panel layout on the barn gable elevation" },
+  roof: { src: "/projects/black-board-and-batten-barn/02_PROGRESS/progress-early-black-siding-installation.jpeg", alt: "Early black metal siding installation on the barn exterior" },
+  commercial: { src: "/projects/black-board-and-batten-barn/03_COMPLETED/completed-black-board-batten-long-side.jpeg", alt: "Completed long barn elevation with black board-and-batten-style metal siding" },
+  progress: { src: "/projects/black-board-and-batten-barn/02_PROGRESS/progress-crew-installing-siding.jpeg", alt: "HBG Construction crew installing black metal siding" },
+  teamwork: { src: "/projects/black-board-and-batten-barn/02_PROGRESS/progress-crew-installing-siding.jpeg", alt: "Installation crew working on the barn metal exterior" },
 };
 
 export function Button({ href, children, light = false }: { href: string; children: React.ReactNode; light?: boolean }) {
