@@ -1,15 +1,8 @@
-import fs from "node:fs";
-import path from "node:path";
 import Link from "next/link";
 import { AssetPanel, Button } from "@/components/ui";
 import { BeforeAfter } from "@/components/before-after";
 import { Mark } from "@/components/brand-logo";
-import { barnProjectImages } from "@/lib/projects";
 import { pageMetadata, ESTIMATE_HREF, HOME_TITLE, HOME_DESCRIPTION } from "@/lib/seo";
-
-const hasBeforePhotos = fs.existsSync(
-  path.join(process.cwd(), "public", barnProjectImages.beforePrimary.src.replace(/^\//, "")),
-);
 
 export const metadata = pageMetadata({
   title: HOME_TITLE,
@@ -31,7 +24,7 @@ export default function Home() { return <>
 
   <section className="home-services wrap"><div className="home-heading"><p className="eyebrow">WHAT WE DO</p><h2>EXTERIOR &amp; BUILDING SERVICES</h2></div><div className="home-services__grid">{services.map(([title, copy, href, kind]) => <Link href={href} className="home-service" key={href}><AssetPanel kind={kind} /><div><h3>{title}</h3><p>{copy}</p><span>LEARN MORE ↗</span></div></Link>)}</div></section>
 
-  <section className="home-transformation"><div className="wrap"><div className="home-heading home-heading--split"><div><p className="eyebrow">FEATURED PROJECT</p><h2>{hasBeforePhotos ? <>BEFORE &amp; AFTER</> : "BARN EXTERIOR TRANSFORMATION"}</h2></div><p>Aging red metal barn exterior updated with black vertical board-and-batten-style metal siding.</p></div>{hasBeforePhotos ? <BeforeAfter /> : <div className="home-transformation__hero"><AssetPanel kind="after" /></div>}<Link className="simple-link" href="/projects/complete-metal-exterior-transformation">VIEW THE FULL PROJECT <span>↗</span></Link></div></section>
+  <section className="home-transformation"><div className="wrap"><div className="home-heading home-heading--split"><div><p className="eyebrow">FEATURED PROJECT</p><h2>BEFORE &amp; AFTER</h2></div><p>From aging red metal barn to a modern black board-and-batten exterior.</p></div><BeforeAfter /><Link className="simple-link" href="/projects/complete-metal-exterior-transformation">VIEW THE FULL PROJECT <span>↗</span></Link></div></section>
 
   <section className="why wrap"><div className="home-heading"><div><Mark size="section" className="brand--ink" /><p className="eyebrow">WHY HBG</p><h2>STRAIGHTFORWARD FROM START TO FINISH.</h2></div></div><div className="why__grid"><article><span>01</span><h3>CLEAR PROPOSALS</h3><p>Know what is included before work begins.</p></article><article><span>02</span><h3>QUALITY INSTALLATION</h3><p>Experienced crews and a clear standard for the work.</p></article><article><span>03</span><h3>ONE POINT OF CONTACT</h3><p>Professional management from estimate through completion.</p></article></div></section>
 

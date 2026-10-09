@@ -1,31 +1,37 @@
-import fs from "node:fs";
-import path from "node:path";
 import Image from "next/image";
 import Link from "next/link";
-import { ProjectCTA } from "@/components/ui";
+import { Button } from "@/components/ui";
+import { Mark } from "@/components/brand-logo";
 import { BeforeAfter } from "@/components/before-after";
 import { BreadcrumbJsonLd, JsonLd } from "@/components/seo";
-import { absoluteUrl, pageMetadata } from "@/lib/seo";
+import { absoluteUrl, ESTIMATE_HREF, pageMetadata } from "@/lib/seo";
 import { barnProjectImages, completeExteriorTransformation as project } from "@/lib/projects";
 
-function publicFileExists(publicPath: string) {
-  return fs.existsSync(path.join(process.cwd(), "public", publicPath.replace(/^\//, "")));
-}
-
-const hasBeforePhotos =
-  publicFileExists(barnProjectImages.beforePrimary.src) &&
-  publicFileExists(barnProjectImages.beforeSecondary.src);
-
 export const metadata = pageMetadata({
-  title: "Black Board-and-Batten Barn Exterior Transformation",
+  title: "From Red Barn to Modern Black Metal Exterior",
   description:
-    "See a genuine HBG Construction barn siding renovation—from the existing red metal exterior through installation to the finished black board-and-batten metal siding.",
+    "A complete Heritage Build Group exterior transformation featuring black board-and-batten metal siding—from the original red barn through installation to the finished exterior.",
   path: "/projects/complete-metal-exterior-transformation",
 });
 
 export default function Page() {
-  const afterHero = barnProjectImages.afterHero;
-  const progress = barnProjectImages.progress;
+  const {
+    beforePrimary,
+    beforeSecondary,
+    beforeTertiary,
+    afterHero,
+    completedGable,
+    progress,
+  } = barnProjectImages;
+
+  const allImages = [
+    afterHero.src,
+    beforePrimary.src,
+    beforeSecondary.src,
+    beforeTertiary.src,
+    ...progress.map((image) => image.src),
+    completedGable.src,
+  ];
 
   return (
     <>
@@ -44,15 +50,7 @@ export default function Page() {
           description: project.description,
           url: absoluteUrl(`/projects/${project.slug}`),
           creator: { "@id": `${absoluteUrl("/")}#business` },
-          image: [
-            absoluteUrl(afterHero.src),
-            ...(hasBeforePhotos
-              ? [absoluteUrl(barnProjectImages.beforePrimary.src), absoluteUrl(barnProjectImages.beforeSecondary.src)]
-              : []),
-            ...progress.map((image) => absoluteUrl(image.src)),
-            absoluteUrl(barnProjectImages.completedLong.src),
-            absoluteUrl(barnProjectImages.completedGable.src),
-          ],
+          image: allImages.map((image) => absoluteUrl(image)),
           about: project.services.map((service) => service.name),
         }}
       />
@@ -65,17 +63,17 @@ export default function Page() {
             fill
             priority
             sizes="100vw"
-            style={{ objectFit: "cover", objectPosition: "center" }}
+            style={{ objectFit: "cover", objectPosition: "center 40%" }}
           />
         </div>
         <div className="wrap">
           <p className="eyebrow">PROJECT CASE STUDY</p>
           <h1>
-            BLACK BOARD-AND-BATTEN
+            FROM RED BARN TO
             <br />
-            BARN EXTERIOR
+            MODERN BLACK METAL EXTERIOR
           </h1>
-          <p>Metal Siding • Exterior Renovation • Western Pennsylvania</p>
+          <p>A complete exterior transformation featuring black board-and-batten metal siding, installed by Heritage Build Group.</p>
         </div>
       </section>
 
@@ -83,7 +81,7 @@ export default function Page() {
         <p className="eyebrow">THE PROJECT</p>
         <div>
           <p className="lead">
-            HBG Construction updated this barn exterior with black vertical board-and-batten-style metal siding—documented from existing conditions through installation to completion.
+            Aging red metal siding replaced with black vertical board-and-batten-style metal siding—documented from existing conditions through installation to completion.
           </p>
           <nav className="inline-links" aria-label="Services shown in this project">
             {project.services.map((service) => (
@@ -95,83 +93,65 @@ export default function Page() {
         </div>
       </section>
 
-      {hasBeforePhotos && (
-        <section className="project-compare wrap">
-          <div className="project-section-head">
-            <p className="eyebrow">THE CHANGE</p>
-            <h2>BEFORE / AFTER</h2>
-            <p>The same barn—red metal exterior replaced with black vertical board-and-batten-style metal siding.</p>
-          </div>
-          <BeforeAfter
-            beforeSrc={barnProjectImages.beforePrimary.src}
-            afterSrc={afterHero.src}
-            beforeAlt={barnProjectImages.beforePrimary.alt}
-            afterAlt={afterHero.alt}
-          />
-          <div className="ba-pair" aria-label="Before and after side by side">
-            <figure className="ba-pair__item">
-              <div className="ba-pair__frame">
-                <Image
-                  src={barnProjectImages.beforePrimary.src}
-                  alt={barnProjectImages.beforePrimary.alt}
-                  fill
-                  sizes="(max-width: 800px) 100vw, 620px"
-                />
-              </div>
-              <figcaption>BEFORE</figcaption>
-            </figure>
-            <figure className="ba-pair__item">
-              <div className="ba-pair__frame">
-                <Image src={afterHero.src} alt={afterHero.alt} fill sizes="(max-width: 800px) 100vw, 620px" />
-              </div>
-              <figcaption>AFTER</figcaption>
-            </figure>
-          </div>
-        </section>
-      )}
+      <section className="project-compare wrap">
+        <div className="project-section-head">
+          <p className="eyebrow">BEFORE &amp; AFTER</p>
+          <h2>THE CHANGE</h2>
+          <p>Same barn. Same structure. A completely different exterior.</p>
+        </div>
+        <BeforeAfter
+          beforeSrc={beforePrimary.src}
+          afterSrc={afterHero.src}
+          beforeAlt={beforePrimary.alt}
+          afterAlt={afterHero.alt}
+        />
+        <div className="ba-pair" aria-label="Before and after side by side">
+          <figure className="ba-pair__item">
+            <div className="ba-pair__frame">
+              <Image src={beforePrimary.src} alt={beforePrimary.alt} fill sizes="(max-width: 800px) 100vw, 620px" />
+            </div>
+            <figcaption>BEFORE</figcaption>
+          </figure>
+          <figure className="ba-pair__item">
+            <div className="ba-pair__frame">
+              <Image src={afterHero.src} alt={afterHero.alt} fill sizes="(max-width: 800px) 100vw, 620px" />
+            </div>
+            <figcaption>AFTER</figcaption>
+          </figure>
+        </div>
+      </section>
 
-      {hasBeforePhotos && (
-        <section className="project-stage wrap">
-          <div className="project-section-head">
-            <p className="eyebrow">SECTION 01</p>
-            <h2>BEFORE</h2>
-            <p>
-              The existing barn had aging red metal siding with large sections of the exterior open and exposed. HBG Construction was brought in to update the exterior with black vertical board-and-batten-style metal siding.
-            </p>
-          </div>
-          <div className="before-gallery">
-            <figure className="before-gallery__primary">
-              <div className="project-photo">
-                <Image
-                  src={barnProjectImages.beforePrimary.src}
-                  alt={barnProjectImages.beforePrimary.alt}
-                  fill
-                  sizes="(max-width: 800px) 100vw, 760px"
-                />
-              </div>
-            </figure>
-            <figure className="before-gallery__secondary">
-              <div className="project-photo">
-                <Image
-                  src={barnProjectImages.beforeSecondary.src}
-                  alt={barnProjectImages.beforeSecondary.alt}
-                  fill
-                  sizes="(max-width: 800px) 100vw, 460px"
-                />
-              </div>
-            </figure>
-          </div>
-        </section>
-      )}
+      <section className="project-stage wrap">
+        <div className="project-section-head">
+          <p className="eyebrow">BEFORE</p>
+          <h2>THE EXISTING BARN</h2>
+          <p>Aging red metal siding with large sections of the exterior open and exposed.</p>
+        </div>
+        <div className="before-gallery before-gallery--three">
+          <figure className="before-gallery__primary">
+            <div className="project-photo project-photo--portrait">
+              <Image src={beforePrimary.src} alt={beforePrimary.alt} fill sizes="(max-width: 800px) 100vw, 720px" />
+            </div>
+          </figure>
+          <figure>
+            <div className="project-photo project-photo--portrait">
+              <Image src={beforeSecondary.src} alt={beforeSecondary.alt} fill sizes="(max-width: 800px) 100vw, 420px" />
+            </div>
+          </figure>
+          <figure>
+            <div className="project-photo project-photo--portrait">
+              <Image src={beforeTertiary.src} alt={beforeTertiary.alt} fill sizes="(max-width: 800px) 100vw, 420px" />
+            </div>
+          </figure>
+        </div>
+      </section>
 
       <section className="project-stage project-stage--cream">
         <div className="wrap">
           <div className="project-section-head">
-            <p className="eyebrow">SECTION 02</p>
-            <h2>THE TRANSFORMATION</h2>
-            <p>
-              The existing exterior was opened up and prepared before new black vertical metal siding was installed across the barn. Installation progressed around the original framing, windows, openings, corners, and gable areas.
-            </p>
+            <p className="eyebrow">THE TRANSFORMATION</p>
+            <h2>INSTALLATION IN PROGRESS</h2>
+            <p>Existing exterior preparation, panel installation, and progress around the building.</p>
           </div>
           <div className="progress-gallery">
             {progress.map((image) => (
@@ -179,11 +159,12 @@ export default function Page() {
                 className={image.feature ? "progress-gallery__item progress-gallery__item--feature" : "progress-gallery__item"}
                 key={image.src}
               >
-                <div className="project-photo">
+                <div className={`project-photo ${image.feature ? "project-photo--feature" : "project-photo--portrait"}`}>
                   <Image
                     src={image.src}
                     alt={image.alt}
                     fill
+                    loading="lazy"
                     sizes={image.feature ? "(max-width: 800px) 100vw, 1240px" : "(max-width: 800px) 100vw, 600px"}
                   />
                 </div>
@@ -196,64 +177,40 @@ export default function Page() {
 
       <section className="project-stage wrap">
         <div className="project-section-head">
-          <p className="eyebrow">SECTION 03</p>
-          <h2>THE FINISHED EXTERIOR</h2>
-          <p>
-            The finished black vertical metal siding gives the original barn a completely different appearance while retaining the structure and character of the existing building.
-          </p>
+          <p className="eyebrow">THE FINISHED EXTERIOR</p>
+          <h2>BLACK BOARD-AND-BATTEN</h2>
+          <p>The finished black vertical metal siding gives the original barn a completely different appearance.</p>
         </div>
         <figure className="finished-hero">
           <div className="project-photo project-photo--hero">
-            <Image src={afterHero.src} alt={afterHero.alt} fill sizes="100vw" />
+            <Image src={afterHero.src} alt={afterHero.alt} fill sizes="100vw" priority={false} loading="lazy" />
           </div>
         </figure>
-        <div className="finished-grid">
+        <div className="finished-grid finished-grid--single">
           <figure>
-            <div className="project-photo">
-              <Image
-                src={barnProjectImages.completedLong.src}
-                alt={barnProjectImages.completedLong.alt}
-                fill
-                sizes="(max-width: 800px) 100vw, 620px"
-              />
+            <div className="project-photo project-photo--portrait">
+              <Image src={completedGable.src} alt={completedGable.alt} fill sizes="(max-width: 800px) 100vw, 720px" loading="lazy" />
             </div>
-            <figcaption>{barnProjectImages.completedLong.caption}</figcaption>
-          </figure>
-          <figure>
-            <div className="project-photo">
-              <Image
-                src={barnProjectImages.completedGable.src}
-                alt={barnProjectImages.completedGable.alt}
-                fill
-                sizes="(max-width: 800px) 100vw, 620px"
-              />
-            </div>
-            <figcaption>{barnProjectImages.completedGable.caption}</figcaption>
+            <figcaption>{completedGable.caption}</figcaption>
           </figure>
         </div>
       </section>
 
-      <section className="project-taxonomy wrap">
-        <p className="eyebrow">PROJECT INFORMATION</p>
-        <div>
-          <p>
-            <strong>Services documented</strong>
-            <br />
-            Metal siding, exterior renovation
-          </p>
-          <p>
-            <strong>Location</strong>
-            <br />
-            Not published—the project location has not been provided.
-          </p>
-          <p>
-            <strong>Materials</strong>
-            <br />
-            Black vertical board-and-batten-style metal siding. Specific manufacturer information has not been provided.
-          </p>
+      <section className="cta-band">
+        <div className="wrap">
+          <Mark size="cta" />
+          <div>
+            <p className="eyebrow">YOUR PROPERTY. YOUR PROJECT.</p>
+            <h2>READY TO TRANSFORM YOUR BUILDING?</h2>
+            <p className="cta-band__copy">
+              Heritage Build Group specializes in metal siding, metal roofing, pole buildings, garages, and exterior renovations throughout the Pittsburgh region.
+            </p>
+          </div>
+          <Button href={ESTIMATE_HREF} light>
+            REQUEST A FREE ESTIMATE
+          </Button>
         </div>
       </section>
-      <ProjectCTA />
     </>
   );
 }

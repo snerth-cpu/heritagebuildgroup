@@ -20,75 +20,62 @@ const PROJECT_ROOT = "/projects/black-board-and-batten-barn";
 
 export const barnProjectImages = {
   beforePrimary: {
-    src: `${PROJECT_ROOT}/01_BEFORE/before-red-barn-front-angle.jpeg`,
-    alt: "Existing red metal barn exterior before HBG Construction siding renovation",
+    src: `${PROJECT_ROOT}/01_BEFORE/before-red-barn-corner-angle.jpg`,
+    alt: "Existing red metal barn exterior with open wall sections before HBG Construction siding renovation",
   },
   beforeSecondary: {
-    src: `${PROJECT_ROOT}/01_BEFORE/before-red-barn-side-angle.jpeg`,
-    alt: "Existing barn before installation of black board-and-batten metal siding",
+    src: `${PROJECT_ROOT}/01_BEFORE/before-red-barn-gable.jpg`,
+    alt: "Gable end of the barn with aging red metal siding and exposed framing before renovation",
+  },
+  beforeTertiary: {
+    src: `${PROJECT_ROOT}/01_BEFORE/before-barn-exposed-frame-dusk.jpg`,
+    alt: "Barn with siding removed and timber frame exposed at dusk before new metal siding",
   },
   afterHero: {
-    src: `${PROJECT_ROOT}/03_COMPLETED/completed-black-board-batten-hero-angle.jpeg`,
-    alt: "Completed barn with black board-and-batten-style metal siding by HBG Construction",
-  },
-  completedLong: {
-    src: `${PROJECT_ROOT}/03_COMPLETED/completed-black-board-batten-long-side.jpeg`,
-    alt: "Completed long elevation with black board-and-batten-style metal siding",
-    caption: "Completed long elevation with black board-and-batten-style metal siding.",
+    src: `${PROJECT_ROOT}/03_COMPLETED/completed-black-barn-corner-hero.jpg`,
+    alt: "Completed barn with black board-and-batten metal siding by Heritage Build Group",
   },
   completedGable: {
-    src: `${PROJECT_ROOT}/03_COMPLETED/completed-black-board-batten-gable.jpeg`,
-    alt: "Completed gable elevation showing the finished vertical panel layout",
-    caption: "Completed gable elevation showing the finished vertical panel layout.",
+    src: `${PROJECT_ROOT}/03_COMPLETED/completed-black-barn-gable.jpg`,
+    alt: "Completed gable elevation with black vertical board-and-batten metal siding",
+    caption: "Finished gable elevation with clean vertical panel layout.",
   },
   progress: [
     {
-      src: `${PROJECT_ROOT}/02_PROGRESS/progress-existing-siding-removed.jpeg`,
-      alt: "Existing barn exterior removed with framing exposed for new metal siding",
-      caption: "Existing exterior removed and framing exposed for the new siding installation.",
+      src: `${PROJECT_ROOT}/02_PROGRESS/progress-siding-removed-crew.jpg`,
+      alt: "Crew preparing the barn after original siding removal with timber frame exposed",
+      caption: "Existing exterior removed and framing prepared for new siding.",
       feature: true,
     },
     {
-      src: `${PROJECT_ROOT}/02_PROGRESS/progress-early-black-siding-installation.jpeg`,
-      alt: "Black vertical metal siding beginning to cover the barn exterior",
-      caption: "Black vertical metal siding beginning to transform the barn exterior.",
+      src: `${PROJECT_ROOT}/02_PROGRESS/progress-gable-siding-install.jpg`,
+      alt: "Workers installing black metal siding on the barn gable from scaffolding",
+      caption: "Black board-and-batten panels going up on the gable.",
     },
     {
-      src: `${PROJECT_ROOT}/02_PROGRESS/progress-crew-installing-siding.jpeg`,
-      alt: "HBG Construction crew installing black metal siding on the barn",
-      caption: "HBG crew installing the new siding across the main elevation.",
-    },
-    {
-      src: `${PROJECT_ROOT}/02_PROGRESS/progress-gable-siding-installation.jpeg`,
-      alt: "Board-and-batten metal siding installation continuing into the barn gable",
-      caption: "Board-and-batten-style metal siding installation continuing into the gable.",
-    },
-    {
-      src: `${PROJECT_ROOT}/02_PROGRESS/progress-wide-installation-view.jpeg`,
-      alt: "Metal siding installation progressing across multiple barn elevations",
-      caption: "Installation progressing across multiple elevations of the barn.",
+      src: `${PROJECT_ROOT}/02_PROGRESS/progress-side-wall-install.jpg`,
+      alt: "HBG crew installing black metal siding across the barn side wall",
+      caption: "Installation progressing across the main elevation.",
       feature: true,
     },
     {
-      src: `${PROJECT_ROOT}/02_PROGRESS/progress-siding-around-windows.jpeg`,
-      alt: "Black metal siding carefully laid out around barn windows and openings",
-      caption: "Careful panel layout around the barn's existing windows and openings.",
+      src: `${PROJECT_ROOT}/02_PROGRESS/progress-corner-scaffolding.jpg`,
+      alt: "Scaffolding and ladders as black metal siding wraps the barn corner",
+      caption: "Panels continuing around corners and openings.",
     },
     {
-      src: `${PROJECT_ROOT}/02_PROGRESS/progress-gable-nearing-completion.jpeg`,
-      alt: "Barn exterior nearing completion with black siding on upper elevations",
-      caption: "The exterior nearing completion as the black siding continues through the upper elevations.",
+      src: `${PROJECT_ROOT}/02_PROGRESS/progress-windows-and-framing.jpg`,
+      alt: "Barn with new windows and black siding on the gable while framing remains on the side wall",
+      caption: "Detail work around windows, framing, and the gable.",
     },
   ] satisfies ProjectImage[],
 };
 
-// Future projects should only be added after location, services, materials, and
-// photography are verified. Optional fields remain absent when facts are unknown.
 export const completeExteriorTransformation: ProjectRecord = {
   slug: "complete-metal-exterior-transformation",
-  title: "Black Board-and-Batten Barn Exterior",
+  title: "From Red Barn to Modern Black Metal Exterior",
   description:
-    "A documented barn exterior renovation: aging red metal siding replaced with black vertical board-and-batten-style metal siding by HBG Construction.",
+    "A complete exterior transformation featuring black board-and-batten metal siding, installed by Heritage Build Group.",
   services: [
     { name: "Metal Siding", href: "/metal-siding" },
     { name: "Pole Buildings", href: "/pole-buildings" },
@@ -98,8 +85,8 @@ export const completeExteriorTransformation: ProjectRecord = {
     barnProjectImages.afterHero.src.replace(/^\//, ""),
     barnProjectImages.beforePrimary.src.replace(/^\//, ""),
     barnProjectImages.beforeSecondary.src.replace(/^\//, ""),
+    barnProjectImages.beforeTertiary.src.replace(/^\//, ""),
     ...barnProjectImages.progress.map((image) => image.src.replace(/^\//, "")),
-    barnProjectImages.completedLong.src.replace(/^\//, ""),
     barnProjectImages.completedGable.src.replace(/^\//, ""),
   ],
 };
