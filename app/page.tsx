@@ -3,7 +3,7 @@ import Link from "next/link";
 import { AssetPanel, Button } from "@/components/ui";
 import { BeforeAfter } from "@/components/before-after";
 import { Mark } from "@/components/brand-logo";
-import { barnProjectImages } from "@/lib/projects";
+import { barnProjectImagesFlat } from "@/lib/projects";
 import { pageMetadata, ESTIMATE_HREF, HOME_TITLE, HOME_DESCRIPTION } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -26,31 +26,31 @@ export default function Home() { return <>
 
   <section className="home-services wrap"><div className="home-heading"><p className="eyebrow">WHAT WE DO</p><h2>EXTERIOR &amp; BUILDING SERVICES</h2></div><div className="home-services__grid">{services.map(([title, copy, href, kind]) => <Link href={href} className="home-service" key={href}><AssetPanel kind={kind} /><div><h3>{title}</h3><p>{copy}</p><span>LEARN MORE ↗</span></div></Link>)}</div></section>
 
-  <section className="home-transformation"><div className="wrap"><div className="home-heading home-heading--split"><div><p className="eyebrow">FEATURED PROJECT</p><h2>BEFORE &amp; AFTER</h2></div><p>Metal roofing, vertical metal siding, trim, and details—finished as one project.</p></div><BeforeAfter /><Link className="simple-link" href="/projects/complete-metal-exterior-transformation">VIEW THE FULL PROJECT <span>↗</span></Link></div></section>
+  <section className="home-transformation"><div className="wrap"><div className="home-heading home-heading--split"><div><p className="eyebrow">FEATURED PROJECT</p><h2>BEFORE &amp; AFTER</h2></div><p>Metal roofing, siding, and trim on one exterior.</p></div><BeforeAfter /><Link className="simple-link" href="/projects/complete-metal-exterior-transformation">VIEW PROJECT PHOTOS <span>↗</span></Link></div></section>
 
   <section className="home-featured-projects wrap">
     <div className="home-heading">
       <div>
-        <p className="eyebrow">PROJECT SPOTLIGHT</p>
-        <h2>MORE RECENT WORK</h2>
+        <p className="eyebrow">ANOTHER PROJECT</p>
+        <h2>BARN SIDING</h2>
       </div>
-      <Link className="simple-link" href="/projects">VIEW ALL PROJECTS <span>↗</span></Link>
+      <Link className="simple-link" href="/projects">ALL PROJECTS <span>↗</span></Link>
     </div>
     <Link href="/projects/black-board-and-batten-barn" className="project-card project-card--compact">
       <div className="asset-panel">
         <Image
-          src={barnProjectImages.afterHero.src}
-          alt={barnProjectImages.afterHero.alt}
+          src={barnProjectImagesFlat.afterHero.src}
+          alt={barnProjectImagesFlat.afterHero.alt}
           fill
           sizes="(max-width: 800px) 100vw, 60vw"
           style={{ objectFit: "cover", objectPosition: "center 40%" }}
         />
       </div>
       <div>
-        <p className="eyebrow">METAL SIDING • EXTERIOR RENOVATION</p>
-        <h2>FROM RED BARN TO BLACK BOARD-AND-BATTEN.</h2>
-        <p>A complete barn siding transformation with before, during, and after photography.</p>
-        <span>VIEW CASE STUDY ↗</span>
+        <p className="eyebrow">METAL SIDING</p>
+        <h2>BLACK BOARD-AND-BATTEN BARN.</h2>
+        <p>Before, during, and after photos.</p>
+        <span>VIEW PHOTOS ↗</span>
       </div>
     </Link>
   </section>

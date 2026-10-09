@@ -1,25 +1,22 @@
+import Image from "next/image";
 import Link from "next/link";
-import { AssetPanel, ProjectCTA } from "@/components/ui";
+import { ProjectCTA } from "@/components/ui";
+import { ProjectGallery } from "@/components/project-gallery";
 import { BreadcrumbJsonLd, JsonLd } from "@/components/seo";
 import { absoluteUrl, pageMetadata } from "@/lib/seo";
-import { completeExteriorTransformation as project } from "@/lib/projects";
-
-const stages = [
-  ["01", "Existing building / before", "before"],
-  ["02", "Exterior preparation", "prep"],
-  ["03", "Installation", "installation"],
-  ["04", "Metal siding installation", "siding"],
-  ["05", "Roofing + siding", "roof"],
-  ["06", "Finished exterior", "after"],
-];
+import { completeExteriorTransformation as project, exteriorProjectGallery } from "@/lib/projects";
 
 export const metadata = pageMetadata({
-  title: "Complete Metal Roofing & Siding Transformation",
-  description: "See a genuine HBG Construction exterior renovation progress from existing conditions through metal roofing, vertical metal siding, trim, and completion.",
+  title: "Metal Exterior Project Photos",
+  description:
+    "Photos from a metal roofing and siding exterior project—existing conditions, install progress, and the finished building.",
   path: "/projects/complete-metal-exterior-transformation",
 });
 
 export default function Page() {
+  const { before, during, after } = exteriorProjectGallery;
+  const hero = after[0];
+
   return (
     <>
       <BreadcrumbJsonLd
@@ -41,64 +38,86 @@ export default function Page() {
           about: project.services.map((service) => service.name),
         }}
       />
+
       <section className="case-hero">
-        <AssetPanel kind="after" />
+        <div className="case-hero__media">
+          <Image
+            src={hero.src}
+            alt={hero.alt}
+            fill
+            priority
+            sizes="100vw"
+            style={{ objectFit: "cover", objectPosition: "center" }}
+          />
+        </div>
         <div className="wrap">
-          <p className="eyebrow">PROJECT CASE STUDY</p>
+          <p className="eyebrow">PROJECT</p>
           <h1>
-            COMPLETE METAL
+            METAL ROOFING
             <br />
-            EXTERIOR TRANSFORMATION
+            &amp; SIDING
           </h1>
-          <p>Metal Roofing • Metal Siding • Exterior Renovation</p>
+          <p>Photos from an exterior update—prep, install, and finish.</p>
         </div>
       </section>
+
       <section className="case-intro wrap">
-        <p className="eyebrow">THE PROJECT</p>
+        <p className="eyebrow">OVERVIEW</p>
         <div>
-          <p className="lead">A full exterior update using dark vertical metal siding, matching metal roofing, contrasting trim, and custom details.</p>
+          <p className="lead">Dark vertical metal siding, matching roofing, and trim details.</p>
           <nav className="inline-links" aria-label="Services shown in this project">
             {project.services.map((service) => (
-              <Link href={service.href} key={service.href}>{service.name}</Link>
+              <Link href={service.href} key={service.href}>
+                {service.name}
+              </Link>
             ))}
           </nav>
         </div>
       </section>
-      <section className="story wrap">
-        {stages.map(([n, title, kind], i) => (
-          <article className={i % 2 ? "story__item story__item--reverse" : "story__item"} key={n}>
-            <AssetPanel kind={kind} />
-            <div>
-              <span>{n} / 06</span>
-              <h2>{title}</h2>
-              <p>
-                {i === 0
-                  ? "This is how the building looked before the metal roofing and siding went on."
-                  : i === 5
-                    ? "The finished exterior brings roofing, siding, trim, and openings together as one look."
-                    : "These photos show the install in progress—the order of work, the coordination, and the details."}
-              </p>
-            </div>
-          </article>
-        ))}
+
+      <section className="project-stage wrap">
+        <div className="project-section-head">
+          <p className="eyebrow">BEFORE</p>
+          <h2>EXISTING CONDITIONS</h2>
+        </div>
+        <ProjectGallery images={before} />
       </section>
+
+      <section className="project-stage project-stage--cream">
+        <div className="wrap">
+          <div className="project-section-head">
+            <p className="eyebrow">DURING</p>
+            <h2>INSTALL</h2>
+          </div>
+          <ProjectGallery images={during} />
+        </div>
+      </section>
+
+      <section className="project-stage wrap">
+        <div className="project-section-head">
+          <p className="eyebrow">AFTER</p>
+          <h2>FINISHED LOOK</h2>
+        </div>
+        <ProjectGallery images={after} />
+      </section>
+
       <section className="project-taxonomy wrap">
         <p className="eyebrow">PROJECT INFORMATION</p>
         <div>
           <p>
-            <strong>Services documented</strong>
+            <strong>Services</strong>
             <br />
             Metal roofing, metal siding, exterior renovation
           </p>
           <p>
             <strong>Location</strong>
             <br />
-            Not published—the project location has not been provided.
+            Not published
           </p>
           <p>
             <strong>Materials</strong>
             <br />
-            Specific product and manufacturer information has not been provided.
+            Specific product details not provided
           </p>
         </div>
       </section>

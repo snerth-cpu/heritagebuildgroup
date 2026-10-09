@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { AssetPanel, ProjectCTA, SectionHead } from "@/components/ui";
 import { Mark } from "@/components/brand-logo";
-import { barnProjectImages } from "@/lib/projects";
+import { barnProjectImagesFlat } from "@/lib/projects";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -21,32 +21,32 @@ export default function Page() {
         <p>Real photos of metal roofing, metal siding, finished exteriors, and the work in between.</p>
       </section>
       <section className="project-list wrap">
-        <SectionHead kicker="FEATURED PROJECTS" title="DOCUMENTED EXTERIOR WORK" />
+        <SectionHead kicker="PROJECTS" title="RECENT WORK" />
         <div className="project-list__stack">
           <Link href="/projects/complete-metal-exterior-transformation" className="project-card">
             <AssetPanel kind="after" />
             <div>
-              <p className="eyebrow">METAL ROOFING • METAL SIDING • EXTERIOR RENOVATION</p>
-              <h2>A COMPLETE EXTERIOR UPDATE.</h2>
-              <p>See the prep, installation, and details behind this full exterior project.</p>
-              <span>VIEW CASE STUDY ↗</span>
+              <p className="eyebrow">METAL ROOFING • METAL SIDING</p>
+              <h2>EXTERIOR UPDATE.</h2>
+              <p>Prep, install, and finished photos.</p>
+              <span>VIEW PHOTOS ↗</span>
             </div>
           </Link>
           <Link href="/projects/black-board-and-batten-barn" className="project-card">
             <div className="asset-panel">
               <Image
-                src={barnProjectImages.afterHero.src}
-                alt={barnProjectImages.afterHero.alt}
+                src={barnProjectImagesFlat.afterHero.src}
+                alt={barnProjectImagesFlat.afterHero.alt}
                 fill
                 sizes="(max-width: 800px) 100vw, 60vw"
                 style={{ objectFit: "cover", objectPosition: "center 40%" }}
               />
             </div>
             <div>
-              <p className="eyebrow">METAL SIDING • EXTERIOR RENOVATION</p>
-              <h2>FROM RED BARN TO BLACK BOARD-AND-BATTEN.</h2>
-              <p>Before, during, and after photos from a complete barn siding transformation.</p>
-              <span>VIEW CASE STUDY ↗</span>
+              <p className="eyebrow">METAL SIDING</p>
+              <h2>BLACK BOARD-AND-BATTEN BARN.</h2>
+              <p>Before, during, and after photos.</p>
+              <span>VIEW PHOTOS ↗</span>
             </div>
           </Link>
         </div>
