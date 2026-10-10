@@ -22,7 +22,41 @@ const services = [
 ] as const;
 
 export default function Home() { return <>
-  <section className="hero home-hero"><AssetPanel kind="hero" className="hero__image" /><div className="hero__shade" /><div className="wrap hero__content"><p className="eyebrow">WESTERN PENNSYLVANIA</p><h1 className="hero__brand"><Mark size="hero" priority /><span className="visually-hidden">HBG Construction</span></h1><p className="hero__offer">Metal Roofing, Siding &amp; Post-Frame Construction</p><p className="hero__copy">Durable metal exterior systems and custom building solutions for homes, garages, barns and commercial properties throughout Western Pennsylvania.</p><div className="button-row"><Button href={ESTIMATE_HREF} light>REQUEST AN ESTIMATE</Button><Link href="/projects" className="text-button">VIEW OUR WORK <span>↓</span></Link></div></div></section>
+  <section className="hero home-hero home-hero--dual">
+    <div className="hero__media">
+      <div className="hero__shot">
+        <Image
+          src="/images/metal-exterior-wide.png"
+          alt="Completed commercial building with black vertical metal siding and metal roofing"
+          fill
+          priority
+          sizes="(max-width: 900px) 100vw, 58vw"
+          style={{ objectFit: "cover", objectPosition: "center" }}
+        />
+      </div>
+      <div className="hero__shot">
+        <Image
+          src={barnProjectImagesFlat.afterHero.src}
+          alt={barnProjectImagesFlat.afterHero.alt}
+          fill
+          priority
+          sizes="(max-width: 900px) 100vw, 42vw"
+          style={{ objectFit: "cover", objectPosition: "center 40%" }}
+        />
+      </div>
+    </div>
+    <div className="hero__shade" />
+    <div className="wrap hero__content">
+      <p className="eyebrow">WESTERN PENNSYLVANIA</p>
+      <h1 className="hero__brand"><Mark size="hero" priority /><span className="visually-hidden">HBG Construction</span></h1>
+      <p className="hero__offer">Metal Roofing, Siding &amp; Post-Frame Construction</p>
+      <p className="hero__copy">Durable metal exterior systems and custom building solutions for homes, garages, barns and commercial properties throughout Western Pennsylvania.</p>
+      <div className="button-row">
+        <Button href={ESTIMATE_HREF} light>REQUEST AN ESTIMATE</Button>
+        <Link href="/projects" className="text-button">VIEW OUR WORK <span>↓</span></Link>
+      </div>
+    </div>
+  </section>
 
   <section className="home-services wrap"><div className="home-heading"><p className="eyebrow">WHAT WE DO</p><h2>EXTERIOR &amp; BUILDING SERVICES</h2></div><div className="home-services__grid">{services.map(([title, copy, href, kind]) => <Link href={href} className="home-service" key={href}><AssetPanel kind={kind} /><div><h3>{title}</h3><p>{copy}</p><span>LEARN MORE ↗</span></div></Link>)}</div></section>
 

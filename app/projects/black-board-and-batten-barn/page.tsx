@@ -114,7 +114,7 @@ export default function Page() {
           <p className="eyebrow">BEFORE</p>
           <h2>STARTING POINT</h2>
         </div>
-        <ProjectGallery images={before} />
+        <ProjectGallery images={before} shape="portrait" />
       </section>
 
       <section className="project-stage project-stage--cream">
@@ -123,7 +123,7 @@ export default function Page() {
             <p className="eyebrow">DURING</p>
             <h2>THE WORK</h2>
           </div>
-          <ProjectGallery images={during} />
+          <ProjectGallery images={during} shape="portrait" />
         </div>
       </section>
 
@@ -132,7 +132,7 @@ export default function Page() {
           <p className="eyebrow">AFTER</p>
           <h2>FINISHED</h2>
         </div>
-        <ProjectGallery images={after} />
+        <ProjectGallery images={after} shape="portrait" />
       </section>
 
       <section className="cta-band">

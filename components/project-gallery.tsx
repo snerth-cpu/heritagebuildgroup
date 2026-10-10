@@ -4,10 +4,13 @@ import type { ProjectImage } from "@/lib/projects";
 export function ProjectGallery({
   images,
   columns = 2,
+  shape = "standard",
 }: {
   images: ProjectImage[];
   columns?: 2 | 3;
+  shape?: "standard" | "portrait";
 }) {
+  const tileClass = shape === "portrait" ? "project-photo--portrait" : "project-photo--standard";
   return (
     <div className={`photo-gallery photo-gallery--${columns}`}>
       {images.map((image) => (
@@ -15,7 +18,7 @@ export function ProjectGallery({
           className={image.feature ? "photo-gallery__item photo-gallery__item--feature" : "photo-gallery__item"}
           key={image.src}
         >
-          <div className={`project-photo ${image.feature ? "project-photo--feature" : "project-photo--standard"}`}>
+          <div className={`project-photo ${image.feature ? "project-photo--feature" : tileClass}`}>
             <Image
               src={image.src}
               alt={image.alt}
