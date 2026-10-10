@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.heritagebuildgroup.com";
 export const SITE_NAME = "HBG Construction";
 export const LEGAL_NAME = "Heritage Build Group LLC";
-export const BUSINESS_PHONE = "(814) 860-4979";
-export const BUSINESS_PHONE_HREF = "tel:+18148604979";
+export const BUSINESS_PHONE = "(724) 719-7237";
+export const BUSINESS_PHONE_HREF = "tel:+17247197237";
 export const BUSINESS_EMAIL = "scott@heritagebuildgroup.com";
 export const SOCIAL_IMAGE = "/images/metal-exterior-wide.png";
 export const ESTIMATE_HREF = "/estimate#estimate-form";
@@ -75,7 +75,7 @@ export const localBusinessSchema = {
   legalName: LEGAL_NAME,
   alternateName: ["Heritage Build Group"],
   url: SITE_URL,
-  telephone: "+1-814-860-4979",
+  telephone: "+1-724-719-7237",
   email: BUSINESS_EMAIL,
   logo: absoluteUrl("/brand/hbg-primary.png"),
   image: absoluteUrl(SOCIAL_IMAGE),

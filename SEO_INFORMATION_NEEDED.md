@@ -11,7 +11,7 @@ The website intentionally does not publish unverified business facts. Provide th
 Published contact details:
 
 - Legal name: Heritage Build Group LLC
-- Phone: (814) 860-4979
+- Phone: (724) 719-7237
 - Email: scott@heritagebuildgroup.com
 
 For every future project page, provide only verified details:
