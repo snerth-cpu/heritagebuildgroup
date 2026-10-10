@@ -77,17 +77,21 @@
 .home-hero--dual .hero__content{padding-top:clamp(120px,14vh,180px);padding-bottom:56px;margin-top:auto}
 @media(max-width:900px){
   .home-services__grid{grid-template-columns:1fr}.home-service{display:grid;grid-template-columns:1fr 1fr}.home-service .asset-panel{height:300px}.home-service p{min-height:0}.service-area{grid-template-columns:1fr 2fr}.service-area__all{grid-column:2;margin-top:20px;justify-self:start}
-  /* Stack full-width so landscape project photos are not cropped into thin strips */
+  /* Stack full-width with landscape frames so buildings are not sliced into thin strips */
   .hero.home-hero--dual,.home-hero.home-hero--dual{min-height:0;height:auto;display:flex;flex-direction:column;justify-content:flex-start}
-  .home-hero--dual .hero__media{position:relative;inset:auto;width:100%;height:auto;flex:0 0 auto;grid-template-columns:1fr;grid-template-rows:minmax(260px,36vh) minmax(280px,40vh);gap:3px}
-  .home-hero--dual .hero__shot{min-height:inherit}
+  .home-hero--dual .hero__media{position:relative;inset:auto;width:100%;height:auto;flex:0 0 auto;grid-template-columns:1fr;grid-template-rows:auto auto;gap:3px}
+  .home-hero--dual .hero__shot{width:100%;height:auto;min-height:0;aspect-ratio:16/10}
+  .home-hero--dual .hero__shot--barn{aspect-ratio:5/4}
+  .home-hero--dual .hero__shot--commercial{aspect-ratio:16/10}
   .home-hero--dual .hero__shade{display:none}
   .home-hero--dual .hero__content{position:relative;margin-top:0;background:linear-gradient(180deg,#1a1b1a 0%,#222321 100%);padding-top:28px;padding-bottom:40px}
 }
 @media(max-width:650px){
   .home-hero{min-height:680px;height:auto}.home-hero .hero__content{padding-top:180px;padding-bottom:64px}.home-hero .hero__offer{font-size:22px;max-width:none}.brand--hero .brand__image{width:136px;height:136px}.home-heading,.home-heading--split,.home-cta>.wrap{display:block}.home-heading--split>p{margin-top:25px}.home-services,.home-transformation,.why{padding-top:78px;padding-bottom:82px}.home-service{display:block}.home-service .asset-panel{height:300px}.home-transformation .before-after{height:390px}.why__grid,.home-markets__grid{grid-template-columns:1fr}.why article,.why article+article{padding:28px 0;border-left:0;border-bottom:1px solid var(--line)}.why h3{margin:32px 0 10px}.home-markets{padding:75px 0}.home-markets article,.home-markets article+article{padding:0;border-left:0}.home-markets article+article{padding-top:55px;margin-top:55px;border-top:1px solid rgba(255,255,255,.2)}.service-area{grid-template-columns:1fr}.service-area__all{grid-column:1}.home-cta .button{margin-top:32px}.cta-band .wrap{grid-template-columns:1fr}.cta-band .brand{margin-bottom:8px}
   .hero.home-hero--dual,.home-hero.home-hero--dual{min-height:0;height:auto}
-  .home-hero--dual .hero__media{grid-template-columns:1fr;grid-template-rows:minmax(220px,32vh) minmax(250px,36vh);gap:3px}
+  .home-hero--dual .hero__shot{aspect-ratio:16/11}
+  .home-hero--dual .hero__shot--barn{aspect-ratio:5/4}
+  .home-hero--dual .hero__shot--commercial{aspect-ratio:16/11}
   .home-hero--dual .hero__content,.home-hero.home-hero--dual .hero__content{padding-top:24px;padding-bottom:calc(32px + env(safe-area-inset-bottom,0px))}
   .home-hero--dual .hero__offer{font-size:20px;max-width:none}
   .home-hero--dual .hero__copy{font-size:15px}
