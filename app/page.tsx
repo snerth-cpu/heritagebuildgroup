@@ -24,24 +24,24 @@ const services = [
 export default function Home() { return <>
   <section className="hero home-hero home-hero--dual">
     <div className="hero__media">
-      <div className="hero__shot">
+      <div className="hero__shot hero__shot--barn">
         <Image
           src={barnProjectImagesFlat.afterHero.src}
           alt={barnProjectImagesFlat.afterHero.alt}
           fill
           priority
           sizes="(max-width: 900px) 100vw, 55vw"
-          style={{ objectFit: "cover", objectPosition: "center 42%" }}
+          style={{ objectFit: "cover", objectPosition: "center 40%" }}
         />
       </div>
-      <div className="hero__shot">
+      <div className="hero__shot hero__shot--commercial">
         <Image
           src="/images/metal-exterior-wide.png"
           alt="Completed commercial building with black vertical metal siding and metal roofing"
           fill
           priority
           sizes="(max-width: 900px) 100vw, 45vw"
-          style={{ objectFit: "cover", objectPosition: "center" }}
+          style={{ objectFit: "cover", objectPosition: "center 45%" }}
         />
       </div>
     </div>
