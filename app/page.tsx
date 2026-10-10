@@ -26,22 +26,22 @@ export default function Home() { return <>
     <div className="hero__media">
       <div className="hero__shot">
         <Image
-          src="/images/metal-exterior-wide.png"
-          alt="Completed commercial building with black vertical metal siding and metal roofing"
-          fill
-          priority
-          sizes="(max-width: 900px) 100vw, 58vw"
-          style={{ objectFit: "cover", objectPosition: "center" }}
-        />
-      </div>
-      <div className="hero__shot">
-        <Image
           src={barnProjectImagesFlat.afterHero.src}
           alt={barnProjectImagesFlat.afterHero.alt}
           fill
           priority
-          sizes="(max-width: 900px) 100vw, 42vw"
-          style={{ objectFit: "cover", objectPosition: "center 40%" }}
+          sizes="(max-width: 900px) 100vw, 55vw"
+          style={{ objectFit: "cover", objectPosition: "center 42%" }}
+        />
+      </div>
+      <div className="hero__shot">
+        <Image
+          src="/images/metal-exterior-wide.png"
+          alt="Completed commercial building with black vertical metal siding and metal roofing"
+          fill
+          priority
+          sizes="(max-width: 900px) 100vw, 45vw"
+          style={{ objectFit: "cover", objectPosition: "center" }}
         />
       </div>
     </div>
