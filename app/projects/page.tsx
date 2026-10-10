@@ -7,7 +7,7 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "Metal Roofing & Siding Projects",
-  description: "Explore genuine HBG Construction metal roofing, metal siding, and complete exterior project photography and case studies.",
+  description: "Project photos from HBG Construction metal roofing, metal siding, and exterior builds across Western Pennsylvania.",
   path: "/projects",
 });
 
@@ -16,19 +16,19 @@ export default function Page() {
     <>
       <section className="simple-hero wrap">
         <Mark size="section" className="brand--ink" />
-        <p className="eyebrow">METAL EXTERIOR PROJECTS</p>
-        <h1>REAL METAL<br />EXTERIOR PROJECTS.</h1>
-        <p>Real photos of metal roofing, metal siding, finished exteriors, and the work in between.</p>
+        <p className="eyebrow">PROJECTS</p>
+        <h1>COMPLETED WORK.</h1>
+        <p>Photos from real metal roofing, siding, and building projects.</p>
       </section>
       <section className="project-list wrap">
-        <SectionHead kicker="PROJECTS" title="RECENT WORK" />
+        <SectionHead kicker="GALLERY" title="RECENT PROJECTS" />
         <div className="project-list__stack">
           <Link href="/projects/complete-metal-exterior-transformation" className="project-card">
             <AssetPanel kind="after" />
             <div>
               <p className="eyebrow">METAL ROOFING • METAL SIDING</p>
-              <h2>EXTERIOR UPDATE.</h2>
-              <p>Prep, install, and finished photos.</p>
+              <h2>COMMERCIAL EXTERIOR UPDATE</h2>
+              <p>Before, during, and finished photos of a full metal exterior.</p>
               <span>VIEW PHOTOS ↗</span>
             </div>
           </Link>
@@ -44,16 +44,12 @@ export default function Page() {
             </div>
             <div>
               <p className="eyebrow">METAL SIDING</p>
-              <h2>BLACK BOARD-AND-BATTEN BARN.</h2>
-              <p>Before, during, and after photos.</p>
+              <h2>BLACK BOARD-AND-BATTEN BARN</h2>
+              <p>Before, during, and after photos from a barn siding project.</p>
               <span>VIEW PHOTOS ↗</span>
             </div>
           </Link>
         </div>
-        <p className="project-note">
-          Future case studies will include verified location, services, materials, photographs, and links to the related{" "}
-          <Link href="/metal-roofing">service</Link> and <Link href="/service-areas">service-area pages</Link>. Unverified details will not be added.
-        </p>
       </section>
       <ProjectCTA />
     </>

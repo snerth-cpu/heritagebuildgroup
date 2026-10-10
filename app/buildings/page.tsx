@@ -1,31 +1,31 @@
 import Link from "next/link";
-import { AssetPanel, Button, Process, ProjectCTA, SectionHead } from "@/components/ui";
+import { AssetPanel, Button, ProjectCTA } from "@/components/ui";
 import { ServiceAreaLinks } from "@/components/seo";
 import { ESTIMATE_HREF, pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "Pole Buildings, Barns & Garages | Pittsburgh PA",
   description:
-    "HBG Construction builds pole buildings, barns, garages, workshops, and storage buildings across Western Pennsylvania—with metal exteriors when the job calls for them.",
+    "HBG Construction builds pole buildings, barns, garages, and additions across Western Pennsylvania—with metal exteriors when the job calls for them.",
   path: "/buildings",
 });
 
 const offerings = [
   {
     title: "POLE BUILDINGS",
-    copy: "Post-frame for barns, workshops, storage, agricultural, and commercial buildings—planned around how you use the property.",
+    copy: "Post-frame barns, workshops, storage, and light-commercial buildings.",
     href: "/pole-buildings",
     kind: "commercial",
   },
   {
     title: "GARAGES",
-    copy: "Detached, attached, and shop-style garages sized for vehicles, storage, and daily access.",
+    copy: "Detached, attached, and shop-style garages for vehicles, storage, and work space.",
     href: "/garages",
     kind: "installation",
   },
   {
     title: "ADDITIONS",
-    copy: "Home and property additions scoped to meet the building you already have—structure, connections, and finish.",
+    copy: "Home and property additions that connect cleanly to what you already have.",
     href: "/additions",
     kind: "teamwork",
   },
@@ -38,9 +38,9 @@ export default function Page() {
         <div className="wrap page-hero__grid">
           <div>
             <p className="eyebrow">POST-FRAME &amp; BUILDINGS • WESTERN PENNSYLVANIA</p>
-            <h1>POLE BUILDINGS, BARNS &amp; GARAGES.</h1>
+            <h1>POLE BUILDINGS, GARAGES &amp; ADDITIONS.</h1>
             <p>
-              HBG Construction plans and builds post-frame structures and related buildings—clear scope, quality materials, experienced crews, and one point of contact.
+              Custom buildings planned around how you use the property—then finished with a durable exterior when metal roofing or siding is part of the job.
             </p>
             <Button href={ESTIMATE_HREF}>REQUEST AN ESTIMATE</Button>
           </div>
@@ -67,31 +67,22 @@ export default function Page() {
         </div>
       </section>
 
-      <section className="editorial wrap editorial--copy">
-        <SectionHead
-          kicker="HOW WE WORK"
-          title="BUILT WITH THE EXTERIOR IN MIND."
-          copy="Many buildings finish with metal roofing and siding. When structure and exterior are in the same job, we plan them together so the building looks and performs as one project."
-        />
-      </section>
-
       <section className="related-links wrap">
         <p className="eyebrow">ALSO OFFERED</p>
         <div>
           <h2>Metal exteriors</h2>
           <p className="related-links__copy">
-            Metal roofing and metal siding remain a core specialty—on homes, commercial buildings, and post-frame structures.
+            Many buildings finish with metal roofing and siding. We can include that in the same project.
           </p>
           <nav aria-label="Metal exterior services">
             <Link href="/metal-roofing">Metal Roofing<span>↗</span></Link>
             <Link href="/metal-siding">Metal Siding<span>↗</span></Link>
-            <Link href="/commercial">Commercial<span>↗</span></Link>
+            <Link href="/commercial">Commercial Exteriors<span>↗</span></Link>
           </nav>
         </div>
       </section>
 
       <ServiceAreaLinks heading="Building construction service areas" />
-      <Process />
       <ProjectCTA />
     </>
   );
