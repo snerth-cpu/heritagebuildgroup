@@ -17,7 +17,7 @@ export default function Page() {
         kicker="POLE BUILDINGS • WESTERN PENNSYLVANIA"
         title="POLE BUILDINGS BUILT TO WORK."
         copy="Post-frame buildings for barns, shops, storage, and light-commercial use across Western Pennsylvania."
-        kind="commercial"
+        kind="pole"
       />
       <section className="editorial wrap">
         <SectionHead kicker="POST-FRAME" title="SIZED FOR HOW YOU USE THE PROPERTY." />
@@ -35,7 +35,7 @@ export default function Page() {
             </p>
           </div>
         </div>
-        <AssetPanel kind="commercial" className="wide-visual" />
+        <AssetPanel kind="pole" className="wide-visual" />
       </section>
       <section className="service-depth wrap">
         <article>

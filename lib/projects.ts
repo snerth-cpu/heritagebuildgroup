@@ -80,6 +80,12 @@ export const barnProjectImages = {
       feature: true,
     },
     {
+      src: `${BARN_ROOT}/03_COMPLETED/completed-black-barn-long-wall.jpg`,
+      alt: "Completed barn long wall with black board-and-batten metal siding and paired upper windows",
+      caption: "Finished long wall.",
+      feature: true,
+    },
+    {
       src: `${BARN_ROOT}/03_COMPLETED/completed-black-barn-gable.jpg`,
       alt: "Completed barn gable with black vertical metal siding",
       caption: "The finished gable.",
@@ -91,6 +97,12 @@ export const barnProjectImagesFlat = {
   beforePrimary: barnProjectImages.before[0],
   afterHero: barnProjectImages.after[0],
   afterGable: barnProjectImages.after[1],
+  afterLongWall: barnProjectImages.after[2],
+};
+
+export const poleBuildingBoardAndBatten = {
+  src: "/images/pole-building-board-and-batten.jpg",
+  alt: "Black board-and-batten metal pole building with stone wainscoting and garage door",
 };
 
 export const exteriorProjectGallery = {

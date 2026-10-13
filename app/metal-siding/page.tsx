@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { AssetPanel, PageHero, Process, ProjectCTA, SectionHead } from "@/components/ui";
 import { ServiceAreaLinks } from "@/components/seo";
-import { barnProjectImagesFlat } from "@/lib/projects";
+import { barnProjectImagesFlat, poleBuildingBoardAndBatten } from "@/lib/projects";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -40,6 +40,24 @@ export default function Page() {
             fill
             sizes="(max-width: 800px) 100vw, 80vw"
             style={{ objectFit: "cover", objectPosition: "center 45%" }}
+          />
+        </div>
+        <div className="asset-panel wide-visual">
+          <Image
+            src={barnProjectImagesFlat.afterLongWall.src}
+            alt={barnProjectImagesFlat.afterLongWall.alt}
+            fill
+            sizes="(max-width: 800px) 100vw, 80vw"
+            style={{ objectFit: "cover", objectPosition: "center 40%" }}
+          />
+        </div>
+        <div className="asset-panel wide-visual">
+          <Image
+            src={poleBuildingBoardAndBatten.src}
+            alt={poleBuildingBoardAndBatten.alt}
+            fill
+            sizes="(max-width: 800px) 100vw, 80vw"
+            style={{ objectFit: "cover", objectPosition: "center 55%" }}
           />
         </div>
         <div className="asset-panel wide-visual">

@@ -16,7 +16,7 @@ export const metadata = pageMetadata({
 const services = [
   ["METAL ROOFING", "Standing seam and metal roofing for homes and commercial buildings.", "/metal-roofing", "roof"],
   ["METAL SIDING", "Metal siding for homes and commercial walls, including board-and-batten.", "/metal-siding", "siding"],
-  ["POLE BUILDINGS", "Post-frame barns, shops, storage, and light-commercial buildings.", "/pole-buildings", "commercial"],
+  ["POLE BUILDINGS", "Post-frame barns, shops, storage, and light-commercial buildings.", "/pole-buildings", "pole"],
   ["GARAGES", "Detached, attached, and shop-style garages sized for how you use them.", "/garages", "installation"],
   ["COMMERCIAL EXTERIORS", "Commercial roofing, siding, trim, and full exterior updates.", "/commercial", "prep"],
 ] as const;
