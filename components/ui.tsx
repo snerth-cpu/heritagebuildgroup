@@ -34,7 +34,15 @@ export function AssetPanel({ kind = "finished", label, className = "", contain =
     </div>;
   }
   return <div className={`asset-panel asset-panel--${kind} ${className}`}>
-    <Image src={image.src} alt={image.alt} fill sizes={kind === "hero" ? "100vw" : "(max-width: 800px) 100vw, 60vw"} priority={kind === "hero"} style={{ objectPosition: image.position }} />{label && <span>{label}</span>}
+    <Image
+      src={image.src}
+      alt={image.alt}
+      fill
+      sizes={kind === "hero" ? "100vw" : "(max-width: 800px) 100vw, 60vw"}
+      priority={kind === "hero"}
+      style={{ objectFit: "cover", objectPosition: image.position || "center" }}
+    />
+    {label && <span>{label}</span>}
   </div>;
 }
 export function PageHero({ kicker, title, copy, kind = "detail", contain = false }: { kicker: string; title: string; copy: string; kind?: string; contain?: boolean }) {

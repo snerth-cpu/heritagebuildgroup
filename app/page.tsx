@@ -3,7 +3,7 @@ import Link from "next/link";
 import { AssetPanel, Button } from "@/components/ui";
 import { BeforeAfter } from "@/components/before-after";
 import { Mark } from "@/components/brand-logo";
-import { barnProjectImagesFlat } from "@/lib/projects";
+import { barnProjectImagesFlat, poleBuildingBoardAndBatten } from "@/lib/projects";
 import { pageMetadata, ESTIMATE_HREF, HOME_TITLE, HOME_DESCRIPTION } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -38,12 +38,12 @@ export default function Home() {
           </div>
           <div className="hero__shot hero__shot--commercial">
             <Image
-              src="/images/metal-exterior-wide.png"
-              alt="Completed commercial building with black vertical metal siding and metal roofing"
+              src={poleBuildingBoardAndBatten.src}
+              alt={poleBuildingBoardAndBatten.alt}
               fill
               priority
               sizes="(max-width: 900px) 100vw, 45vw"
-              style={{ objectFit: "cover", objectPosition: "center 45%" }}
+              style={{ objectFit: "cover", objectPosition: "center 55%" }}
             />
           </div>
         </div>
