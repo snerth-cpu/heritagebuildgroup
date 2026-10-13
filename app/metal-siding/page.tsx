@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { AssetPanel, PageHero, Process, ProjectCTA, SectionHead } from "@/components/ui";
 import { ServiceAreaLinks } from "@/components/seo";
-import { barnProjectImagesFlat } from "@/lib/projects";
+import { barnProjectImagesFlat, poleBuildingBoardAndBatten } from "@/lib/projects";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -32,6 +32,33 @@ export default function Page() {
               For commercial buildings, metal wall panels give large surfaces a consistent look. Corners, openings, the base of the wall, and roof edges are planned as one job so the finished wall holds up and looks complete.
             </p>
           </div>
+        </div>
+        <div className="asset-panel wide-visual">
+          <Image
+            src={barnProjectImagesFlat.afterGable.src}
+            alt={barnProjectImagesFlat.afterGable.alt}
+            fill
+            sizes="(max-width: 800px) 100vw, 80vw"
+            style={{ objectFit: "cover", objectPosition: "center 45%" }}
+          />
+        </div>
+        <div className="asset-panel wide-visual">
+          <Image
+            src={barnProjectImagesFlat.afterLongWall.src}
+            alt={barnProjectImagesFlat.afterLongWall.alt}
+            fill
+            sizes="(max-width: 800px) 100vw, 80vw"
+            style={{ objectFit: "cover", objectPosition: "center 40%" }}
+          />
+        </div>
+        <div className="asset-panel wide-visual">
+          <Image
+            src={poleBuildingBoardAndBatten.src}
+            alt={poleBuildingBoardAndBatten.alt}
+            fill
+            sizes="(max-width: 800px) 100vw, 80vw"
+            style={{ objectFit: "cover", objectPosition: "center 55%" }}
+          />
         </div>
         <div className="asset-panel wide-visual">
           <Image

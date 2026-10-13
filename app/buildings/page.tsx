@@ -15,7 +15,7 @@ const offerings = [
     title: "POLE BUILDINGS",
     copy: "Post-frame barns, workshops, storage, and light-commercial buildings.",
     href: "/pole-buildings",
-    kind: "commercial",
+    kind: "pole",
   },
   {
     title: "GARAGES",
@@ -44,7 +44,7 @@ export default function Page() {
             </p>
             <Button href={ESTIMATE_HREF}>REQUEST AN ESTIMATE</Button>
           </div>
-          <AssetPanel kind="commercial" />
+          <AssetPanel kind="pole" />
         </div>
       </section>
 
