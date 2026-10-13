@@ -74,6 +74,12 @@ export const barnProjectImages = {
       feature: true,
     },
     {
+      src: `${BARN_ROOT}/03_COMPLETED/completed-black-barn-gable-field.jpg`,
+      alt: "Completed barn gable with charcoal vertical metal siding over a concrete block base",
+      caption: "Finished gable from the field.",
+      feature: true,
+    },
+    {
       src: `${BARN_ROOT}/03_COMPLETED/completed-black-barn-gable.jpg`,
       alt: "Completed barn gable with black vertical metal siding",
       caption: "The finished gable.",
@@ -84,6 +90,7 @@ export const barnProjectImages = {
 export const barnProjectImagesFlat = {
   beforePrimary: barnProjectImages.before[0],
   afterHero: barnProjectImages.after[0],
+  afterGable: barnProjectImages.after[1],
 };
 
 export const exteriorProjectGallery = {

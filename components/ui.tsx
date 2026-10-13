@@ -1,4 +1,5 @@
 import { Mark } from "@/components/brand-logo";
+import { barnProjectImagesFlat } from "@/lib/projects";
 import { ESTIMATE_HREF } from "@/lib/seo";
 import Link from "next/link";
 import Image from "next/image";
@@ -10,7 +11,7 @@ const projectImages: Record<string, { src: string; alt: string; position?: strin
   before: { src: "/images/02_before_front.jpeg", alt: "Building exterior before metal roofing and siding renovation" },
   prep: { src: "/images/03_before_side_roof.jpeg", alt: "Existing side wall and roof during exterior preparation" },
   installation: { src: "/images/04_installation_wide_panels.jpeg", alt: "Metal siding panels staged during installation" },
-  siding: { src: "/images/metal-siding-front.png", alt: "Front view of commercial building with black vertical ribbed metal siding" },
+  siding: { src: barnProjectImagesFlat.afterGable.src, alt: barnProjectImagesFlat.afterGable.alt, position: "center 45%" },
   detail: { src: "/images/metal-siding-front.png", alt: "Front facade of commercial building with black vertical ribbed metal siding" },
   roof: { src: "/images/metal-roofing-roof.png", alt: "Angled view of corrugated metal roofing on a commercial building" },
   commercial: { src: "/images/metal-exterior-wide.png", alt: "Completed large-scale commercial building with black vertical ribbed metal siding, metal roofing, and coordinated trim" },

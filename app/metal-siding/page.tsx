@@ -35,6 +35,15 @@ export default function Page() {
         </div>
         <div className="asset-panel wide-visual">
           <Image
+            src={barnProjectImagesFlat.afterGable.src}
+            alt={barnProjectImagesFlat.afterGable.alt}
+            fill
+            sizes="(max-width: 800px) 100vw, 80vw"
+            style={{ objectFit: "cover", objectPosition: "center 45%" }}
+          />
+        </div>
+        <div className="asset-panel wide-visual">
+          <Image
             src={barnProjectImagesFlat.afterHero.src}
             alt={barnProjectImagesFlat.afterHero.alt}
             fill
