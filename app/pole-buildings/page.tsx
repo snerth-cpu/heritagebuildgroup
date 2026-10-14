@@ -18,6 +18,7 @@ export default function Page() {
         title="POLE BUILDINGS BUILT TO WORK."
         copy="Post-frame buildings for barns, shops, storage, and light-commercial use across Western Pennsylvania."
         kind="pole"
+        contain
       />
       <section className="editorial wrap">
         <SectionHead kicker="POST-FRAME" title="SIZED FOR HOW YOU USE THE PROPERTY." />

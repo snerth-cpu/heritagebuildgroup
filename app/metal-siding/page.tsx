@@ -44,20 +44,20 @@ export default function Page() {
         </div>
         <div className="asset-panel wide-visual">
           <Image
-            src={barnProjectImagesFlat.afterLongWall.src}
-            alt={barnProjectImagesFlat.afterLongWall.alt}
-            fill
-            sizes="(max-width: 800px) 100vw, 80vw"
-            style={{ objectFit: "cover", objectPosition: "center 40%" }}
-          />
-        </div>
-        <div className="asset-panel wide-visual">
-          <Image
             src={poleBuildingBoardAndBatten.src}
             alt={poleBuildingBoardAndBatten.alt}
             fill
             sizes="(max-width: 800px) 100vw, 80vw"
             style={{ objectFit: "cover", objectPosition: "center 55%" }}
+          />
+        </div>
+        <div className="asset-panel wide-visual">
+          <Image
+            src={barnProjectImagesFlat.afterLongWall.src}
+            alt={barnProjectImagesFlat.afterLongWall.alt}
+            fill
+            sizes="(max-width: 800px) 100vw, 80vw"
+            style={{ objectFit: "cover", objectPosition: "center 40%" }}
           />
         </div>
         <div className="asset-panel wide-visual">
