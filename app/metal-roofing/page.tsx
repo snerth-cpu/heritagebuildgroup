@@ -30,8 +30,8 @@ export default function Page() {
             </p>
           </div>
         </div>
+        <AssetPanel kind="roofDetail" className="wide-visual" />
         <AssetPanel kind="installation" className="wide-visual" />
-        <AssetPanel kind="roof" className="wide-visual" />
       </section>
       <section className="service-depth wrap">
         <article>
