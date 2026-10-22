@@ -3,7 +3,7 @@ import Link from "next/link";
 import { AssetPanel, PageHero, Process, ProjectCTA, SectionHead } from "@/components/ui";
 import { BeforeAfter } from "@/components/before-after";
 import { ServiceAreaLinks } from "@/components/seo";
-import { barnProjectImagesFlat, poleBuildingBoardAndBatten } from "@/lib/projects";
+import { barnBeforeAfterPrimary, barnProjectImagesFlat, poleBuildingBoardAndBatten } from "@/lib/projects";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -13,8 +13,6 @@ export const metadata = pageMetadata({
 });
 
 export default function Page() {
-  const { beforePrimary, afterLongWall } = barnProjectImagesFlat;
-
   return (
     <>
       <PageHero
@@ -43,24 +41,34 @@ export default function Page() {
         <SectionHead
           kicker="BOARD-AND-BATTEN"
           title="BEFORE AND AFTER."
-          copy="A weathered red barn finished with black vertical metal siding."
+          copy="Same gable end—weathered red siding replaced with black vertical metal."
         />
         <BeforeAfter
-          beforeSrc={beforePrimary.src}
-          afterSrc={afterLongWall.src}
-          beforeAlt={beforePrimary.alt}
-          afterAlt={afterLongWall.alt}
+          beforeSrc={barnBeforeAfterPrimary.before.src}
+          afterSrc={barnBeforeAfterPrimary.after.src}
+          beforeAlt={barnBeforeAfterPrimary.before.alt}
+          afterAlt={barnBeforeAfterPrimary.after.alt}
         />
         <div className="ba-pair" aria-label="Before and after side by side">
           <figure className="ba-pair__item">
             <div className="ba-pair__frame">
-              <Image src={beforePrimary.src} alt={beforePrimary.alt} fill sizes="(max-width: 800px) 100vw, 620px" />
+              <Image
+                src={barnBeforeAfterPrimary.before.src}
+                alt={barnBeforeAfterPrimary.before.alt}
+                fill
+                sizes="(max-width: 800px) 100vw, 620px"
+              />
             </div>
             <figcaption>BEFORE</figcaption>
           </figure>
           <figure className="ba-pair__item">
             <div className="ba-pair__frame">
-              <Image src={afterLongWall.src} alt={afterLongWall.alt} fill sizes="(max-width: 800px) 100vw, 620px" />
+              <Image
+                src={barnBeforeAfterPrimary.after.src}
+                alt={barnBeforeAfterPrimary.after.alt}
+                fill
+                sizes="(max-width: 800px) 100vw, 620px"
+              />
             </div>
             <figcaption>AFTER</figcaption>
           </figure>

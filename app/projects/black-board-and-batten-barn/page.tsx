@@ -8,6 +8,7 @@ import { BreadcrumbJsonLd, JsonLd } from "@/components/seo";
 import { absoluteUrl, ESTIMATE_HREF, pageMetadata } from "@/lib/seo";
 import {
   barnBeforeAfterPairs,
+  barnBeforeAfterPrimary,
   barnProjectImages,
   barnProjectImagesFlat,
   blackBoardAndBattenBarn as project,
@@ -22,7 +23,7 @@ export const metadata = pageMetadata({
 
 export default function Page() {
   const { before, during, after } = barnProjectImages;
-  const { beforePrimary, afterLongWall, afterHero } = barnProjectImagesFlat;
+  const { afterHero } = barnProjectImagesFlat;
   const allImages = [...after, ...before, ...during].map((image) => image.src);
 
   return (
@@ -89,10 +90,10 @@ export default function Page() {
           <h2>BEFORE / AFTER</h2>
         </div>
         <BeforeAfter
-          beforeSrc={beforePrimary.src}
-          afterSrc={afterLongWall.src}
-          beforeAlt={beforePrimary.alt}
-          afterAlt={afterLongWall.alt}
+          beforeSrc={barnBeforeAfterPrimary.before.src}
+          afterSrc={barnBeforeAfterPrimary.after.src}
+          beforeAlt={barnBeforeAfterPrimary.before.alt}
+          afterAlt={barnBeforeAfterPrimary.after.alt}
         />
 
         <div className="ba-pairs" aria-label="Matched before and after angles">

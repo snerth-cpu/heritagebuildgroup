@@ -111,32 +111,38 @@ export const barnProjectImages = {
 };
 
 export const barnProjectImagesFlat = {
-  beforePrimary: barnProjectImages.before[0],
-  beforeCorner: barnProjectImages.before[1],
-  beforeSide: barnProjectImages.before[2],
+  /** Front elevation before (ramp) — no matching finished front photo yet. */
+  beforeFront: barnProjectImages.before[0],
+  beforeFrontCorner: barnProjectImages.before[1],
+  beforeFrontSide: barnProjectImages.before[2],
+  /** Same gable end, before panels came off / after black siding. */
+  beforeGable: barnProjectImages.before[4],
+  /** Same back corner, framing exposed / finished. */
+  beforeCorner: barnProjectImages.before[3],
   afterHero: barnProjectImages.after[0],
   afterGable: barnProjectImages.after[1],
   afterLongWall: barnProjectImages.after[2],
 };
 
-/** Matched before/after angles for the barn board-and-batten project. */
+/**
+ * Only pair photos of the same wall/angle.
+ * New front befores stay in the Before gallery — we do not have matching front afters.
+ */
 export const barnBeforeAfterPairs = [
   {
-    label: "Long wall",
-    before: barnProjectImagesFlat.beforePrimary,
-    after: barnProjectImagesFlat.afterLongWall,
+    label: "Gable end",
+    before: barnProjectImagesFlat.beforeGable,
+    after: barnProjectImagesFlat.afterGable,
   },
   {
-    label: "Corner",
+    label: "Back corner",
     before: barnProjectImagesFlat.beforeCorner,
     after: barnProjectImagesFlat.afterHero,
   },
-  {
-    label: "Side wall",
-    before: barnProjectImagesFlat.beforeSide,
-    after: barnProjectImagesFlat.afterGable,
-  },
 ] as const;
+
+/** Primary compare used on project + metal siding pages (same gable angle). */
+export const barnBeforeAfterPrimary = barnBeforeAfterPairs[0];
 
 export const poleBuildingBoardAndBatten = {
   src: "/images/pole-building-board-and-batten.jpg",
