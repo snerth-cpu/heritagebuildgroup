@@ -21,10 +21,27 @@ const BARN_ROOT = "/projects/black-board-and-batten-barn";
 export const barnProjectImages = {
   before: [
     {
+      src: `${BARN_ROOT}/01_BEFORE/before-red-barn-long-wall-ramp.jpg`,
+      alt: "Weathered red barn long wall with grassy ramp before metal siding",
+      caption: "Long wall before the new siding.",
+      feature: true,
+    },
+    {
+      src: `${BARN_ROOT}/01_BEFORE/before-red-barn-corner-doors.jpg`,
+      alt: "Weathered red barn corner and sliding doors before metal siding",
+      caption: "Corner and doors before the remodel.",
+      feature: true,
+    },
+    {
+      src: `${BARN_ROOT}/01_BEFORE/before-red-barn-side-garden.jpg`,
+      alt: "Weathered red barn side wall before metal siding",
+      caption: "Side elevation before the remodel.",
+      feature: true,
+    },
+    {
       src: `${BARN_ROOT}/01_BEFORE/before-red-barn-corner-angle.jpg`,
       alt: "Red metal barn exterior before the siding renovation",
       caption: "The barn before the new siding went on.",
-      feature: true,
     },
     {
       src: `${BARN_ROOT}/01_BEFORE/before-red-barn-gable.jpg`,
@@ -95,10 +112,31 @@ export const barnProjectImages = {
 
 export const barnProjectImagesFlat = {
   beforePrimary: barnProjectImages.before[0],
+  beforeCorner: barnProjectImages.before[1],
+  beforeSide: barnProjectImages.before[2],
   afterHero: barnProjectImages.after[0],
   afterGable: barnProjectImages.after[1],
   afterLongWall: barnProjectImages.after[2],
 };
+
+/** Matched before/after angles for the barn board-and-batten project. */
+export const barnBeforeAfterPairs = [
+  {
+    label: "Long wall",
+    before: barnProjectImagesFlat.beforePrimary,
+    after: barnProjectImagesFlat.afterLongWall,
+  },
+  {
+    label: "Corner",
+    before: barnProjectImagesFlat.beforeCorner,
+    after: barnProjectImagesFlat.afterHero,
+  },
+  {
+    label: "Side wall",
+    before: barnProjectImagesFlat.beforeSide,
+    after: barnProjectImagesFlat.afterGable,
+  },
+] as const;
 
 export const poleBuildingBoardAndBatten = {
   src: "/images/pole-building-board-and-batten.jpg",

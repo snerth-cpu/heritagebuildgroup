@@ -190,10 +190,17 @@
 .finished-grid figure{margin:0}
 .project-section-head h2{font-size:clamp(40px,5vw,64px)}
 .ba-pair{display:none;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+.ba-pair--visible{display:grid}
+.ba-pairs{display:grid;gap:32px;margin-top:40px}
+.ba-pairs .ba-pair{margin-top:0}
 .ba-pair__item{margin:0}
-.ba-pair__frame{position:relative;aspect-ratio:3/4;overflow:hidden;background:#222}
+.ba-pair__frame{position:relative;aspect-ratio:4/3;overflow:hidden;background:#222}
 .ba-pair__frame img{object-fit:cover;object-position:center}
 .ba-pair figcaption{font-size:12px;letter-spacing:.16em}
+.ba-pair__label{margin:0 0 12px;font-size:11px;font-weight:500;letter-spacing:.19em;text-transform:uppercase;color:#5d5f5a}
+.siding-compare{padding:0 0 90px}
+.siding-compare .before-after{margin:40px 0 28px}
+.siding-compare .simple-link{display:inline-flex;margin-top:8px}
 .cta-band__copy{max-width:520px;margin:18px 0 0;color:rgba(255,255,255,.88);font-size:16px}
 .home-featured-projects{padding:0 0 110px}
 .home-featured-projects .home-heading{margin-bottom:40px}
@@ -211,8 +218,9 @@
   .before-after--portrait{height:520px}
 }
 @media(max-width:800px){
-  .project-compare .before-after{display:none}
-  .project-compare .ba-pair{display:grid;grid-template-columns:1fr;gap:18px}
+  .project-compare .before-after,.siding-compare .before-after{display:none}
+  .siding-compare .ba-pair{display:grid;grid-template-columns:1fr;gap:18px}
+  .ba-pairs .ba-pair{grid-template-columns:1fr}
 }
 @media(max-width:620px){
   .project-stage{padding:85px 0}

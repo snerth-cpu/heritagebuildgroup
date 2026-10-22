@@ -7,6 +7,7 @@ import { ProjectGallery } from "@/components/project-gallery";
 import { BreadcrumbJsonLd, JsonLd } from "@/components/seo";
 import { absoluteUrl, ESTIMATE_HREF, pageMetadata } from "@/lib/seo";
 import {
+  barnBeforeAfterPairs,
   barnProjectImages,
   barnProjectImagesFlat,
   blackBoardAndBattenBarn as project,
@@ -21,7 +22,7 @@ export const metadata = pageMetadata({
 
 export default function Page() {
   const { before, during, after } = barnProjectImages;
-  const { beforePrimary, afterHero } = barnProjectImagesFlat;
+  const { beforePrimary, afterLongWall, afterHero } = barnProjectImagesFlat;
   const allImages = [...after, ...before, ...during].map((image) => image.src);
 
   return (
@@ -89,23 +90,31 @@ export default function Page() {
         </div>
         <BeforeAfter
           beforeSrc={beforePrimary.src}
-          afterSrc={afterHero.src}
+          afterSrc={afterLongWall.src}
           beforeAlt={beforePrimary.alt}
-          afterAlt={afterHero.alt}
+          afterAlt={afterLongWall.alt}
         />
-        <div className="ba-pair" aria-label="Before and after side by side">
-          <figure className="ba-pair__item">
-            <div className="ba-pair__frame">
-              <Image src={beforePrimary.src} alt={beforePrimary.alt} fill sizes="(max-width: 800px) 100vw, 620px" />
+
+        <div className="ba-pairs" aria-label="Matched before and after angles">
+          {barnBeforeAfterPairs.map((pair) => (
+            <div key={pair.label}>
+              <p className="ba-pair__label">{pair.label}</p>
+              <div className="ba-pair ba-pair--visible">
+                <figure className="ba-pair__item">
+                  <div className="ba-pair__frame">
+                    <Image src={pair.before.src} alt={pair.before.alt} fill sizes="(max-width: 800px) 100vw, 620px" />
+                  </div>
+                  <figcaption>BEFORE</figcaption>
+                </figure>
+                <figure className="ba-pair__item">
+                  <div className="ba-pair__frame">
+                    <Image src={pair.after.src} alt={pair.after.alt} fill sizes="(max-width: 800px) 100vw, 620px" />
+                  </div>
+                  <figcaption>AFTER</figcaption>
+                </figure>
+              </div>
             </div>
-            <figcaption>BEFORE</figcaption>
-          </figure>
-          <figure className="ba-pair__item">
-            <div className="ba-pair__frame">
-              <Image src={afterHero.src} alt={afterHero.alt} fill sizes="(max-width: 800px) 100vw, 620px" />
-            </div>
-            <figcaption>AFTER</figcaption>
-          </figure>
+          ))}
         </div>
       </section>
 
