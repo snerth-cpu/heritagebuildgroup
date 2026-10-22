@@ -45,8 +45,8 @@ export const barnProjectImages = {
     },
     {
       src: `${BARN_ROOT}/01_BEFORE/before-red-barn-gable.jpg`,
-      alt: "Gable end of the barn with aging red metal siding",
-      caption: "Red metal and open framing on the gable end.",
+      alt: "Same barn gable end before black metal siding, with red panels and open framing",
+      caption: "Gable end before the black siding.",
     },
     {
       src: `${BARN_ROOT}/01_BEFORE/before-barn-exposed-frame-dusk.jpg`,

@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { AssetPanel, PageHero, Process, ProjectCTA, SectionHead } from "@/components/ui";
-import { BeforeAfter } from "@/components/before-after";
 import { ServiceAreaLinks } from "@/components/seo";
 import { barnBeforeAfterPrimary, barnProjectImagesFlat, poleBuildingBoardAndBatten } from "@/lib/projects";
 import { pageMetadata } from "@/lib/seo";
@@ -43,13 +42,7 @@ export default function Page() {
           title="BEFORE AND AFTER."
           copy="Same gable end—weathered red siding replaced with black vertical metal."
         />
-        <BeforeAfter
-          beforeSrc={barnBeforeAfterPrimary.before.src}
-          afterSrc={barnBeforeAfterPrimary.after.src}
-          beforeAlt={barnBeforeAfterPrimary.before.alt}
-          afterAlt={barnBeforeAfterPrimary.after.alt}
-        />
-        <div className="ba-pair" aria-label="Before and after side by side">
+        <div className="ba-pair ba-pair--visible ba-pair--hero" aria-label="Gable end before and after">
           <figure className="ba-pair__item">
             <div className="ba-pair__frame">
               <Image
