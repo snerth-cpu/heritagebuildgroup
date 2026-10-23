@@ -2,11 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui";
 import { Mark } from "@/components/brand-logo";
-import { BeforeAfter } from "@/components/before-after";
 import { ProjectGallery } from "@/components/project-gallery";
 import { BreadcrumbJsonLd, JsonLd } from "@/components/seo";
 import { absoluteUrl, ESTIMATE_HREF, pageMetadata } from "@/lib/seo";
 import {
+  barnBeforeAfterPairs,
+  barnBeforeAfterPrimary,
   barnProjectImages,
   barnProjectImagesFlat,
   blackBoardAndBattenBarn as project,
@@ -21,7 +22,7 @@ export const metadata = pageMetadata({
 
 export default function Page() {
   const { before, during, after } = barnProjectImages;
-  const { beforePrimary, afterHero } = barnProjectImagesFlat;
+  const { afterHero } = barnProjectImagesFlat;
   const allImages = [...after, ...before, ...during].map((image) => image.src);
 
   return (
@@ -87,25 +88,52 @@ export default function Page() {
           <p className="eyebrow">COMPARE</p>
           <h2>BEFORE / AFTER</h2>
         </div>
-        <BeforeAfter
-          beforeSrc={beforePrimary.src}
-          afterSrc={afterHero.src}
-          beforeAlt={beforePrimary.alt}
-          afterAlt={afterHero.alt}
-        />
-        <div className="ba-pair" aria-label="Before and after side by side">
+        <p className="ba-pair__label">{barnBeforeAfterPrimary.label}</p>
+        <div className="ba-pair ba-pair--visible ba-pair--hero" aria-label="Gable end before and after">
           <figure className="ba-pair__item">
             <div className="ba-pair__frame">
-              <Image src={beforePrimary.src} alt={beforePrimary.alt} fill sizes="(max-width: 800px) 100vw, 620px" />
+              <Image
+                src={barnBeforeAfterPrimary.before.src}
+                alt={barnBeforeAfterPrimary.before.alt}
+                fill
+                sizes="(max-width: 800px) 100vw, 620px"
+              />
             </div>
             <figcaption>BEFORE</figcaption>
           </figure>
           <figure className="ba-pair__item">
             <div className="ba-pair__frame">
-              <Image src={afterHero.src} alt={afterHero.alt} fill sizes="(max-width: 800px) 100vw, 620px" />
+              <Image
+                src={barnBeforeAfterPrimary.after.src}
+                alt={barnBeforeAfterPrimary.after.alt}
+                fill
+                sizes="(max-width: 800px) 100vw, 620px"
+              />
             </div>
             <figcaption>AFTER</figcaption>
           </figure>
+        </div>
+
+        <div className="ba-pairs" aria-label="Matched before and after angles">
+          {barnBeforeAfterPairs.slice(1).map((pair) => (
+            <div key={pair.label}>
+              <p className="ba-pair__label">{pair.label}</p>
+              <div className="ba-pair ba-pair--visible">
+                <figure className="ba-pair__item">
+                  <div className="ba-pair__frame">
+                    <Image src={pair.before.src} alt={pair.before.alt} fill sizes="(max-width: 800px) 100vw, 620px" />
+                  </div>
+                  <figcaption>BEFORE</figcaption>
+                </figure>
+                <figure className="ba-pair__item">
+                  <div className="ba-pair__frame">
+                    <Image src={pair.after.src} alt={pair.after.alt} fill sizes="(max-width: 800px) 100vw, 620px" />
+                  </div>
+                  <figcaption>AFTER</figcaption>
+                </figure>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 

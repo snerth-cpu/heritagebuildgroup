@@ -21,15 +21,32 @@ const BARN_ROOT = "/projects/black-board-and-batten-barn";
 export const barnProjectImages = {
   before: [
     {
-      src: `${BARN_ROOT}/01_BEFORE/before-red-barn-corner-angle.jpg`,
-      alt: "Red metal barn exterior before the siding renovation",
-      caption: "The barn before the new siding went on.",
+      src: `${BARN_ROOT}/01_BEFORE/before-red-barn-long-wall-ramp.jpg`,
+      alt: "Weathered red barn long wall with grassy ramp before metal siding",
+      caption: "Long wall before the new siding.",
       feature: true,
     },
     {
+      src: `${BARN_ROOT}/01_BEFORE/before-red-barn-corner-doors.jpg`,
+      alt: "Weathered red barn corner and sliding doors before metal siding",
+      caption: "Corner and doors before the remodel.",
+      feature: true,
+    },
+    {
+      src: `${BARN_ROOT}/01_BEFORE/before-red-barn-side-garden.jpg`,
+      alt: "Weathered red barn side wall before metal siding",
+      caption: "Side elevation before the remodel.",
+      feature: true,
+    },
+    {
+      src: `${BARN_ROOT}/01_BEFORE/before-red-barn-corner-angle.jpg`,
+      alt: "Red metal barn exterior before the siding renovation",
+      caption: "The barn before the new siding went on.",
+    },
+    {
       src: `${BARN_ROOT}/01_BEFORE/before-red-barn-gable.jpg`,
-      alt: "Gable end of the barn with aging red metal siding",
-      caption: "Red metal and open framing on the gable end.",
+      alt: "Same barn gable end before black metal siding, with red panels and open framing",
+      caption: "Gable end before the black siding.",
     },
     {
       src: `${BARN_ROOT}/01_BEFORE/before-barn-exposed-frame-dusk.jpg`,
@@ -94,11 +111,38 @@ export const barnProjectImages = {
 };
 
 export const barnProjectImagesFlat = {
-  beforePrimary: barnProjectImages.before[0],
+  /** Front elevation before (ramp) — no matching finished front photo yet. */
+  beforeFront: barnProjectImages.before[0],
+  beforeFrontCorner: barnProjectImages.before[1],
+  beforeFrontSide: barnProjectImages.before[2],
+  /** Same gable end, before panels came off / after black siding. */
+  beforeGable: barnProjectImages.before[4],
+  /** Same back corner, framing exposed / finished. */
+  beforeCorner: barnProjectImages.before[3],
   afterHero: barnProjectImages.after[0],
   afterGable: barnProjectImages.after[1],
   afterLongWall: barnProjectImages.after[2],
 };
+
+/**
+ * Only pair photos of the same wall/angle.
+ * New front befores stay in the Before gallery — we do not have matching front afters.
+ */
+export const barnBeforeAfterPairs = [
+  {
+    label: "Gable end",
+    before: barnProjectImagesFlat.beforeGable,
+    after: barnProjectImagesFlat.afterGable,
+  },
+  {
+    label: "Back corner",
+    before: barnProjectImagesFlat.beforeCorner,
+    after: barnProjectImagesFlat.afterHero,
+  },
+] as const;
+
+/** Primary compare used on project + metal siding pages (same gable angle). */
+export const barnBeforeAfterPrimary = barnBeforeAfterPairs[0];
 
 export const poleBuildingBoardAndBatten = {
   src: "/images/pole-building-board-and-batten.jpg",
