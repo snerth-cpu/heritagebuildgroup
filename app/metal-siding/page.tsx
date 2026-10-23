@@ -42,7 +42,7 @@ export default function Page() {
           title="BEFORE AND AFTER."
           copy="Same gable end—weathered red siding replaced with black vertical metal."
         />
-        <div className="ba-pair ba-pair--visible ba-pair--hero" aria-label="Gable end before and after">
+        <div className="ba-pair ba-pair--visible ba-pair--hero" aria-label={`${barnBeforeAfterPrimary.label} before and after`}>
           <figure className="ba-pair__item">
             <div className="ba-pair__frame">
               <Image
