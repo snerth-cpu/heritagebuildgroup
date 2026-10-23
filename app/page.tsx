@@ -105,11 +105,12 @@ export default function Home() {
             <div className="home-compare">
               <p className="home-compare__label">Barn front</p>
               <BeforeAfter
+                className="before-after--barn-front"
                 beforeSrc={barnBeforeAfterPrimary.before.src}
                 afterSrc={barnBeforeAfterPrimary.after.src}
                 beforeAlt={barnBeforeAfterPrimary.before.alt}
                 afterAlt={barnBeforeAfterPrimary.after.alt}
-                imagePosition="center 62%"
+                imagePosition={{ before: "center 42%", after: "center 55%" }}
               />
             </div>
           </div>

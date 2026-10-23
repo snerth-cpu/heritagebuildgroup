@@ -31,6 +31,8 @@
 .home-compares{display:grid;gap:48px;margin:40px 0 20px}
 .home-compare .before-after{margin:14px 0 0}
 .home-compare__label{margin:0;font-size:11px;font-weight:500;letter-spacing:.19em;text-transform:uppercase;color:#5d5f5a}
+.home-transformation .before-after--barn-front{height:min(78vh,760px)}
+@media(max-width:620px){.home-transformation .before-after--barn-front{height:480px}}
 .hero__brand{margin:18px 0 10px;max-width:none;line-height:0}
 .hero__brand .brand{display:inline-flex;animation:brand-rise .9s cubic-bezier(.22,1,.36,1) both}
 .home-hero .hero__offer{animation:brand-rise .9s cubic-bezier(.22,1,.36,1) .12s both}
