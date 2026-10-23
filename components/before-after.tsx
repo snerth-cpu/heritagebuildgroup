@@ -8,6 +8,9 @@ type BeforeAfterProps = {
   afterSrc?: string;
   beforeAlt?: string;
   afterAlt?: string;
+  className?: string;
+  /** CSS object-position for both images (keeps facade in frame for tall crops). */
+  imagePosition?: string;
 };
 
 const defaults = {
@@ -22,14 +25,18 @@ export function BeforeAfter({
   afterSrc = defaults.afterSrc,
   beforeAlt = defaults.beforeAlt,
   afterAlt = defaults.afterAlt,
+  className,
+  imagePosition,
 }: BeforeAfterProps) {
   const [position, setPosition] = useState(50);
+  const rootClass = className ? `before-after ${className}` : "before-after";
+  const imageStyle = imagePosition ? { objectPosition: imagePosition } : undefined;
 
   return (
-    <div className="before-after" style={{ "--position": `${position}%` } as React.CSSProperties}>
-      <Image src={afterSrc} alt={afterAlt} fill sizes="(max-width: 800px) 100vw, 1240px" />
+    <div className={rootClass} style={{ "--position": `${position}%` } as React.CSSProperties}>
+      <Image src={afterSrc} alt={afterAlt} fill sizes="(max-width: 800px) 100vw, 1240px" style={imageStyle} />
       <div className="before-after__before">
-        <Image src={beforeSrc} alt={beforeAlt} fill sizes="(max-width: 800px) 100vw, 1240px" />
+        <Image src={beforeSrc} alt={beforeAlt} fill sizes="(max-width: 800px) 100vw, 1240px" style={imageStyle} />
       </div>
       <span className="before-after__label before-after__label--before">BEFORE</span>
       <span className="before-after__label before-after__label--after">AFTER</span>

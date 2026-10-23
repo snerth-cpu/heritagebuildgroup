@@ -109,6 +109,7 @@ export default function Home() {
                 afterSrc={barnBeforeAfterPrimary.after.src}
                 beforeAlt={barnBeforeAfterPrimary.before.alt}
                 afterAlt={barnBeforeAfterPrimary.after.alt}
+                imagePosition="center 62%"
               />
             </div>
           </div>
