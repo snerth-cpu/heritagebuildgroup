@@ -85,6 +85,12 @@ export const barnProjectImages = {
   ] satisfies ProjectImage[],
   after: [
     {
+      src: `${BARN_ROOT}/03_COMPLETED/completed-black-barn-front-ramp.jpg`,
+      alt: "Barn front with black metal siding and standing-seam roof after renovation",
+      caption: "Front elevation finished.",
+      feature: true,
+    },
+    {
       src: `${BARN_ROOT}/03_COMPLETED/completed-black-barn-corner-hero.jpg`,
       alt: "Completed barn with black board-and-batten metal siding",
       caption: "Finished corner view.",
@@ -111,7 +117,7 @@ export const barnProjectImages = {
 };
 
 export const barnProjectImagesFlat = {
-  /** Front elevation before (ramp) — no matching finished front photo yet. */
+  /** Same front elevation with grassy ramp — red wood before / black metal after. */
   beforeFront: barnProjectImages.before[0],
   beforeFrontCorner: barnProjectImages.before[1],
   beforeFrontSide: barnProjectImages.before[2],
@@ -119,16 +125,21 @@ export const barnProjectImagesFlat = {
   beforeGable: barnProjectImages.before[4],
   /** Same back corner, framing exposed / finished. */
   beforeCorner: barnProjectImages.before[3],
-  afterHero: barnProjectImages.after[0],
-  afterGable: barnProjectImages.after[1],
-  afterLongWall: barnProjectImages.after[2],
+  afterFront: barnProjectImages.after[0],
+  afterHero: barnProjectImages.after[1],
+  afterGable: barnProjectImages.after[2],
+  afterLongWall: barnProjectImages.after[3],
 };
 
 /**
  * Only pair photos of the same wall/angle.
- * New front befores stay in the Before gallery — we do not have matching front afters.
  */
 export const barnBeforeAfterPairs = [
+  {
+    label: "Front elevation",
+    before: barnProjectImagesFlat.beforeFront,
+    after: barnProjectImagesFlat.afterFront,
+  },
   {
     label: "Gable end",
     before: barnProjectImagesFlat.beforeGable,
@@ -141,7 +152,7 @@ export const barnBeforeAfterPairs = [
   },
 ] as const;
 
-/** Primary compare used on project + metal siding pages (same gable angle). */
+/** Primary compare used on project + metal siding + homepage (same front angle). */
 export const barnBeforeAfterPrimary = barnBeforeAfterPairs[0];
 
 export const poleBuildingBoardAndBatten = {

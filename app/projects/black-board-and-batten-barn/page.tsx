@@ -89,7 +89,7 @@ export default function Page() {
           <h2>BEFORE / AFTER</h2>
         </div>
         <p className="ba-pair__label">{barnBeforeAfterPrimary.label}</p>
-        <div className="ba-pair ba-pair--visible ba-pair--hero" aria-label="Gable end before and after">
+        <div className="ba-pair ba-pair--visible ba-pair--hero" aria-label={`${barnBeforeAfterPrimary.label} before and after`}>
           <figure className="ba-pair__item">
             <div className="ba-pair__frame">
               <Image

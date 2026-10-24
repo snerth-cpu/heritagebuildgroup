@@ -3,7 +3,7 @@ import Link from "next/link";
 import { AssetPanel, Button } from "@/components/ui";
 import { BeforeAfter } from "@/components/before-after";
 import { Mark } from "@/components/brand-logo";
-import { barnProjectImagesFlat } from "@/lib/projects";
+import { barnBeforeAfterPrimary, barnProjectImagesFlat } from "@/lib/projects";
 import { pageMetadata, ESTIMATE_HREF, HOME_TITLE, HOME_DESCRIPTION } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -97,7 +97,23 @@ export default function Home() {
             </div>
             <p>Before-and-after photos from completed metal exterior projects.</p>
           </div>
-          <BeforeAfter />
+          <div className="home-compares">
+            <div className="home-compare">
+              <p className="home-compare__label">Garage exterior</p>
+              <BeforeAfter />
+            </div>
+            <div className="home-compare">
+              <p className="home-compare__label">Barn front</p>
+              <BeforeAfter
+                className="before-after--barn-front"
+                beforeSrc={barnBeforeAfterPrimary.before.src}
+                afterSrc={barnBeforeAfterPrimary.after.src}
+                beforeAlt={barnBeforeAfterPrimary.before.alt}
+                afterAlt={barnBeforeAfterPrimary.after.alt}
+                imagePosition={{ before: "center 42%", after: "center 55%" }}
+              />
+            </div>
+          </div>
           <div className="home-featured-links">
             <Link className="simple-link" href="/projects/complete-metal-exterior-transformation">
               COMMERCIAL EXTERIOR PHOTOS <span>↗</span>
