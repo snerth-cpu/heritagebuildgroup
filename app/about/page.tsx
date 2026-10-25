@@ -28,9 +28,9 @@ export default function Page() {
       <section className="trust wrap">
         <p className="eyebrow">WHAT TO EXPECT</p>
         {[
-          ["CLEAR ESTIMATES", "Know what is included before work begins."],
-          ["QUALITY WORKMANSHIP", "Experienced crews and a consistent finish standard."],
-          ["ONE POINT OF CONTACT", "The same person from estimate through completion."],
+          ["WRITTEN ESTIMATES", "Scope and pricing in writing before work starts—no vague verbal quotes."],
+          ["LICENSED & INSURED", "PA registered and fully insured, with one crew standard from start to finish."],
+          ["ONE POINT OF CONTACT", "The same person stays with your project from the first call through completion."],
         ].map(([t, c], i) => (
           <article key={t}>
             <span>0{i + 1}</span>

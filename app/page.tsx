@@ -4,7 +4,15 @@ import { AssetPanel, Button } from "@/components/ui";
 import { BeforeAfter } from "@/components/before-after";
 import { Mark } from "@/components/brand-logo";
 import { barnBeforeAfterPrimary, barnProjectImagesFlat } from "@/lib/projects";
-import { pageMetadata, ESTIMATE_HREF, HOME_TITLE, HOME_DESCRIPTION } from "@/lib/seo";
+import {
+  pageMetadata,
+  BUSINESS_PHONE,
+  BUSINESS_PHONE_HREF,
+  BUSINESS_TRUST_LINE,
+  ESTIMATE_HREF,
+  HOME_TITLE,
+  HOME_DESCRIPTION,
+} from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: HOME_TITLE,
@@ -18,7 +26,6 @@ const services = [
   ["METAL SIDING", "Metal siding for homes and commercial walls, including board-and-batten.", "/metal-siding", "siding"],
   ["POLE BUILDINGS", "Post-frame barns, shops, storage, and light-commercial buildings.", "/pole-buildings", "pole"],
   ["GARAGES", "Detached, attached, and shop-style garages sized for how you use them.", "/garages", "installation"],
-  ["COMMERCIAL EXTERIORS", "Commercial roofing, siding, trim, and full exterior updates.", "/commercial", "prep"],
 ] as const;
 
 export default function Home() {
@@ -58,9 +65,12 @@ export default function Home() {
           <p className="hero__copy">
             Metal exteriors and custom buildings for homes, garages, barns, and commercial properties across Western Pennsylvania.
           </p>
+          <p className="hero__trust">{BUSINESS_TRUST_LINE}</p>
           <div className="button-row">
             <Button href={ESTIMATE_HREF} light>REQUEST AN ESTIMATE</Button>
-            <Link href="/projects" className="text-button">VIEW OUR WORK <span>↓</span></Link>
+            <a href={BUSINESS_PHONE_HREF} className="text-button">
+              CALL {BUSINESS_PHONE}
+            </a>
           </div>
         </div>
       </section>
@@ -70,7 +80,7 @@ export default function Home() {
           <p className="eyebrow">SERVICES</p>
           <h2>WHAT WE BUILD</h2>
         </div>
-        <div className="home-services__grid home-services__grid--five">
+        <div className="home-services__grid home-services__grid--four">
           {services.map(([title, copy, href, kind]) => (
             <Link href={href} className="home-service" key={href}>
               <AssetPanel kind={kind} />
@@ -83,8 +93,10 @@ export default function Home() {
           ))}
         </div>
         <p className="home-services__note">
-          Looking for a home addition?{" "}
-          <Link href="/additions" className="text-link">See Additions</Link>.
+          Also available:{" "}
+          <Link href="/commercial" className="text-link">Commercial Exteriors</Link>
+          {" · "}
+          <Link href="/additions" className="text-link">Home Additions</Link>
         </p>
       </section>
 
@@ -115,37 +127,11 @@ export default function Home() {
             </div>
           </div>
           <div className="home-featured-links">
-            <Link className="simple-link" href="/projects/complete-metal-exterior-transformation">
-              COMMERCIAL EXTERIOR PHOTOS <span>↗</span>
-            </Link>
-            <Link className="simple-link" href="/projects/black-board-and-batten-barn">
-              BARN SIDING PHOTOS <span>↗</span>
-            </Link>
             <Link className="simple-link" href="/projects">
-              ALL PROJECTS <span>↗</span>
+              SEE ALL PROJECTS <span>↗</span>
             </Link>
           </div>
         </div>
-      </section>
-
-      <section className="home-featured-projects wrap">
-        <Link href="/projects/black-board-and-batten-barn" className="project-card project-card--compact">
-          <div className="asset-panel">
-            <Image
-              src={barnProjectImagesFlat.afterHero.src}
-              alt={barnProjectImagesFlat.afterHero.alt}
-              fill
-              sizes="(max-width: 800px) 100vw, 60vw"
-              style={{ objectFit: "cover", objectPosition: "center 40%" }}
-            />
-          </div>
-          <div>
-            <p className="eyebrow">METAL SIDING</p>
-            <h2>BLACK BOARD-AND-BATTEN BARN</h2>
-            <p>Before, during, and after photos from a residential barn siding project.</p>
-            <span>VIEW PHOTOS ↗</span>
-          </div>
-        </Link>
       </section>
 
       <section className="why wrap">
@@ -153,24 +139,24 @@ export default function Home() {
           <div>
             <Mark size="section" className="brand--ink" />
             <p className="eyebrow">WHY HBG</p>
-            <h2>CLEAR, DIRECT, AND ACCOUNTABLE.</h2>
+            <h2>STRAIGHTFORWARD FROM ESTIMATE TO FINISH.</h2>
           </div>
         </div>
         <div className="why__grid">
           <article>
             <span>01</span>
-            <h3>CLEAR ESTIMATES</h3>
-            <p>Know what is included before work begins.</p>
+            <h3>WRITTEN ESTIMATES</h3>
+            <p>Scope and pricing in writing before work starts—no vague verbal quotes.</p>
           </article>
           <article>
             <span>02</span>
-            <h3>QUALITY WORKMANSHIP</h3>
-            <p>Experienced crews and a consistent finish standard.</p>
+            <h3>LICENSED &amp; INSURED</h3>
+            <p>PA registered and fully insured, with one crew standard from start to finish.</p>
           </article>
           <article>
             <span>03</span>
             <h3>ONE POINT OF CONTACT</h3>
-            <p>The same person from estimate through completion.</p>
+            <p>The same person stays with your project from the first call through completion.</p>
           </article>
         </div>
       </section>
@@ -196,7 +182,12 @@ export default function Home() {
             <p className="eyebrow">NEXT STEP</p>
             <h2>REQUEST AN ESTIMATE.</h2>
           </div>
-          <Button href={ESTIMATE_HREF} light>REQUEST AN ESTIMATE</Button>
+          <div className="button-row">
+            <Button href={ESTIMATE_HREF} light>REQUEST AN ESTIMATE</Button>
+            <a href={BUSINESS_PHONE_HREF} className="text-button text-button--on-dark">
+              CALL {BUSINESS_PHONE}
+            </a>
+          </div>
         </div>
       </section>
     </>

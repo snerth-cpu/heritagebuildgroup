@@ -3,7 +3,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Mark } from "@/components/brand-logo";
-import { BUSINESS_EMAIL, BUSINESS_PHONE, BUSINESS_PHONE_HREF, CONTACT_HREF, ESTIMATE_HREF, LEGAL_NAME } from "@/lib/seo";
+import {
+  BUSINESS_EMAIL,
+  BUSINESS_HIC,
+  BUSINESS_PHONE,
+  BUSINESS_PHONE_HREF,
+  CONTACT_HREF,
+  ESTIMATE_HREF,
+  LEGAL_NAME,
+} from "@/lib/seo";
 
 const serviceLinks = [
   ["Metal Roofing", "/metal-roofing"],
@@ -107,6 +115,9 @@ export function Header() {
               {label}
             </Link>
           ))}
+          <a className="nav__phone" href={BUSINESS_PHONE_HREF} onClick={() => setOpen(false)}>
+            {BUSINESS_PHONE}
+          </a>
           <Link
             className={`nav__cta${estimateActive ? " active" : ""}`}
             href={ESTIMATE_HREF}
@@ -120,7 +131,7 @@ export function Header() {
   );
 }
 
-/** Fixed mobile estimate control — hidden on contact and estimate pages. */
+/** Fixed mobile call + estimate bar — hidden on contact and estimate pages. */
 export function MobileContactCta() {
   const pathname = usePathname();
   const hidden = pathname === CONTACT_HREF || pathname === "/estimate";
@@ -136,9 +147,10 @@ export function MobileContactCta() {
 
   if (hidden) return null;
   return (
-    <Link href={ESTIMATE_HREF} className="mobile-contact-cta">
-      REQUEST AN ESTIMATE
-    </Link>
+    <div className="mobile-contact-cta" role="group" aria-label="Contact options">
+      <a href={BUSINESS_PHONE_HREF}>Call {BUSINESS_PHONE}</a>
+      <Link href={ESTIMATE_HREF}>Get an Estimate</Link>
+    </div>
   );
 }
 
@@ -173,7 +185,7 @@ export function Footer() {
       </div>
       <div className="footer__bottom wrap">
         <p>© {new Date().getFullYear()} {LEGAL_NAME}</p>
-        <p>PA Registered & Fully Insured · PA HIC #PA223621</p>
+        <p>PA Registered & Fully Insured · {BUSINESS_HIC}</p>
         <p>Western Pennsylvania</p>
       </div>
     </footer>
