@@ -6,6 +6,9 @@ export const LEGAL_NAME = "Heritage Build Group LLC";
 export const BUSINESS_PHONE = "(724) 719-7237";
 export const BUSINESS_PHONE_HREF = "tel:+17247197237";
 export const BUSINESS_EMAIL = "scott@heritagebuildgroup.com";
+export const BUSINESS_HIC = "PA HIC #PA223621";
+export const BUSINESS_TRUST_LINE =
+  "PA registered & fully insured · Serving Butler, Mercer, Erie Counties & Greater Pittsburgh";
 export const SOCIAL_IMAGE = "/images/metal-exterior-wide.png";
 export const ESTIMATE_HREF = "/estimate#estimate-form";
 export const CONTACT_HREF = "/contact";

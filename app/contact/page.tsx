@@ -4,6 +4,7 @@ import {
   BUSINESS_EMAIL,
   BUSINESS_PHONE,
   BUSINESS_PHONE_HREF,
+  BUSINESS_TRUST_LINE,
   ESTIMATE_HREF,
   pageMetadata,
 } from "@/lib/seo";
@@ -14,30 +15,6 @@ export const metadata = pageMetadata({
     "Call, email, or request an estimate from HBG Construction for pole buildings, garages, additions, and metal exterior projects in Western Pennsylvania.",
   path: "/contact",
 });
-
-const options = [
-  {
-    num: "01",
-    title: "CALL US",
-    detail: BUSINESS_PHONE,
-    href: BUSINESS_PHONE_HREF,
-    external: true,
-  },
-  {
-    num: "02",
-    title: "EMAIL US",
-    detail: BUSINESS_EMAIL,
-    href: `mailto:${BUSINESS_EMAIL}`,
-    external: true,
-  },
-  {
-    num: "03",
-    title: "REQUEST AN ESTIMATE",
-    detail: "Send us your project details",
-    href: ESTIMATE_HREF,
-    external: false,
-  },
-] as const;
 
 export default function Page() {
   return (
@@ -51,22 +28,37 @@ export default function Page() {
           YOUR PROJECT.
         </h1>
         <p className="contact__intro">
-          Call, email, or send us your project details and we’ll help you determine the next step.
+          Prefer to talk now? Call us. Or send project details and we’ll help you determine the next step.
         </p>
+        <p className="contact__trust">{BUSINESS_TRUST_LINE}</p>
+
+        <div className="contact-primary">
+          <a className="button" href={BUSINESS_PHONE_HREF}>
+            CALL {BUSINESS_PHONE} <span aria-hidden="true">↗</span>
+          </a>
+          <Link className="button button--ghost" href={ESTIMATE_HREF}>
+            REQUEST AN ESTIMATE <span aria-hidden="true">↗</span>
+          </Link>
+        </div>
+
         <div className="contact-options">
-          {options.map(({ num, title, detail, href, external }) => (
-            <article key={num}>
-              <span>{num}</span>
-              <h2>{title}</h2>
-              {external ? (
-                <a href={href}>{detail}</a>
-              ) : (
-                <Link href={href}>
-                  {detail} <span aria-hidden="true">↗</span>
-                </Link>
-              )}
-            </article>
-          ))}
+          <article>
+            <span>01</span>
+            <h2>CALL US</h2>
+            <a href={BUSINESS_PHONE_HREF}>{BUSINESS_PHONE}</a>
+          </article>
+          <article>
+            <span>02</span>
+            <h2>EMAIL US</h2>
+            <a href={`mailto:${BUSINESS_EMAIL}`}>{BUSINESS_EMAIL}</a>
+          </article>
+          <article>
+            <span>03</span>
+            <h2>REQUEST AN ESTIMATE</h2>
+            <Link href={ESTIMATE_HREF}>
+              Send us your project details <span aria-hidden="true">↗</span>
+            </Link>
+          </article>
         </div>
       </div>
     </section>
