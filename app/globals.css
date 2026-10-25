@@ -32,6 +32,8 @@
 .header--light .nav__cta{border-color:rgba(23,24,23,.35)}
 .hero__trust{max-width:540px;margin:0 0 22px;font-size:13px;line-height:1.45;letter-spacing:.02em;color:rgba(255,255,255,.78)}
 .home-services__grid--four{grid-template-columns:repeat(4,1fr)}
+.home-services__grid--four .home-service .asset-panel{height:300px}
+.home-services__grid--four .home-service h3{font-size:28px}
 .home-cta .button-row{display:flex;flex-wrap:wrap;align-items:center;gap:18px 28px}
 .text-button--on-dark{color:#f3efe7}
 .button--ghost{background:transparent;color:var(--ink);border-color:var(--ink)}
