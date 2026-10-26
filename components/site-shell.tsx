@@ -9,8 +9,10 @@ import {
   BUSINESS_PHONE,
   BUSINESS_PHONE_HREF,
   CONTACT_HREF,
+  COPYRIGHT_LINE,
   ESTIMATE_HREF,
-  LEGAL_NAME,
+  LEGAL_RELATIONSHIP,
+  SITE_NAME,
 } from "@/lib/seo";
 
 const serviceLinks = [
@@ -65,8 +67,8 @@ export function Header() {
   return (
     <header className={`header ${onLight ? "header--light" : ""}`}>
       <div className="header__inner">
-        <Link href="/" className="logo" onClick={() => setOpen(false)}>
-          <Mark size="nav" priority />
+        <Link href="/" className="logo" aria-label={`${SITE_NAME} home`} onClick={() => setOpen(false)}>
+          <Mark size="nav" priority alt="" />
         </Link>
         <button
           className="menu"
@@ -184,7 +186,10 @@ export function Footer() {
         </Link>
       </div>
       <div className="footer__bottom wrap">
-        <p>© {new Date().getFullYear()} {LEGAL_NAME}</p>
+        <div className="footer__legal">
+          <p>{COPYRIGHT_LINE}</p>
+          <p>{LEGAL_RELATIONSHIP}</p>
+        </div>
         <p>PA Registered & Fully Insured · {BUSINESS_HIC}</p>
         <p>Western Pennsylvania</p>
       </div>

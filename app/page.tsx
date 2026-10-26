@@ -58,7 +58,7 @@ export default function Home() {
         <div className="wrap hero__content">
           <p className="eyebrow">WESTERN PENNSYLVANIA</p>
           <h1 className="hero__brand">
-            <Mark size="hero" priority />
+            <Mark size="hero" priority alt="" />
             <span className="visually-hidden">HBG Construction</span>
           </h1>
           <p className="hero__offer">Metal Roofing, Siding &amp; Custom Buildings</p>

@@ -1,6 +1,6 @@
 import { AssetPanel, ProjectCTA } from "@/components/ui";
 import { Mark } from "@/components/brand-logo";
-import { pageMetadata } from "@/lib/seo";
+import { LEGAL_RELATIONSHIP, pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "About HBG Construction | Western Pennsylvania Builder",
@@ -22,6 +22,8 @@ export default function Page() {
           HBG Construction serves homeowners and commercial property teams across Greater Pittsburgh, Cranberry Township, Butler County, Mercer County, and Erie County.
           <br /><br />
           We focus on metal roofing, metal siding, pole buildings, garages, additions, and commercial exterior work—with clear estimates and one point of contact through the job.
+          <br /><br />
+          {LEGAL_RELATIONSHIP}
         </p>
       </section>
       <AssetPanel kind="teamwork" className="about-visual" />

@@ -17,22 +17,31 @@ export function Mark({
   size,
   priority = false,
   className = "",
+  /** Pass empty string when a parent element already names the brand (avoids duplicate announcements). */
+  alt,
 }: {
   compact?: boolean;
   size?: MarkSize;
   priority?: boolean;
   className?: string;
+  alt?: string;
 }) {
   const resolved = size ?? (compact ? "compact" : "nav");
   const { width, height, src } = markSizes[resolved];
+  const imageAlt = alt === undefined ? `${SITE_NAME} logo` : alt;
+  const decorative = imageAlt === "";
+
   return (
-    <span className={`brand brand--${resolved}${className ? ` ${className}` : ""}`} aria-label={SITE_NAME}>
+    <span
+      className={`brand brand--${resolved}${className ? ` ${className}` : ""}`}
+      {...(decorative ? { "aria-hidden": true } : {})}
+    >
       <Image
         className="brand__image"
         src={src}
         width={width}
         height={height}
-        alt={`${SITE_NAME} logo`}
+        alt={imageAlt}
         priority={priority || resolved === "nav" || resolved === "hero"}
       />
     </span>

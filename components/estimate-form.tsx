@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { BUSINESS_HIC, ESTIMATE_PRIVACY_DISCLOSURE } from "@/lib/seo";
 
 const JOBBER_CONTAINER_ID = "fdc5a674-3e03-4178-a0d2-29eb4a6a2613-5089699";
 const JOBBER_FORM_URL = "https://clienthub.getjobber.com/client_hubs/fdc5a674-3e03-4178-a0d2-29eb4a6a2613/public/work_request/embedded_work_request_form?form_id=5089699";
@@ -66,9 +67,14 @@ export function EstimateForm() {
 
   return (
     <div id="estimate-form" className="estimate-form jobber-embed">
+      {/*
+        Jobber embed: company display name, emails, and any in-form consent/privacy
+        wording are controlled in Jobber (Client Hub / Work Request form settings),
+        not in this repository. Do not overlay or rewrite iframe contents here.
+      */}
       <div id={JOBBER_CONTAINER_ID} />
-      <p className="form-note">Submitted information will only be used to respond to your estimate request. It will not be sold or shared for marketing purposes.</p>
-      <p className="form-note">PA Registered & Fully Insured</p>
+      <p className="form-note form-note--privacy">{ESTIMATE_PRIVACY_DISCLOSURE}</p>
+      <p className="form-note">PA Registered & Fully Insured · {BUSINESS_HIC}</p>
     </div>
   );
 }

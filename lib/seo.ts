@@ -1,8 +1,17 @@
 import type { Metadata } from "next";
 
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.heritagebuildgroup.com";
+/** Public-facing brand customers see across the site. */
 export const SITE_NAME = "HBG Construction";
+/** Legal entity name for copyright, privacy, and structured data. */
 export const LEGAL_NAME = "Heritage Build Group LLC";
+/** Former / alternate public name retained for search and schema. */
+export const ALTERNATE_NAME = "Heritage Build Group";
+export const LEGAL_RELATIONSHIP =
+  "HBG Construction is a registered fictitious name of Heritage Build Group LLC.";
+export const COPYRIGHT_LINE = `© ${new Date().getFullYear()} Heritage Build Group LLC, doing business as HBG Construction.`;
+export const ESTIMATE_PRIVACY_DISCLOSURE =
+  "Information submitted through this website is received by Heritage Build Group LLC, doing business as HBG Construction, and will only be used to respond to your request and provide related service communications.";
 export const BUSINESS_PHONE = "(724) 719-7237";
 export const BUSINESS_PHONE_HREF = "tel:+17247197237";
 export const BUSINESS_EMAIL = "scott@heritagebuildgroup.com";
@@ -76,13 +85,14 @@ export const localBusinessSchema = {
   "@id": `${SITE_URL}/#business`,
   name: SITE_NAME,
   legalName: LEGAL_NAME,
-  alternateName: ["Heritage Build Group"],
+  alternateName: [ALTERNATE_NAME],
+  description:
+    "Western Pennsylvania exterior and building contractor for metal roofing, metal siding, pole buildings, barns, garages, and commercial exterior construction. HBG Construction is a registered fictitious name of Heritage Build Group LLC.",
   url: SITE_URL,
   telephone: "+1-724-719-7237",
   email: BUSINESS_EMAIL,
   logo: absoluteUrl("/brand/hbg-primary.png"),
   image: absoluteUrl(SOCIAL_IMAGE),
-  description: "Western Pennsylvania exterior and building contractor for metal roofing, metal siding, pole buildings, barns, garages, and commercial exterior construction.",
   areaServed: [
     { "@type": "City", name: "Pittsburgh", containedInPlace: { "@type": "State", name: "Pennsylvania" } },
     { "@type": "AdministrativeArea", name: "Greater Pittsburgh" },
