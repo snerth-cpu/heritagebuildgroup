@@ -40,7 +40,7 @@ export default function Page() {
             <p className="eyebrow">POST-FRAME &amp; BUILDINGS • WESTERN PENNSYLVANIA</p>
             <h1>POLE BUILDINGS, GARAGES &amp; ADDITIONS.</h1>
             <p>
-              Custom buildings planned around how you use the property—then finished with a durable exterior when metal roofing or siding is part of the job.
+              Pole buildings planned around how you use the property—then finished with a durable exterior when metal roofing or siding is part of the job.
             </p>
             <Button href={ESTIMATE_HREF}>REQUEST AN ESTIMATE</Button>
           </div>

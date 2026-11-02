@@ -12,7 +12,7 @@ export const BUSINESS_TRUST_LINE =
 export const SOCIAL_IMAGE = "/images/metal-exterior-wide.png";
 export const ESTIMATE_HREF = "/estimate#estimate-form";
 export const CONTACT_HREF = "/contact";
-export const HOME_TITLE = "HBG Construction | Metal Roofing, Siding & Custom Buildings Pittsburgh";
+export const HOME_TITLE = "HBG Construction | Metal Roofing, Siding & Pole Buildings Pittsburgh";
 export const HOME_DESCRIPTION = "HBG Construction builds metal roofing, metal siding, pole buildings, garages, and commercial exteriors throughout Pittsburgh and Western Pennsylvania.";
 
 // Remaining before complete LocalBusiness markup:
