@@ -61,9 +61,9 @@ export default function Home() {
             <Mark size="hero" priority />
             <span className="visually-hidden">HBG Construction</span>
           </h1>
-          <p className="hero__offer">Metal Roofing, Siding &amp; Custom Buildings</p>
+          <p className="hero__offer">Metal Roofing, Siding &amp; Pole Buildings</p>
           <p className="hero__copy">
-            Metal exteriors and custom buildings for homes, garages, barns, and commercial properties across Western Pennsylvania.
+            Metal exteriors and pole buildings for homes, garages, barns, and commercial properties across Western Pennsylvania.
           </p>
           <p className="hero__trust">{BUSINESS_TRUST_LINE}</p>
           <div className="button-row">

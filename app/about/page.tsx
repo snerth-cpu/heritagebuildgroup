@@ -16,7 +16,7 @@ export default function Page() {
         <div>
           <Mark size="section" className="brand--ink" />
           <p className="eyebrow">ABOUT HBG CONSTRUCTION</p>
-          <h1>LOCAL BUILDERS FOR EXTERIORS AND CUSTOM BUILDINGS.</h1>
+          <h1>LOCAL BUILDERS FOR EXTERIORS AND POLE BUILDINGS.</h1>
         </div>
         <p>
           HBG Construction serves homeowners and commercial property teams across Greater Pittsburgh, Cranberry Township, Butler County, Mercer County, and Erie County.
