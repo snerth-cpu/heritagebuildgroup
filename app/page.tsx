@@ -4,6 +4,7 @@ import { AssetPanel, Button } from "@/components/ui";
 import { BeforeAfter } from "@/components/before-after";
 import { Mark } from "@/components/brand-logo";
 import { barnBeforeAfterPrimary, barnProjectImagesFlat } from "@/lib/projects";
+import { leadServices } from "@/lib/services";
 import {
   pageMetadata,
   BUSINESS_PHONE,
@@ -20,13 +21,6 @@ export const metadata = pageMetadata({
   path: "/",
   absoluteTitle: true,
 });
-
-const services = [
-  ["METAL ROOFING", "Standing seam and metal roofing for homes and commercial buildings.", "/metal-roofing", "roof"],
-  ["METAL SIDING", "Metal siding for homes and commercial walls, including board-and-batten.", "/metal-siding", "siding"],
-  ["POLE BUILDINGS", "Post-frame barns, shops, storage, and light-commercial buildings.", "/pole-buildings", "pole"],
-  ["GARAGES", "Detached, attached, and shop-style garages sized for how you use them.", "/garages", "installation"],
-] as const;
 
 export default function Home() {
   return (
@@ -56,18 +50,18 @@ export default function Home() {
         </div>
         <div className="hero__shade" />
         <div className="wrap hero__content">
-          <p className="eyebrow">WESTERN PENNSYLVANIA</p>
+          <p className="eyebrow">PITTSBURGH REGION · NEARBY OHIO</p>
           <h1 className="hero__brand">
             <Mark size="hero" priority />
             <span className="visually-hidden">HBG Construction</span>
           </h1>
-          <p className="hero__offer">Metal Roofing, Siding &amp; Custom Buildings</p>
+          <p className="hero__offer">Metal Roofing, Siding &amp; Pole Buildings</p>
           <p className="hero__copy">
-            Metal exteriors and custom buildings for homes, garages, barns, and commercial properties across Western Pennsylvania.
+            Metal roofing and siding, barn siding replacement, pole building kits and construction, and detached garages.
           </p>
           <p className="hero__trust">{BUSINESS_TRUST_LINE}</p>
           <div className="button-row">
-            <Button href={ESTIMATE_HREF} light>REQUEST AN ESTIMATE</Button>
+            <Button href={ESTIMATE_HREF} light>REQUEST A QUOTE</Button>
             <a href={BUSINESS_PHONE_HREF} className="text-button">
               CALL {BUSINESS_PHONE}
             </a>
@@ -77,16 +71,16 @@ export default function Home() {
 
       <section className="home-services wrap">
         <div className="home-heading">
-          <p className="eyebrow">SERVICES</p>
+          <p className="eyebrow">MAIN SERVICES</p>
           <h2>WHAT WE BUILD</h2>
         </div>
-        <div className="home-services__grid home-services__grid--four">
-          {services.map(([title, copy, href, kind]) => (
-            <Link href={href} className="home-service" key={href}>
-              <AssetPanel kind={kind} />
+        <div className="home-services__grid home-services__grid--five">
+          {leadServices.map((service) => (
+            <Link href={service.path} className="home-service" key={service.path}>
+              <AssetPanel kind={service.cardKind} contain={service.heroContain} />
               <div>
-                <h3>{title}</h3>
-                <p>{copy}</p>
+                <h3>{service.cardTitle}</h3>
+                <p>{service.cardCopy}</p>
                 <span>LEARN MORE ↗</span>
               </div>
             </Link>
@@ -139,7 +133,7 @@ export default function Home() {
           <div>
             <Mark size="section" className="brand--ink" />
             <p className="eyebrow">WHY HBG</p>
-            <h2>STRAIGHTFORWARD FROM ESTIMATE TO FINISH.</h2>
+            <h2>STRAIGHTFORWARD FROM QUOTE TO FINISH.</h2>
           </div>
         </div>
         <div className="why__grid">
@@ -162,13 +156,13 @@ export default function Home() {
       </section>
 
       <section className="service-area wrap">
-        <p className="eyebrow">SERVING WESTERN PENNSYLVANIA</p>
+        <p className="eyebrow">WHERE WE WORK</p>
         <div>
           <Link href="/service-areas/pittsburgh-pa">GREATER PITTSBURGH</Link>
           <Link href="/service-areas/cranberry-township-pa">CRANBERRY TOWNSHIP</Link>
           <Link href="/service-areas/butler-county-pa">BUTLER COUNTY</Link>
           <Link href="/service-areas/mercer-county-pa">MERCER COUNTY</Link>
-          <span>ERIE COUNTY</span>
+          <span>NEARBY OHIO</span>
         </div>
         <Link className="simple-link service-area__all" href="/service-areas">
           VIEW SERVICE AREAS ↗
@@ -180,10 +174,10 @@ export default function Home() {
           <div>
             <Mark size="cta" />
             <p className="eyebrow">NEXT STEP</p>
-            <h2>REQUEST AN ESTIMATE.</h2>
+            <h2>REQUEST A QUOTE.</h2>
           </div>
           <div className="button-row">
-            <Button href={ESTIMATE_HREF} light>REQUEST AN ESTIMATE</Button>
+            <Button href={ESTIMATE_HREF} light>REQUEST A QUOTE</Button>
             <a href={BUSINESS_PHONE_HREF} className="text-button text-button--on-dark">
               CALL {BUSINESS_PHONE}
             </a>

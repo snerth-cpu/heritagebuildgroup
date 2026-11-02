@@ -8,12 +8,13 @@ export const BUSINESS_PHONE_HREF = "tel:+17247197237";
 export const BUSINESS_EMAIL = "scott@heritagebuildgroup.com";
 export const BUSINESS_HIC = "PA HIC #PA223621";
 export const BUSINESS_TRUST_LINE =
-  "PA registered & fully insured · HIC #PA223621 · Butler, Mercer, Erie Counties & Greater Pittsburgh";
+  "PA registered & fully insured · HIC #PA223621 · Pittsburgh region, Butler & Mercer Counties, nearby Ohio";
 export const SOCIAL_IMAGE = "/images/metal-exterior-wide.png";
 export const ESTIMATE_HREF = "/estimate#estimate-form";
 export const CONTACT_HREF = "/contact";
-export const HOME_TITLE = "HBG Construction | Metal Roofing, Siding & Custom Buildings Pittsburgh";
-export const HOME_DESCRIPTION = "HBG Construction builds metal roofing, metal siding, pole buildings, garages, and commercial exteriors throughout Pittsburgh and Western Pennsylvania.";
+export const HOME_TITLE = "HBG Construction | Metal Roofing, Siding & Pole Buildings";
+export const HOME_DESCRIPTION =
+  "HBG Construction supplies and installs metal roofing and siding, and builds pole buildings and garages in the Pittsburgh region, Cranberry Township, Butler County, Mercer County, and nearby Ohio communities.";
 
 // Remaining before complete LocalBusiness markup:
 // TODO: BUSINESS_STREET_ADDRESS, CITY, STATE, POSTAL_CODE — do not publish until approved
@@ -67,7 +68,7 @@ export const serviceAreaNames = [
   "Cranberry Township",
   "Butler County",
   "Mercer County",
-  "Erie County",
+  "nearby Ohio communities",
 ] as const;
 
 export const localBusinessSchema = {
@@ -82,25 +83,28 @@ export const localBusinessSchema = {
   email: BUSINESS_EMAIL,
   logo: absoluteUrl("/brand/hbg-primary.png"),
   image: absoluteUrl(SOCIAL_IMAGE),
-  description: "Western Pennsylvania exterior and building contractor for metal roofing, metal siding, pole buildings, barns, garages, and commercial exterior construction.",
+  description:
+    "HBG Construction supplies and installs metal roofing and metal siding, and builds pole buildings and detached garages in the Pittsburgh region, Cranberry Township, Butler County, Mercer County, and nearby Ohio communities.",
   areaServed: [
     { "@type": "City", name: "Pittsburgh", containedInPlace: { "@type": "State", name: "Pennsylvania" } },
     { "@type": "AdministrativeArea", name: "Greater Pittsburgh" },
     { "@type": "City", name: "Cranberry Township", containedInPlace: { "@type": "State", name: "Pennsylvania" } },
     { "@type": "AdministrativeArea", name: "Butler County, Pennsylvania" },
     { "@type": "AdministrativeArea", name: "Mercer County, Pennsylvania" },
-    { "@type": "AdministrativeArea", name: "Erie County, Pennsylvania" },
-    { "@type": "AdministrativeArea", name: "Western Pennsylvania" },
+    { "@type": "AdministrativeArea", name: "nearby Ohio communities" },
   ],
   knowsAbout: [
     "Metal roofing",
     "Standing seam metal roofing",
     "Metal siding",
     "Residential board-and-batten metal siding",
+    "Barn siding replacement",
     "Pole buildings",
+    "Pole building kits",
     "Post-frame construction",
     "Barns",
     "Garage construction",
+    "Detached garage construction",
     "Commercial exterior construction",
     "Commercial metal roofing",
     "Commercial metal siding",
@@ -111,8 +115,9 @@ export const localBusinessSchema = {
     itemListElement: [
       "Metal Roofing",
       "Metal Siding",
+      "Barn Siding Replacement",
       "Pole Buildings",
-      "Barns",
+      "Pole Building Kits",
       "Garages",
       "Commercial Exterior Construction",
       "Residential Board-and-Batten Metal Siding",

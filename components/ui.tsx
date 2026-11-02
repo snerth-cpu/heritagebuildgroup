@@ -1,6 +1,6 @@
 import { Mark } from "@/components/brand-logo";
 import { barnProjectImagesFlat, poleBuildingBoardAndBatten } from "@/lib/projects";
-import { ESTIMATE_HREF } from "@/lib/seo";
+import { BUSINESS_PHONE, BUSINESS_PHONE_HREF, ESTIMATE_HREF } from "@/lib/seo";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -50,20 +50,72 @@ export function AssetPanel({ kind = "finished", label, className = "", contain =
     {label && <span>{label}</span>}
   </div>;
 }
-export function PageHero({ kicker, title, copy, kind = "detail", contain = false }: { kicker: string; title: string; copy: string; kind?: string; contain?: boolean }) {
-  return <section className="page-hero"><div className="wrap page-hero__grid"><div><Mark size="cta" className="brand--on-dark" /><p className="eyebrow">{kicker}</p><h1>{title}</h1><p>{copy}</p><Button href={ESTIMATE_HREF}>REQUEST AN ESTIMATE</Button></div><AssetPanel kind={kind} contain={contain} /></div></section>;
+
+type PageHeroProps = {
+  kicker: string;
+  title: string;
+  copy: string;
+  kind?: string;
+  contain?: boolean;
+  estimateHref?: string;
+  estimateLabel?: string;
+  showCall?: boolean;
+};
+
+export function PageHero({
+  kicker,
+  title,
+  copy,
+  kind = "detail",
+  contain = false,
+  estimateHref = ESTIMATE_HREF,
+  estimateLabel = "REQUEST A QUOTE",
+  showCall = false,
+}: PageHeroProps) {
+  return (
+    <section className="page-hero">
+      <div className="wrap page-hero__grid">
+        <div>
+          <Mark size="cta" className="brand--on-dark" />
+          <p className="eyebrow">{kicker}</p>
+          <h1>{title}</h1>
+          <p>{copy}</p>
+          <div className="button-row page-hero__actions">
+            <Button href={estimateHref}>{estimateLabel}</Button>
+            {showCall ? (
+              <a href={BUSINESS_PHONE_HREF} className="text-button text-button--on-dark">
+                CALL {BUSINESS_PHONE}
+              </a>
+            ) : null}
+          </div>
+        </div>
+        <AssetPanel kind={kind} contain={contain} />
+      </div>
+    </section>
+  );
 }
-export function Process() {
+
+const DEFAULT_PROCESS = [
+  ["01", "Estimate", "We review the property and put the scope in writing."],
+  ["02", "Materials", "We select systems that fit the building and the finish you want."],
+  ["03", "Install", "Crews build to a clear standard at edges, openings, and transitions."],
+  ["04", "Follow-through", "One point of contact stays with you through completion."],
+] as const;
+
+export function Process({
+  kicker = "HOW A PROJECT WORKS",
+  title = "FROM ESTIMATE TO FINISH.",
+  steps = DEFAULT_PROCESS,
+}: {
+  kicker?: string;
+  title?: string;
+  steps?: readonly (readonly [string, string, string])[];
+}) {
   return (
     <section className="process wrap">
-      <SectionHead kicker="HOW A PROJECT WORKS" title="FROM ESTIMATE TO FINISH." />
-      <div className="process__grid">
-        {[
-          ["01", "Estimate", "We review the property and put the scope in writing."],
-          ["02", "Materials", "We select systems that fit the building and the finish you want."],
-          ["03", "Install", "Crews build to a clear standard at edges, openings, and transitions."],
-          ["04", "Follow-through", "One point of contact stays with you through completion."],
-        ].map(([n, t, c]) => (
+      <SectionHead kicker={kicker} title={title} />
+      <div className={`process__grid${steps.length === 3 ? " process__grid--three" : ""}`}>
+        {steps.map(([n, t, c]) => (
           <article key={n}>
             <span>{n}</span>
             <h3>{t}</h3>
@@ -74,16 +126,41 @@ export function Process() {
     </section>
   );
 }
-export function ProjectCTA() {
+
+type ProjectCTAProps = {
+  title?: string;
+  copy?: string;
+  estimateHref?: string;
+  estimateLabel?: string;
+  showCall?: boolean;
+};
+
+export function ProjectCTA({
+  title = "REQUEST A QUOTE.",
+  copy,
+  estimateHref = ESTIMATE_HREF,
+  estimateLabel = "REQUEST A QUOTE",
+  showCall = true,
+}: ProjectCTAProps = {}) {
   return (
     <section className="cta-band">
       <div className="wrap">
         <Mark size="cta" />
         <div>
           <p className="eyebrow">READY TO START?</p>
-          <h2>REQUEST AN ESTIMATE.</h2>
+          <h2>{title}</h2>
+          {copy ? <p className="cta-band__copy">{copy}</p> : null}
         </div>
-        <Button href={ESTIMATE_HREF} light>REQUEST AN ESTIMATE</Button>
+        <div className="button-row cta-band__actions">
+          <Button href={estimateHref} light>
+            {estimateLabel}
+          </Button>
+          {showCall ? (
+            <a href={BUSINESS_PHONE_HREF} className="text-button text-button--on-dark">
+              CALL {BUSINESS_PHONE}
+            </a>
+          ) : null}
+        </div>
       </div>
     </section>
   );

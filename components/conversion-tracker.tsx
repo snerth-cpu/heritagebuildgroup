@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { pageContext, trackEvent } from "@/lib/analytics";
+import { pageContext, readAttribution, trackEvent } from "@/lib/analytics";
 
 const JOBBER_ORIGINS = new Set([
   "https://clienthub.getjobber.com",
@@ -9,6 +9,11 @@ const JOBBER_ORIGINS = new Set([
   "https://getjobber.com",
 ]);
 
+/**
+ * Only fire generate_lead when Jobber is confirmed to send one of these, or when
+ * the thank-you redirect lands with ?lead=success (configured in Jobber).
+ * Do not treat iframe load, form open, or submit click as a lead.
+ */
 const JOBBER_SUCCESS_SIGNALS = new Set([
   "generate_lead",
   "form_submitted",
@@ -18,11 +23,16 @@ const JOBBER_SUCCESS_SIGNALS = new Set([
   "submission_success",
 ]);
 
+const LEAD_SUCCESS_KEY = "hbg_lead_success_tracked";
+
 function ctaLocation(anchor: Element) {
   if (anchor.closest("footer")) return "footer";
   if (anchor.closest("header")) return "header";
+  if (anchor.closest(".mobile-contact-cta")) return "mobile_sticky";
   if (anchor.closest(".estimate-contact") || anchor.closest(".estimate aside")) return "estimate_aside";
   if (anchor.closest(".contact-options") || anchor.closest(".contact")) return "contact";
+  if (anchor.closest(".page-hero")) return "page_hero";
+  if (anchor.closest(".cta-band") || anchor.closest(".home-cta")) return "cta_band";
   return "other";
 }
 
@@ -50,8 +60,50 @@ function isJobberSuccessMessage(origin: string, data: unknown) {
   return candidates.some((value) => JOBBER_SUCCESS_SIGNALS.has(stringSignal(value)));
 }
 
+function serviceFromPage() {
+  try {
+    const fromQuery = new URLSearchParams(window.location.search).get("service");
+    if (fromQuery) return fromQuery;
+  } catch {
+    /* ignore */
+  }
+  const path = window.location.pathname.replace(/\/$/, "") || "/";
+  const match = path.match(/^\/(metal-roofing|metal-siding|barn-siding|pole-buildings|garages)(?:\/|$)/);
+  return match?.[1];
+}
+
+function leadEventParams(extra?: Record<string, string | undefined>) {
+  const service = serviceFromPage();
+  return {
+    ...pageContext(),
+    ...readAttribution(),
+    ...(service ? { service_slug: service } : {}),
+    ...extra,
+  };
+}
+
+function trackGenerateLead(source: "jobber_postmessage" | "thank_you_redirect") {
+  try {
+    if (sessionStorage.getItem(LEAD_SUCCESS_KEY) === "1") return;
+    sessionStorage.setItem(LEAD_SUCCESS_KEY, "1");
+  } catch {
+    /* still fire once this page load */
+  }
+  trackEvent("generate_lead", leadEventParams({ location: "estimate_form", lead_source: source }));
+}
+
 export function ConversionTracker() {
   useEffect(() => {
+    // Verified path: Jobber thank-you / redirect URL with ?lead=success
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("lead") === "success") {
+        trackGenerateLead("thank_you_redirect");
+      }
+    } catch {
+      /* ignore */
+    }
+
     const onClick = (event: MouseEvent) => {
       const target = event.target;
       if (!(target instanceof Element)) return;
@@ -63,19 +115,25 @@ export function ConversionTracker() {
       const protocol = protocolFromHref(href);
       if (protocol !== "tel:" && protocol !== "mailto:") return;
 
-      trackEvent(protocol === "tel:" ? "phone_click" : "email_click", {
-        ...pageContext(),
-        link_url: href,
-        location: ctaLocation(anchor),
-      });
+      // click_to_call is the Ads/GA4 conversion name; phone clicks are not tracked calls.
+      if (protocol === "tel:") {
+        trackEvent("click_to_call", leadEventParams({
+          link_url: href,
+          location: ctaLocation(anchor),
+        }));
+      } else {
+        trackEvent("email_click", leadEventParams({
+          link_url: href,
+          location: ctaLocation(anchor),
+        }));
+      }
     };
 
     const onMessage = (event: MessageEvent) => {
+      // Best-effort only: Jobber does not document a public submit postMessage.
+      // Kept so a future documented signal can work without another deploy.
       if (!isJobberSuccessMessage(event.origin, event.data)) return;
-      trackEvent("generate_lead", {
-        ...pageContext(),
-        location: "estimate_form",
-      });
+      trackGenerateLead("jobber_postmessage");
     };
 
     document.addEventListener("click", onClick, true);

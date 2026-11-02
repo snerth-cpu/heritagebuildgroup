@@ -253,8 +253,8 @@ export const blackBoardAndBattenBarn: ProjectRecord = {
   description:
     "Black board-and-batten metal siding on an existing barn—shown from start through install to finish.",
   services: [
+    { name: "Barn Siding", href: "/barn-siding" },
     { name: "Metal Siding", href: "/metal-siding" },
-    { name: "Pole Buildings", href: "/pole-buildings" },
     { name: "Exterior Renovation", href: "/commercial" },
   ],
   images: [
