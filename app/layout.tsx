@@ -31,8 +31,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <main>{children}</main>
         <Footer />
         <MobileContactCta />
-        <ConversionTracker />
+        {/* GA bootstrap before ConversionTracker so thank-you generate_lead can queue immediately. */}
         <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />
+        <ConversionTracker />
       </body>
     </html>
   );

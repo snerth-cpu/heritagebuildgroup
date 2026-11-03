@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { captureAttribution, pageContext, readAttribution, trackEvent } from "@/lib/analytics";
+import { captureAttribution, ensureGtag, pageContext, readAttribution, trackEvent } from "@/lib/analytics";
 
 const JOBBER_CONTAINER_ID = "fdc5a674-3e03-4178-a0d2-29eb4a6a2613-5089699";
 const JOBBER_FORM_URL = "https://clienthub.getjobber.com/client_hubs/fdc5a674-3e03-4178-a0d2-29eb4a6a2613/public/work_request/embedded_work_request_form?form_id=5089699";
@@ -53,6 +53,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
     const container = document.getElementById(JOBBER_CONTAINER_ID);
     if (!container) return;
 
+    ensureGtag();
     captureAttribution();
     ensureJobberCss();
     injectJobberScript();
