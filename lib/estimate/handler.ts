@@ -42,7 +42,7 @@ function saveFailureResponse(error: unknown) {
 
   const hint =
     storageError?.code === "storage_unavailable"
-      ? "Storage unavailable on this host. On Vercel set BLOB_READ_WRITE_TOKEN (or NETLIFY_SITE_ID + NETLIFY_AUTH_TOKEN) and RESEND_API_KEY."
+      ? "Storage unavailable on this host. On Vercel connect a private Blob store (OIDC / BLOB_STORE_ID) or set Netlify Blobs credentials; keep RESEND_API_KEY for notify."
       : storageError?.causeDetail
         ? `Save failed (${storageError.code}).`
         : "Save failed on the server.";
