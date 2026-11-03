@@ -1,7 +1,14 @@
 "use client";
 
 import { useEffect } from "react";
-import { pageContext, readAttribution, trackEvent } from "@/lib/analytics";
+import {
+  captureAttribution,
+  isLeadSuccessLanding,
+  pageContext,
+  readAttribution,
+  trackEvent,
+  trackGenerateLeadOnce,
+} from "@/lib/analytics";
 
 const JOBBER_ORIGINS = new Set([
   "https://clienthub.getjobber.com",
@@ -10,20 +17,11 @@ const JOBBER_ORIGINS = new Set([
 ]);
 
 /**
- * Only fire generate_lead when Jobber is confirmed to send one of these, or when
- * the thank-you redirect lands with ?lead=success (configured in Jobber).
- * Do not treat iframe load, form open, or submit click as a lead.
+ * Jobber's work_request_embed_snippet.js only handles these parent messages:
+ * close | scrolltop | recaptcha-setup | <css height string>.
+ * It does not document a submit/success postMessage. Do not invent one.
  */
-const JOBBER_SUCCESS_SIGNALS = new Set([
-  "generate_lead",
-  "form_submitted",
-  "formsubmitted",
-  "work_request_submitted",
-  "request_submitted",
-  "submission_success",
-]);
-
-const LEAD_SUCCESS_KEY = "hbg_lead_success_tracked";
+const JOBBER_CONTROL_MESSAGES = new Set(["close", "scrolltop", "recaptcha-setup"]);
 
 function ctaLocation(anchor: Element) {
   if (anchor.closest("footer")) return "footer";
@@ -42,22 +40,6 @@ function protocolFromHref(href: string) {
   } catch {
     return "";
   }
-}
-
-function stringSignal(value: unknown) {
-  return typeof value === "string" ? value.trim().toLowerCase() : "";
-}
-
-function isJobberSuccessMessage(origin: string, data: unknown) {
-  if (!JOBBER_ORIGINS.has(origin)) return false;
-
-  const direct = stringSignal(data);
-  if (direct) return JOBBER_SUCCESS_SIGNALS.has(direct);
-  if (!data || typeof data !== "object") return false;
-
-  const record = data as Record<string, unknown>;
-  const candidates = [record.event, record.type, record.action, record.name, record.message, record.status];
-  return candidates.some((value) => JOBBER_SUCCESS_SIGNALS.has(stringSignal(value)));
 }
 
 function serviceFromPage() {
@@ -82,26 +64,24 @@ function leadEventParams(extra?: Record<string, string | undefined>) {
   };
 }
 
-function trackGenerateLead(source: "jobber_postmessage" | "thank_you_redirect") {
-  try {
-    if (sessionStorage.getItem(LEAD_SUCCESS_KEY) === "1") return;
-    sessionStorage.setItem(LEAD_SUCCESS_KEY, "1");
-  } catch {
-    /* still fire once this page load */
-  }
-  trackEvent("generate_lead", leadEventParams({ location: "estimate_form", lead_source: source }));
+function logJobberMessage(data: unknown) {
+  const direct = typeof data === "string" ? data : null;
+  if (direct && (JOBBER_CONTROL_MESSAGES.has(direct) || /^\d/.test(direct.trim()))) return;
+  // Safe diagnostic only — never maps these to generate_lead.
+  console.debug("[hbg][jobber-postmessage]", data);
 }
 
 export function ConversionTracker() {
   useEffect(() => {
-    // Verified path: Jobber thank-you / redirect URL with ?lead=success
-    try {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("lead") === "success") {
-        trackGenerateLead("thank_you_redirect");
-      }
-    } catch {
-      /* ignore */
+    captureAttribution();
+
+    // Confirmed success path: Jobber custom confirmation URL → /estimate/thanks
+    // (or legacy /estimate?lead=success). Embedded forms cannot use this redirect.
+    if (isLeadSuccessLanding(window.location.pathname, window.location.search)) {
+      const path = window.location.pathname.replace(/\/$/, "") || "/";
+      const source = path === "/estimate/thanks" ? "thank_you_page" : "thank_you_redirect";
+      const service = serviceFromPage();
+      void trackGenerateLeadOnce(source, service ? { service_slug: service } : undefined);
     }
 
     const onClick = (event: MouseEvent) => {
@@ -130,10 +110,8 @@ export function ConversionTracker() {
     };
 
     const onMessage = (event: MessageEvent) => {
-      // Best-effort only: Jobber does not document a public submit postMessage.
-      // Kept so a future documented signal can work without another deploy.
-      if (!isJobberSuccessMessage(event.origin, event.data)) return;
-      trackGenerateLead("jobber_postmessage");
+      if (!JOBBER_ORIGINS.has(event.origin)) return;
+      logJobberMessage(event.data);
     };
 
     document.addEventListener("click", onClick, true);

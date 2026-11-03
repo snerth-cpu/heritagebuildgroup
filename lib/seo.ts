@@ -11,6 +11,8 @@ export const BUSINESS_TRUST_LINE =
   "PA registered & fully insured · HIC #PA223621 · Pittsburgh region, Butler & Mercer Counties, nearby Ohio";
 export const SOCIAL_IMAGE = "/images/metal-exterior-wide.png";
 export const ESTIMATE_HREF = "/estimate#estimate-form";
+/** Jobber custom confirmation page (non-embed / share-link only). */
+export const ESTIMATE_THANKS_HREF = "/estimate/thanks";
 export const CONTACT_HREF = "/contact";
 export const HOME_TITLE = "HBG Construction | Metal Roofing, Siding & Pole Buildings";
 export const HOME_DESCRIPTION =
