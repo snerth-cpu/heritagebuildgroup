@@ -1,7 +1,6 @@
 import { randomUUID } from "crypto";
 import { mkdir, readdir, readFile, writeFile } from "fs/promises";
 import path from "path";
-import { getDeployStore, getStore } from "@netlify/blobs";
 import type { LeadPhoto, LeadRecord } from "./types";
 
 const LEADS_STORE_NAME = "hbg-estimate-leads";
@@ -31,7 +30,14 @@ export class LeadStorageError extends Error {
   }
 }
 
-type BlobStore = ReturnType<typeof getStore>;
+type BlobStore = {
+  get: (key: string, options?: { type?: string }) => Promise<string | null>;
+  set: (
+    key: string,
+    value: string | ArrayBuffer,
+    options?: { metadata?: Record<string, string> },
+  ) => Promise<unknown>;
+};
 
 type ResolvedStore = {
   store: BlobStore;
@@ -82,27 +88,59 @@ function explicitBlobsCredentials() {
 
 let cachedStore: ResolvedStore | null | undefined;
 let cachedStoreErrors: string[] = [];
+let blobsModulePromise: Promise<{
+  getStore: (input: unknown, options?: unknown) => BlobStore;
+  getDeployStore: (input?: unknown, options?: unknown) => BlobStore;
+} | null> | null = null;
+
+async function loadBlobsModule() {
+  if (!blobsModulePromise) {
+    blobsModulePromise = import("@netlify/blobs")
+      .then((mod) => ({
+        getStore: mod.getStore as unknown as (input: unknown, options?: unknown) => BlobStore,
+        getDeployStore: mod.getDeployStore as unknown as (
+          input?: unknown,
+          options?: unknown,
+        ) => BlobStore,
+      }))
+      .catch((error) => {
+        console.error("[estimate/store] failed to import @netlify/blobs:", errText(error));
+        return null;
+      });
+  }
+  return blobsModulePromise;
+}
 
 /**
  * Resolve a Netlify Blobs store.
  * On Netlify, prefer automatic site context and do NOT pass siteID/token first —
  * explicit credentials replace the injected runtime context and often break writes.
+ *
+ * Do not probe with store.get() during resolve — a hanging/misconfigured edge
+ * endpoint previously caused Netlify function timeouts (502/504).
  */
 async function resolveBlobStore(): Promise<ResolvedStore | null> {
   if (cachedStore !== undefined) return cachedStore;
 
   const errors: string[] = [];
+  const blobs = await loadBlobsModule();
+  if (!blobs) {
+    cachedStore = null;
+    cachedStoreErrors = ["import @netlify/blobs failed"];
+    return null;
+  }
+
   const attempts: Array<{ label: ResolvedStore["label"]; open: () => BlobStore }> = [];
 
   // 1) Automatic Netlify runtime context (Deploy Preview + production on Netlify).
   if (hasBlobsContext() || isNetlifyRuntime()) {
     attempts.push({
       label: "netlify-blobs",
-      open: () => getStore({ name: LEADS_STORE_NAME, consistency: "strong" }),
+      open: () => blobs.getStore(LEADS_STORE_NAME),
     });
     attempts.push({
       label: "netlify-deploy-blobs",
-      open: () => getDeployStore({ name: LEADS_STORE_NAME, consistency: "strong" }),
+      open: () => blobs.getDeployStore(LEADS_STORE_NAME),
     });
   }
 
@@ -112,9 +150,8 @@ async function resolveBlobStore(): Promise<ResolvedStore | null> {
     attempts.push({
       label: "netlify-blobs-token",
       open: () =>
-        getStore({
+        blobs.getStore({
           name: LEADS_STORE_NAME,
-          consistency: "strong",
           siteID: creds.siteID,
           token: creds.token,
         }),
@@ -125,15 +162,13 @@ async function resolveBlobStore(): Promise<ResolvedStore | null> {
   if (!attempts.length) {
     attempts.push({
       label: "netlify-blobs",
-      open: () => getStore({ name: LEADS_STORE_NAME, consistency: "strong" }),
+      open: () => blobs.getStore(LEADS_STORE_NAME),
     });
   }
 
   for (const attempt of attempts) {
     try {
       const store = attempt.open();
-      // Cheap connectivity check — missing keys return null; auth/context errors throw.
-      await store.get("__hbg_health__", { type: "text" });
       cachedStore = { store, label: attempt.label };
       cachedStoreErrors = [];
       return cachedStore;
@@ -269,6 +304,11 @@ export async function saveLead(
 
     return lead;
   } catch (error) {
+    // If the first Blobs backend opened but writes fail, clear cache so a later
+    // request can try deploy-store / token fallbacks.
+    if (backend.kind === "blobs") {
+      cachedStore = undefined;
+    }
     if (error instanceof LeadStorageError) throw error;
     throw new LeadStorageError("save_failed", "Could not persist the lead record.", errText(error));
   }
