@@ -74,7 +74,12 @@ export async function handleEstimateGet() {
   return json({
     ok: true,
     backend,
-    diagnostics,
+    diagnostics: {
+      ...diagnostics,
+      hasLeadsAdminToken: Boolean(process.env.LEADS_ADMIN_TOKEN),
+      hasResendApiKey: Boolean(process.env.RESEND_API_KEY),
+      hasEstimateFromEmail: Boolean(process.env.ESTIMATE_FROM_EMAIL),
+    },
     customerFacingProduction: isCustomerFacingProduction(),
   });
 }
@@ -138,26 +143,18 @@ export async function handleEstimatePost(request: Request) {
   try {
     saved = await saveLead(draft, photoPayload);
   } catch (error) {
-    // Email-first fallback when durable storage is unavailable (common on Vercel without
-    // Blob/Netlify tokens). Prefer not to lose the lead entirely.
+    // Still notify by email so the inquiry is not invisible to the business, but do NOT
+    // report website success without durable storage (requirement: save before success UI).
     const emailOnly: LeadRecord = { ...draft, photos: [] };
     const emails = await notifyEstimateEmails(emailOnly);
-    if (emails.staff.status === "sent" || emails.customer.status === "sent") {
-      console.error("[estimate] storage failed; lead delivered via email-only fallback", {
-        id,
-        storage: error instanceof LeadStorageError ? error.code : "unknown",
-        staffEmail: emails.staff.status,
-        customerEmail: emails.customer.status,
-      });
-      return json({
-        ok: true,
-        id,
-        emailStatus: emails.staff.status,
-        customerEmailStatus: emails.customer.status,
-        backend: "email-only",
-      });
-    }
-
+    console.error("[estimate] durable storage failed; emailed as emergency notify only", {
+      id,
+      storage: error instanceof LeadStorageError ? error.code : "unknown",
+      staffEmail: emails.staff.status,
+      customerEmail: emails.customer.status,
+      staffError: emails.staff.error,
+      customerError: emails.customer.error,
+    });
     return saveFailureResponse(error);
   }
 

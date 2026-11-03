@@ -530,3 +530,8 @@ export function storageDiagnostics() {
     blobErrors: cachedStoreErrors.slice(0, 3),
   };
 }
+
+/** Human-readable setup checklist for Vercel production (no secret values). */
+export function productionStorageReady() {
+  return Boolean(vercelBlobToken() || explicitBlobsCredentials() || !isServerlessReadonlyHost());
+}
