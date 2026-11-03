@@ -53,7 +53,6 @@ type ResolvedNetlifyStore = {
 type ResolvedVercelStore = {
   kind: "vercel";
   label: "vercel-blob";
-  token: string;
 };
 
 type ResolvedLocalStore = {
@@ -123,8 +122,11 @@ function explicitBlobsCredentials() {
   return null;
 }
 
-function vercelBlobToken() {
-  return env("BLOB_READ_WRITE_TOKEN") || env("VERCEL_BLOB_READ_WRITE_TOKEN") || null;
+/** Private Blob store connected via Vercel project OIDC (preferred). */
+function vercelBlobOidcConfigured() {
+  // BLOB_STORE_ID is injected when a Blob store is connected to the project.
+  // VERCEL_OIDC_TOKEN is issued automatically on Vercel; the SDK refreshes it.
+  return Boolean(env("BLOB_STORE_ID"));
 }
 
 let cachedNetlify: ResolvedNetlifyStore | null | undefined;
@@ -240,13 +242,13 @@ async function canWriteLocalFs() {
 }
 
 async function requireBackend(): Promise<ResolvedBackend> {
+  // Prefer Vercel private Blob + OIDC when the store is connected to this project.
+  if (vercelBlobOidcConfigured()) {
+    return { kind: "vercel", label: "vercel-blob" };
+  }
+
   const netlify = await resolveNetlifyBlobStore();
   if (netlify) return netlify;
-
-  const token = vercelBlobToken();
-  if (token) {
-    return { kind: "vercel", label: "vercel-blob", token };
-  }
 
   if (await canWriteLocalFs()) {
     return { kind: "local", label: "local-filesystem" };
@@ -254,7 +256,7 @@ async function requireBackend(): Promise<ResolvedBackend> {
 
   const detail =
     cachedStoreErrors.slice(0, 3).join(" | ") ||
-    "no Netlify Blobs / Vercel Blob token; filesystem not writable on this host";
+    "no Vercel Blob store (BLOB_STORE_ID) / Netlify Blobs; filesystem not writable on this host";
   throw new LeadStorageError(
     "storage_unavailable",
     "Lead storage is unavailable on this host.",
@@ -276,17 +278,19 @@ async function blobsGet(store: BlobStore, key: string) {
   );
 }
 
-async function vercelPut(
-  token: string,
-  key: string,
-  body: string | Buffer,
-  contentType: string,
-) {
+async function streamToText(stream: ReadableStream<Uint8Array>) {
+  return new Response(stream).text();
+}
+
+/**
+ * Private Vercel Blob via OIDC — do not pass BLOB_READ_WRITE_TOKEN.
+ * The SDK reads VERCEL_OIDC_TOKEN + BLOB_STORE_ID from the environment.
+ */
+async function vercelPut(key: string, body: string | Buffer, contentType: string) {
   const { put } = await import("@vercel/blob");
   return withTimeout(
     put(`${VERCEL_BLOB_PREFIX}${key}`, body, {
       access: "private",
-      token,
       contentType,
       addRandomSuffix: false,
       allowOverwrite: true,
@@ -296,23 +300,16 @@ async function vercelPut(
   );
 }
 
-async function vercelGetText(token: string, key: string): Promise<string | null> {
-  const { list } = await import("@vercel/blob");
-  const prefix = `${VERCEL_BLOB_PREFIX}${key}`;
-  const listed = await withTimeout(
-    list({ prefix, token, limit: 5 }),
-    BLOBS_OP_TIMEOUT_MS,
-    `vercel.blob.list(${key})`,
+async function vercelGetText(key: string): Promise<string | null> {
+  const { get } = await import("@vercel/blob");
+  const pathname = `${VERCEL_BLOB_PREFIX}${key}`;
+  const result = await withTimeout(
+    get(pathname, { access: "private", useCache: false }),
+    BLOBS_OP_TIMEOUT_MS * 2,
+    `vercel.blob.get(${key})`,
   );
-  const match = listed.blobs.find((b) => b.pathname === prefix) || listed.blobs[0];
-  if (!match) return null;
-  const res = await withTimeout(
-    fetch(match.url, { headers: { Authorization: `Bearer ${token}` } }),
-    BLOBS_OP_TIMEOUT_MS,
-    `vercel.blob.fetch(${key})`,
-  );
-  if (!res.ok) return null;
-  return res.text();
+  if (!result || result.statusCode !== 200 || !result.stream) return null;
+  return streamToText(result.stream);
 }
 
 async function readIndex(backend: ResolvedBackend): Promise<string[]> {
@@ -328,7 +325,7 @@ async function readIndex(backend: ResolvedBackend): Promise<string[]> {
   }
 
   if (backend.kind === "vercel") {
-    const raw = await vercelGetText(backend.token, INDEX_KEY);
+    const raw = await vercelGetText(INDEX_KEY);
     if (!raw) return [];
     try {
       const parsed = JSON.parse(raw) as string[];
@@ -355,7 +352,7 @@ async function writeIndex(backend: ResolvedBackend, ids: string[]) {
     return;
   }
   if (backend.kind === "vercel") {
-    await vercelPut(backend.token, INDEX_KEY, body, "application/json");
+    await vercelPut(INDEX_KEY, body, "application/json");
     return;
   }
   const root = localRoot();
@@ -383,7 +380,7 @@ export async function saveLead(
           metadata: { contentType: file.contentType, filename: safeName },
         });
       } else if (backend.kind === "vercel") {
-        await vercelPut(backend.token, key, buffer, file.contentType || "application/octet-stream");
+        await vercelPut(key, buffer, file.contentType || "application/octet-stream");
       } else {
         const root = localRoot();
         const dir = path.join(root, "photos", id);
@@ -404,7 +401,7 @@ export async function saveLead(
     if (backend.kind === "netlify") {
       await blobsSet(backend.store, `leads/${id}.json`, payload);
     } else if (backend.kind === "vercel") {
-      await vercelPut(backend.token, `leads/${id}.json`, payload, "application/json");
+      await vercelPut(`leads/${id}.json`, payload, "application/json");
     } else {
       const root = localRoot();
       await mkdir(path.join(root, "leads"), { recursive: true });
@@ -435,7 +432,7 @@ export async function updateLead(lead: LeadRecord): Promise<LeadRecord> {
     if (backend.kind === "netlify") {
       await blobsSet(backend.store, `leads/${lead.id}.json`, payload);
     } else if (backend.kind === "vercel") {
-      await vercelPut(backend.token, `leads/${lead.id}.json`, payload, "application/json");
+      await vercelPut(`leads/${lead.id}.json`, payload, "application/json");
     } else {
       const root = localRoot();
       await mkdir(path.join(root, "leads"), { recursive: true });
@@ -464,7 +461,7 @@ export async function getLead(id: string): Promise<LeadRecord | null> {
   }
 
   if (backend.kind === "vercel") {
-    const raw = await vercelGetText(backend.token, `leads/${id}.json`);
+    const raw = await vercelGetText(`leads/${id}.json`);
     if (!raw) return null;
     try {
       return JSON.parse(raw) as LeadRecord;
@@ -526,7 +523,13 @@ export function storageDiagnostics() {
     vercel: Boolean(env("VERCEL")),
     hasBlobsContext: hasBlobsContext(),
     hasExplicitCredentials: Boolean(explicitBlobsCredentials()),
-    hasVercelBlobToken: Boolean(vercelBlobToken()),
+    hasBlobStoreId: Boolean(env("BLOB_STORE_ID")),
+    hasOidcToken: Boolean(env("VERCEL_OIDC_TOKEN")),
     blobErrors: cachedStoreErrors.slice(0, 3),
   };
+}
+
+/** True when a durable backend can be selected (no secret values). */
+export function productionStorageReady() {
+  return Boolean(vercelBlobOidcConfigured() || explicitBlobsCredentials() || !isServerlessReadonlyHost());
 }

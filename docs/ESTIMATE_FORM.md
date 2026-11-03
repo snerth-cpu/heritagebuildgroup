@@ -58,8 +58,9 @@ Street, city, state, and ZIP remain **required** for manual entry. Apt/unit is o
 | `SMTP_HOST` / `SMTP_USER` / `SMTP_PASS` | Alt to Resend | SMTP credentials |
 | `SMTP_WEBHOOK_URL` | Optional | HTTP relay if using SMTP_* without nodemailer |
 | `LEADS_ADMIN_TOKEN` | Recommended | Bearer token for `GET /api/leads` |
-| `BLOB_READ_WRITE_TOKEN` | **Required on Vercel** for durable save | [Vercel Blob](https://vercel.com/docs/storage/vercel-blob) read/write token |
-| `NETLIFY_SITE_ID` + `NETLIFY_AUTH_TOKEN` | Alt durable store | Use Netlify Blobs from Vercel/local instead of Vercel Blob |
+| `BLOB_STORE_ID` (+ `VERCEL_OIDC_TOKEN`) | **Required on Vercel** (auto) | Injected when a **private** Blob store is connected with OIDC — no `BLOB_READ_WRITE_TOKEN` |
+| `BLOB_WEBHOOK_PUBLIC_KEY` | Auto | Injected with the store; unused by the estimate form |
+| `NETLIFY_SITE_ID` + `NETLIFY_AUTH_TOKEN` | Alt durable store | Netlify Blobs from non-Vercel hosts |
 | `NETLIFY_BLOBS_SITE_ID` / `NETLIFY_BLOBS_TOKEN` | Aliases | Same as above |
 | `LEADS_LOCAL_DIR` | Optional | Local/dev store path (default `.data/leads`) |
 | `NEXT_PUBLIC_GA_ID` | Optional | Defaults to `G-JJ9HCGZZEM` |
@@ -150,7 +151,24 @@ If you also use **Vercel** for production, add the same three variables there �
 
 - Hosting today: Vercel production + Netlify Deploy Previews (`@netlify/plugin-nextjs`).
 - **Netlify (preview + prod):** `/api/estimate` is rewritten to a native Netlify Function (`netlify/functions/estimate.mts`) so `@netlify/blobs` gets automatic site context. No manual Blobs tokens are required on Netlify. Local `.data/leads` is **not** used on Netlify’s read-only filesystem.
-- **Vercel production (current live host):** `/api/estimate` runs as a Next.js route. Durable save needs **`BLOB_READ_WRITE_TOKEN`** (Vercel Blob) **or** `NETLIFY_SITE_ID` + `NETLIFY_AUTH_TOKEN`. Also set **`RESEND_API_KEY`** + **`ESTIMATE_FROM_EMAIL`** on Vercel (Production) — preview-only Netlify env does not apply to `www.heritagebuildgroup.com`.
-- Without durable storage, the handler falls back to **email-only** success if Resend can deliver to scott@ and/or the customer; otherwise the form shows “We could not save your request…”.
-- Email is still best-effort after a successful Blob/FS save — a failed notify never drops a stored lead.
+- **Vercel production (current live host):** `/api/estimate` runs as a Next.js route.
+- **Required Production env on Vercel** (Netlify preview env does **not** apply to `www.heritagebuildgroup.com`):
+  1. `RESEND_API_KEY`
+  2. `ESTIMATE_FROM_EMAIL` (verified domain sender)
+  3. `ESTIMATE_NOTIFY_EMAIL` (optional; defaults to `scott@heritagebuildgroup.com`)
+  4. Private Blob store connected to the project (OIDC) — Vercel injects `BLOB_STORE_ID` + `VERCEL_OIDC_TOKEN` (do **not** require `BLOB_READ_WRITE_TOKEN`)
+  5. `LEADS_ADMIN_TOKEN` (random secret for `GET /api/leads` export)
+- Lead JSON + photos are stored with `access: "private"` under `hbg-estimate-leads/…`.
+- **Success UI / `generate_lead` only after durable storage succeeds.** If storage is missing, the API still emails scott@/customer as an emergency notify when Resend works, but the website returns an error (so we never claim success without a saved record).
+- After a successful Blob save, email notify is best-effort — a failed email never drops the stored lead.
+
+### Retrieve / export leads (after `LEADS_ADMIN_TOKEN` + Blob are set)
+
+```bash
+curl -H "Authorization: Bearer $LEADS_ADMIN_TOKEN" \
+  "https://www.heritagebuildgroup.com/api/leads?limit=50"
+
+curl -H "Authorization: Bearer $LEADS_ADMIN_TOKEN" \
+  "https://www.heritagebuildgroup.com/api/leads?id=<uuid>"
+```
 - Never commit secrets. `.env*` is gitignored.
