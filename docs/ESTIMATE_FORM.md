@@ -11,7 +11,7 @@ This branch ships a first-party `/estimate` form aligned with the archived Jobbe
 | `POST /api/estimate` | Validate → **save first** → email notify |
 | `GET /api/leads` | Admin retrieval (`LEADS_ADMIN_TOKEN`) |
 | `lib/estimate/store.ts` | Durable storage (Netlify Blobs or `.data/leads`) |
-| `lib/estimate/email.ts` | Resend or SMTP webhook notify |
+| `lib/estimate/email.ts` | Staff notify to scott@ + customer confirmation (Resend or SMTP) |
 | `lib/analytics.ts` | `form_start` + `generate_lead` once per saved id |
 
 ## Form fields (vs Jobber)
@@ -52,9 +52,9 @@ Street, city, state, and ZIP remain **required** for manual entry. Apt/unit is o
 
 | Variable | Required? | Purpose |
 | --- | --- | --- |
-| `RESEND_API_KEY` | Recommended | Send lead email via [Resend](https://resend.com) (free tier) |
-| `ESTIMATE_FROM_EMAIL` | Optional | Verified from-address (default Resend onboarding address) |
-| `ESTIMATE_NOTIFY_EMAIL` | Optional | Default `scott@heritagebuildgroup.com` |
+| `RESEND_API_KEY` | **Required for email** | Send staff + customer emails via [Resend](https://resend.com) (free tier) |
+| `ESTIMATE_FROM_EMAIL` | Required for production mail | Verified from-address, e.g. `HBG Construction <quotes@heritagebuildgroup.com>` |
+| `ESTIMATE_NOTIFY_EMAIL` | Optional | Staff inbox — default `scott@heritagebuildgroup.com` |
 | `SMTP_HOST` / `SMTP_USER` / `SMTP_PASS` | Alt to Resend | SMTP credentials |
 | `SMTP_WEBHOOK_URL` | Optional | HTTP relay if using SMTP_* without nodemailer |
 | `LEADS_ADMIN_TOKEN` | Recommended | Bearer token for `GET /api/leads` |
@@ -94,11 +94,40 @@ Locally: inspect `.data/leads/` (gitignored).
 3. Reload / revisit success URL → **no** second `generate_lead`.
 4. Failed validation → no `generate_lead`.
 
-## Email setup (Resend)
+## Email setup (Resend) — so Scott + the customer both get mail
 
-1. Create a free Resend account; verify `heritagebuildgroup.com` (or use the onboarding sender for tests).
-2. Set `RESEND_API_KEY` (+ optional `ESTIMATE_FROM_EMAIL`) in Vercel/Netlify env.
-3. Deploy; submit a TEST lead; confirm inbox + stored lead.
+After a successful save the form sends **two** emails (each best-effort; a failed email never drops the saved lead):
+
+1. **Staff notify** → `scott@heritagebuildgroup.com` with the customer’s details  
+2. **Customer confirmation** → the email address the customer entered  
+
+### A. Create Resend + API key
+
+1. Sign up at [https://resend.com](https://resend.com) (free tier is enough).
+2. Open **API Keys** → **Create API Key** → copy the key (`re_…`).
+3. **Domains** → **Add Domain** → `heritagebuildgroup.com`  
+   Add the DNS records Resend shows (SPF/DKIM). Wait until the domain shows **Verified**.  
+   Without a verified domain, Resend only allows sending to your own Resend-login email using `onboarding@resend.dev` — customers and scott@ will **not** receive real mail.
+
+### B. Add env vars on Netlify (primary host)
+
+1. Netlify → your site (`heritagebuildgroup` / meek-hotteok…) → **Site configuration** → **Environment variables**.
+2. Add:
+   - `RESEND_API_KEY` = `re_…` (secret; not `NEXT_PUBLIC_`)
+   - `ESTIMATE_FROM_EMAIL` = `HBG Construction <quotes@heritagebuildgroup.com>`  
+     (use an address on the **verified** domain)
+   - Optional: `ESTIMATE_NOTIFY_EMAIL` = `scott@heritagebuildgroup.com` (this is already the default)
+3. Scope variables to **Production** and **Deploy Previews** (so PR #18 preview can send mail too).
+4. **Trigger a redeploy** of the deploy preview / production after saving env vars (env changes do not apply to an already-built deploy).
+
+If you also use **Vercel** for production, add the same three variables there → Settings → Environment Variables → Production (and Preview if needed) → redeploy.
+
+### C. Confirm it works
+
+1. Submit a TEST lead on the preview with your real email as the customer email.
+2. You should receive the short confirmation.
+3. `scott@heritagebuildgroup.com` should receive `[HBG Quote] …` with name, phone, email, address, project type, and description.
+4. If staff/customer mail is missing, check Netlify function logs for `staffEmail=` / `customerEmail=` and Resend’s **Logs** dashboard for bounce/reject reasons.
 
 ## Fees / third parties
 

@@ -1,6 +1,12 @@
+import { BUSINESS_PHONE } from "@/lib/seo";
 import { PROJECT_TYPE_LABELS, type LeadRecord } from "./types";
 
 export type EmailResult = { status: "sent" | "skipped" | "failed"; error?: string };
+
+export type NotifyEmailsResult = {
+  staff: EmailResult;
+  customer: EmailResult;
+};
 
 function leadEmailBody(lead: LeadRecord) {
   const lines = [
@@ -28,6 +34,27 @@ function leadEmailBody(lead: LeadRecord) {
     JSON.stringify(lead.attribution || {}, null, 2),
   ];
   return lines.join("\n");
+}
+
+function customerConfirmationBody(lead: LeadRecord) {
+  const project = PROJECT_TYPE_LABELS[lead.projectType];
+  const location = [lead.address, lead.city, lead.state, lead.zip].filter(Boolean).join(", ");
+  return [
+    `Hi ${lead.name.split(/\s+/)[0] || "there"},`,
+    "",
+    "Thanks for requesting a quote from HBG Construction. We received your request and will follow up using the phone or email you provided.",
+    "",
+    "What you submitted:",
+    `• Project type: ${project}`,
+    `• Location: ${location}`,
+    `• Reference: ${lead.id.slice(0, 8)}`,
+    "",
+    "Questions in the meantime?",
+    `Call us at ${BUSINESS_PHONE}.`,
+    "",
+    "— HBG Construction",
+    "Heritage Build Group LLC",
+  ].join("\n");
 }
 
 async function sendViaResend(to: string, subject: string, text: string): Promise<EmailResult> {
@@ -60,9 +87,6 @@ async function sendViaSmtp(to: string, subject: string, text: string): Promise<E
     return { status: "skipped", error: "SMTP_* not fully configured" };
   }
 
-  // Lightweight SMTP without nodemailer dependency: use Resend-style HTTP if SMTP_URL points to a relay,
-  // otherwise document that SMTP needs nodemailer. Prefer Resend for this stack.
-  // For environments with only SMTP, we attempt a minimal TCP-less approach via fetch to a webhook if set.
   if (process.env.SMTP_WEBHOOK_URL) {
     const res = await fetch(process.env.SMTP_WEBHOOK_URL, {
       method: "POST",
@@ -88,12 +112,7 @@ async function sendViaSmtp(to: string, subject: string, text: string): Promise<E
   };
 }
 
-/** Notify scott@… after the lead is already saved. Never throws. */
-export async function notifyLeadEmail(lead: LeadRecord): Promise<EmailResult> {
-  const to = process.env.ESTIMATE_NOTIFY_EMAIL || "scott@heritagebuildgroup.com";
-  const subject = `[HBG Quote] ${PROJECT_TYPE_LABELS[lead.projectType]} — ${lead.zip} (${lead.id.slice(0, 8)})`;
-  const text = leadEmailBody(lead);
-
+async function dispatchEmail(to: string, subject: string, text: string): Promise<EmailResult> {
   try {
     if (process.env.RESEND_API_KEY) {
       return await sendViaResend(to, subject, text);
@@ -106,4 +125,27 @@ export async function notifyLeadEmail(lead: LeadRecord): Promise<EmailResult> {
     const message = error instanceof Error ? error.message : "Unknown email error";
     return { status: "failed", error: message };
   }
+}
+
+/** Staff notify to scott@… after the lead is already saved. Never throws. */
+export async function notifyLeadEmail(lead: LeadRecord): Promise<EmailResult> {
+  const to = process.env.ESTIMATE_NOTIFY_EMAIL || "scott@heritagebuildgroup.com";
+  const subject = `[HBG Quote] ${PROJECT_TYPE_LABELS[lead.projectType]} — ${lead.zip} (${lead.id.slice(0, 8)})`;
+  return dispatchEmail(to, subject, leadEmailBody(lead));
+}
+
+/** Customer confirmation — no pricing/promises; never throws. */
+export async function sendCustomerConfirmation(lead: LeadRecord): Promise<EmailResult> {
+  if (!lead.email) {
+    return { status: "skipped", error: "No customer email" };
+  }
+  const subject = "We received your HBG Construction quote request";
+  return dispatchEmail(lead.email, subject, customerConfirmationBody(lead));
+}
+
+/** Staff + customer emails after save. Each is independent; never throws. */
+export async function notifyEstimateEmails(lead: LeadRecord): Promise<NotifyEmailsResult> {
+  const staff = await notifyLeadEmail(lead);
+  const customer = await sendCustomerConfirmation(lead);
+  return { staff, customer };
 }

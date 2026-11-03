@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { notifyLeadEmail } from "./email";
+import { notifyEstimateEmails, notifyLeadEmail } from "./email";
 import { checkRateLimit, clientKeyFromRequest } from "./rate-limit";
 import {
   LeadStorageError,
@@ -159,11 +159,13 @@ export async function handleEstimatePost(request: Request) {
   }
 
   // Email is best-effort after a successful save — never roll back or fail the request.
-  const emailResult = await notifyLeadEmail(saved);
+  const emails = await notifyEstimateEmails(saved);
   const withEmail: LeadRecord = {
     ...saved,
-    emailStatus: emailResult.status,
-    emailError: emailResult.error,
+    emailStatus: emails.staff.status,
+    emailError: emails.staff.error,
+    customerEmailStatus: emails.customer.status,
+    customerEmailError: emails.customer.error,
   };
   try {
     saved = await updateLead(withEmail);
@@ -174,8 +176,10 @@ export async function handleEstimatePost(request: Request) {
 
   const backend = await storageBackendLabel();
   console.info(
-    `[estimate] saved ${saved.id} via ${backend}; email=${saved.emailStatus}${
+    `[estimate] saved ${saved.id} via ${backend}; staffEmail=${saved.emailStatus}${
       saved.emailError ? ` (${saved.emailError})` : ""
+    }; customerEmail=${saved.customerEmailStatus || "n/a"}${
+      saved.customerEmailError ? ` (${saved.customerEmailError})` : ""
     }`,
   );
 
@@ -183,6 +187,7 @@ export async function handleEstimatePost(request: Request) {
     ok: true,
     id: saved.id,
     emailStatus: saved.emailStatus,
+    customerEmailStatus: saved.customerEmailStatus,
     backend,
   });
 }

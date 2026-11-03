@@ -46,8 +46,12 @@ export type LeadRecord = {
   consent: true;
   attribution: LeadAttribution;
   photos: LeadPhoto[];
+  /** Staff notify (scott@) status. */
   emailStatus: "sent" | "skipped" | "failed";
   emailError?: string;
+  /** Customer confirmation email status. */
+  customerEmailStatus?: "sent" | "skipped" | "failed";
+  customerEmailError?: string;
   userAgent?: string;
   /** Truncated / hashed client hint for rate-limit diagnostics only — not PII. */
   clientKey?: string;

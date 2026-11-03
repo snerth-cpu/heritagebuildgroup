@@ -202,8 +202,8 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
         <p className="eyebrow">REQUEST RECEIVED</p>
         <h2>Thanks — we got your quote request.</h2>
         <p>
-          We will follow up using the phone and email you provided. Reference:{" "}
-          <code>{submittedId.slice(0, 8)}</code>
+          A confirmation is on the way to the email you entered. We will also follow up by phone or
+          email. Reference: <code>{submittedId.slice(0, 8)}</code>
         </p>
         <button
           type="button"
