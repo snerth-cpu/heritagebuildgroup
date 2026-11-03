@@ -5,6 +5,8 @@ import type { LeadPhoto, LeadRecord } from "./types";
 
 const LEADS_STORE_NAME = "hbg-estimate-leads";
 const INDEX_KEY = "index.json";
+/** Blobs calls that hang (missing/broken Netlify context) must not freeze the function. */
+const BLOBS_OP_TIMEOUT_MS = 4000;
 
 export type StoredPhoto = {
   filename: string;
@@ -58,6 +60,24 @@ function errText(error: unknown) {
   return String(error).slice(0, 400);
 }
 
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new LeadStorageError("blobs_timeout", `Timed out during ${label} after ${ms}ms`));
+    }, ms);
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (error) => {
+        clearTimeout(timer);
+        reject(error);
+      },
+    );
+  });
+}
+
 function hasBlobsContext() {
   const globalContext = (globalThis as { netlifyBlobsContext?: unknown }).netlifyBlobsContext;
   return Boolean(globalContext || env("NETLIFY_BLOBS_CONTEXT"));
@@ -95,18 +115,20 @@ let blobsModulePromise: Promise<{
 
 async function loadBlobsModule() {
   if (!blobsModulePromise) {
-    blobsModulePromise = import("@netlify/blobs")
-      .then((mod) => ({
+    blobsModulePromise = withTimeout(
+      import("@netlify/blobs").then((mod) => ({
         getStore: mod.getStore as unknown as (input: unknown, options?: unknown) => BlobStore,
         getDeployStore: mod.getDeployStore as unknown as (
           input?: unknown,
           options?: unknown,
         ) => BlobStore,
-      }))
-      .catch((error) => {
-        console.error("[estimate/store] failed to import @netlify/blobs:", errText(error));
-        return null;
-      });
+      })),
+      BLOBS_OP_TIMEOUT_MS,
+      "import(@netlify/blobs)",
+    ).catch((error) => {
+      console.error("[estimate/store] failed to import @netlify/blobs:", errText(error));
+      return null;
+    });
   }
   return blobsModulePromise;
 }
@@ -115,25 +137,36 @@ async function loadBlobsModule() {
  * Resolve a Netlify Blobs store.
  * On Netlify, prefer automatic site context and do NOT pass siteID/token first —
  * explicit credentials replace the injected runtime context and often break writes.
- *
- * Do not probe with store.get() during resolve — a hanging/misconfigured edge
- * endpoint previously caused Netlify function timeouts (502/504).
  */
 async function resolveBlobStore(): Promise<ResolvedStore | null> {
   if (cachedStore !== undefined) return cachedStore;
 
   const errors: string[] = [];
+
+  // Fast path: without Blobs context or explicit credentials, skip Blobs entirely.
+  // Calling getStore() when context is missing can hang inside Next-on-Netlify.
+  const creds = explicitBlobsCredentials();
+  if (!hasBlobsContext() && !creds) {
+    cachedStore = null;
+    cachedStoreErrors = [
+      isNetlifyRuntime()
+        ? "NETLIFY_BLOBS_CONTEXT missing in Next runtime (no Blobs auto-context)"
+        : "not on Netlify and no NETLIFY_SITE_ID/NETLIFY_AUTH_TOKEN",
+    ];
+    console.error("[estimate/store] skipping Blobs:", cachedStoreErrors[0]);
+    return null;
+  }
+
   const blobs = await loadBlobsModule();
   if (!blobs) {
     cachedStore = null;
-    cachedStoreErrors = ["import @netlify/blobs failed"];
+    cachedStoreErrors = ["import @netlify/blobs failed or timed out"];
     return null;
   }
 
   const attempts: Array<{ label: ResolvedStore["label"]; open: () => BlobStore }> = [];
 
-  // 1) Automatic Netlify runtime context (Deploy Preview + production on Netlify).
-  if (hasBlobsContext() || isNetlifyRuntime()) {
+  if (hasBlobsContext()) {
     attempts.push({
       label: "netlify-blobs",
       open: () => blobs.getStore(LEADS_STORE_NAME),
@@ -144,8 +177,6 @@ async function resolveBlobStore(): Promise<ResolvedStore | null> {
     });
   }
 
-  // 2) Explicit token path for off-Netlify hosts (e.g. Vercel) or local tooling.
-  const creds = explicitBlobsCredentials();
   if (creds) {
     attempts.push({
       label: "netlify-blobs-token",
@@ -155,14 +186,6 @@ async function resolveBlobStore(): Promise<ResolvedStore | null> {
           siteID: creds.siteID,
           token: creds.token,
         }),
-    });
-  }
-
-  // 3) Last chance: try automatic getStore even if env detection missed Netlify.
-  if (!attempts.length) {
-    attempts.push({
-      label: "netlify-blobs",
-      open: () => blobs.getStore(LEADS_STORE_NAME),
     });
   }
 
@@ -217,9 +240,23 @@ async function requireBackend(): Promise<
   );
 }
 
+async function blobsSet(store: BlobStore, key: string, value: string | ArrayBuffer, options?: {
+  metadata?: Record<string, string>;
+}) {
+  await withTimeout(Promise.resolve(store.set(key, value, options)), BLOBS_OP_TIMEOUT_MS, `blobs.set(${key})`);
+}
+
+async function blobsGet(store: BlobStore, key: string) {
+  return withTimeout(
+    Promise.resolve(store.get(key, { type: "text" })),
+    BLOBS_OP_TIMEOUT_MS,
+    `blobs.get(${key})`,
+  );
+}
+
 async function readIndex(store: BlobStore | null): Promise<string[]> {
   if (store) {
-    const raw = await store.get(INDEX_KEY, { type: "text" });
+    const raw = await blobsGet(store, INDEX_KEY);
     if (!raw) return [];
     try {
       const parsed = JSON.parse(raw) as string[];
@@ -242,7 +279,7 @@ async function readIndex(store: BlobStore | null): Promise<string[]> {
 async function writeIndex(store: BlobStore | null, ids: string[]) {
   const body = JSON.stringify(ids.slice(0, 5000));
   if (store) {
-    await store.set(INDEX_KEY, body);
+    await blobsSet(store, INDEX_KEY, body);
     return;
   }
   const root = localRoot();
@@ -266,9 +303,8 @@ export async function saveLead(
       const key = `photos/${id}/${i}-${safeName}`;
       const buffer = Buffer.from(file.bytes);
       if (store) {
-        // Netlify Blobs accepts ArrayBuffer; Buffer typing is stricter under TS 5.x.
         const ab = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
-        await store.set(key, ab as ArrayBuffer, {
+        await blobsSet(store, key, ab as ArrayBuffer, {
           metadata: { contentType: file.contentType, filename: safeName },
         });
       } else {
@@ -289,7 +325,7 @@ export async function saveLead(
     const payload = JSON.stringify(lead, null, 2);
 
     if (store) {
-      await store.set(`leads/${id}.json`, payload);
+      await blobsSet(store, `leads/${id}.json`, payload);
     } else {
       const root = localRoot();
       await mkdir(path.join(root, "leads"), { recursive: true });
@@ -304,8 +340,6 @@ export async function saveLead(
 
     return lead;
   } catch (error) {
-    // If the first Blobs backend opened but writes fail, clear cache so a later
-    // request can try deploy-store / token fallbacks.
     if (backend.kind === "blobs") {
       cachedStore = undefined;
     }
@@ -320,7 +354,7 @@ export async function updateLead(lead: LeadRecord): Promise<LeadRecord> {
   const payload = JSON.stringify(lead, null, 2);
   try {
     if (backend.kind === "blobs") {
-      await backend.store.set(`leads/${lead.id}.json`, payload);
+      await blobsSet(backend.store, `leads/${lead.id}.json`, payload);
     } else {
       const root = localRoot();
       await mkdir(path.join(root, "leads"), { recursive: true });
@@ -339,7 +373,7 @@ export async function getLead(id: string): Promise<LeadRecord | null> {
   if (!backend) return null;
 
   if (backend.kind === "blobs") {
-    const raw = await backend.store.get(`leads/${id}.json`, { type: "text" });
+    const raw = await blobsGet(backend.store, `leads/${id}.json`);
     if (!raw) return null;
     try {
       return JSON.parse(raw) as LeadRecord;
@@ -369,7 +403,6 @@ export async function listLeads(limit = 50): Promise<LeadRecord[]> {
     if (lead) leads.push(lead);
   }
 
-  // Local fallback if index missing but files exist
   if (!leads.length && !store) {
     try {
       const dir = path.join(localRoot(), "leads");

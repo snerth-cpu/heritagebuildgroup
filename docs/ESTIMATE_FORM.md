@@ -118,7 +118,7 @@ Locally: inspect `.data/leads/` (gitignored).
 ## Deploy notes
 
 - Hosting today: Vercel production + Netlify Deploy Previews (`@netlify/plugin-nextjs`).
-- **Netlify (preview + prod):** `@netlify/blobs` uses automatic site context (`NETLIFY_BLOBS_CONTEXT`). No manual Blobs tokens are required on Netlify. Local `.data/leads` is **not** used on Netlify’s read-only filesystem — if Blobs context is missing the API returns a clear save error instead of writing to a read-only path.
-- **Vercel / off-Netlify:** set `NETLIFY_SITE_ID` + `NETLIFY_AUTH_TOKEN` (or `NETLIFY_BLOBS_*` aliases) for durable Blobs. Without them, local FS is used only when writable (local/dev); serverless hosts without Blobs will return a save error.
-- Email (`RESEND_API_KEY` / SMTP) is optional — leads still save when email is skipped/failed.
+- **Netlify (preview + prod):** `/api/estimate` is rewritten to a native Netlify Function (`netlify/functions/estimate.mts`) so `@netlify/blobs` gets automatic site context. No manual Blobs tokens are required on Netlify. Local `.data/leads` is **not** used on Netlify’s read-only filesystem.
+- **Vercel / off-Netlify:** the Next.js `app/api/estimate` route handles POSTs. Set `NETLIFY_SITE_ID` + `NETLIFY_AUTH_TOKEN` (or `NETLIFY_BLOBS_*` aliases) for durable Blobs. Without them, local FS is used when writable; otherwise the handler tries an email-only fallback, then returns a clear save error.
+- Email (`RESEND_API_KEY` / SMTP) is optional when Blobs/FS save works — leads still save when email is skipped/failed.
 - Never commit secrets. `.env*` is gitignored.
