@@ -27,8 +27,8 @@ export default async function Page({ searchParams }: PageProps) {
           <p className="eyebrow">REQUEST A QUOTE</p>
           <h1>TELL US ABOUT<br />YOUR PROJECT.</h1>
           <p>
-            Share your name, phone, email, project street address and ZIP, and what you need built or
-            replaced. Photos and sizes help when you have them.
+            Share your name, email, phone, project address, and what you need built or replaced.
+            Optional photos help when you have them.
           </p>
           {selected ? (
             <p className="estimate-selected" role="status">
@@ -69,16 +69,15 @@ export default async function Page({ searchParams }: PageProps) {
             <p>
               <strong>Required</strong>
               <br />
-              Name · Phone · Email · Street address · ZIP · Property type · Project type · Work type ·
-              Timeline · Description
+              Name · Email · Phone · Street · City · State · ZIP · Project type · Details
             </p>
           </div>
           <div className="estimate__aside">
             <span>02</span>
             <p>
-              <strong>Helpful</strong>
+              <strong>Optional</strong>
               <br />
-              City / state (filled from address) · Approx. size · Photos
+              Apt / unit · Photos
             </p>
           </div>
         </aside>

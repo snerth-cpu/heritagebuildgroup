@@ -1,25 +1,13 @@
-export const PROPERTY_TYPES = ["residential", "commercial"] as const;
-export const WORK_TYPES = ["new_installation", "replacement", "renovation"] as const;
 export const PROJECT_TYPES = [
   "metal_roofing",
   "metal_siding",
   "board_and_batten",
   "pole_building",
+  "garage",
   "other",
 ] as const;
-export const TIMELINES = [
-  "asap",
-  "1_3_months",
-  "3_6_months",
-  "6_plus_months",
-  "flexible",
-  "not_sure",
-] as const;
 
-export type PropertyType = (typeof PROPERTY_TYPES)[number];
-export type WorkType = (typeof WORK_TYPES)[number];
 export type ProjectType = (typeof PROJECT_TYPES)[number];
-export type Timeline = (typeof TIMELINES)[number];
 
 export type LeadAttribution = {
   utm_source?: string;
@@ -48,15 +36,12 @@ export type LeadRecord = {
   phone: string;
   email: string;
   address: string;
+  unit?: string;
   city?: string;
   state?: string;
   zip: string;
-  propertyType: PropertyType;
   projectType: ProjectType;
-  workType: WorkType;
   description: string;
-  timeline: Timeline;
-  projectSize?: string;
   consent: true;
   attribution: LeadAttribution;
   photos: LeadPhoto[];
@@ -73,15 +58,12 @@ export type EstimateFieldErrors = Partial<
     | "phone"
     | "email"
     | "address"
+    | "unit"
     | "city"
     | "state"
     | "zip"
-    | "propertyType"
     | "projectType"
-    | "workType"
     | "description"
-    | "timeline"
-    | "projectSize"
     | "photos"
     | "consent"
     | "form",
@@ -89,32 +71,14 @@ export type EstimateFieldErrors = Partial<
   >
 >;
 
+/** Labels aligned with Jobber / site service names. */
 export const PROJECT_TYPE_LABELS: Record<ProjectType, string> = {
   metal_roofing: "Metal Roofing",
   metal_siding: "Metal Siding",
-  board_and_batten: "Metal Board & Batten Siding",
+  board_and_batten: "Barn Siding (Board & Batten)",
   pole_building: "Pole Building",
+  garage: "Garage",
   other: "Other",
-};
-
-export const WORK_TYPE_LABELS: Record<WorkType, string> = {
-  new_installation: "New installation",
-  replacement: "Replacement",
-  renovation: "Renovation",
-};
-
-export const PROPERTY_TYPE_LABELS: Record<PropertyType, string> = {
-  residential: "Residential",
-  commercial: "Commercial",
-};
-
-export const TIMELINE_LABELS: Record<Timeline, string> = {
-  asap: "As soon as possible",
-  "1_3_months": "1–3 months",
-  "3_6_months": "3–6 months",
-  "6_plus_months": "6+ months",
-  flexible: "Flexible",
-  not_sure: "Not sure yet",
 };
 
 /** Map site service slugs → form project type. */
@@ -129,7 +93,7 @@ export function projectTypeFromServiceSlug(slug?: string | null): ProjectType | 
     case "pole-buildings":
       return "pole_building";
     case "garages":
-      return "other";
+      return "garage";
     default:
       return undefined;
   }

@@ -4,33 +4,16 @@ import { checkRateLimit, clientKeyFromRequest } from "@/lib/estimate/rate-limit"
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const NOMINATIM_URL = "https://nominatim.openstreetmap.org/search";
-const USER_AGENT =
-  "HBGConstructionEstimateForm/1.0 (https://www.heritagebuildgroup.com; contact=scott@heritagebuildgroup.com)";
 const MIN_QUERY_LEN = 3;
 const MAX_RESULTS = 5;
 
-/** Nominatim usage policy: ≤1 request/second. Serialize outbound calls in this instance. */
-let lastNominatimAt = 0;
-let nominatimChain: Promise<void> = Promise.resolve();
-
-function enqueueNominatim<T>(fn: () => Promise<T>): Promise<T> {
-  const run = nominatimChain.then(async () => {
-    const wait = Math.max(0, 1100 - (Date.now() - lastNominatimAt));
-    if (wait) await new Promise((r) => setTimeout(r, wait));
-    lastNominatimAt = Date.now();
-    return fn();
-  });
-  // Keep the chain alive even if a call fails.
-  nominatimChain = run.then(
-    () => undefined,
-    () => undefined,
-  );
-  return run;
-}
+/** Pittsburgh region bias for PA/OH results (Places Autocomplete locationBias). */
+const PITTSBURGH = { latitude: 40.4406, longitude: -79.9959 };
+const BIAS_RADIUS_METERS = 200_000; // ~124 mi — covers Butler/Mercer + nearby OH
 
 export type AddressSuggestion = {
   id: string;
+  placeId: string;
   label: string;
   street: string;
   city: string;
@@ -38,138 +21,177 @@ export type AddressSuggestion = {
   zip: string;
 };
 
-type NominatimResult = {
-  place_id?: number;
-  display_name?: string;
-  address?: {
-    house_number?: string;
-    road?: string;
-    pedestrian?: string;
-    residential?: string;
-    neighbourhood?: string;
-    suburb?: string;
-    city?: string;
-    town?: string;
-    village?: string;
-    hamlet?: string;
-    municipality?: string;
-    county?: string;
-    state?: string;
-    postcode?: string;
+type PlacePrediction = {
+  place?: string;
+  placeId?: string;
+  text?: { text?: string };
+  structuredFormat?: {
+    mainText?: { text?: string };
+    secondaryText?: { text?: string };
   };
 };
 
-function pickLocality(addr: NonNullable<NominatimResult["address"]>) {
-  return (
-    addr.city ||
-    addr.town ||
-    addr.village ||
-    addr.hamlet ||
-    addr.municipality ||
-    addr.suburb ||
-    addr.county ||
-    ""
-  );
+type AutocompleteResponse = {
+  suggestions?: Array<{ placePrediction?: PlacePrediction }>;
+  error?: { message?: string; status?: string };
+};
+
+type AddressComponent = {
+  longText?: string;
+  shortText?: string;
+  types?: string[];
+};
+
+type PlaceDetailsResponse = {
+  formattedAddress?: string;
+  addressComponents?: AddressComponent[];
+  error?: { message?: string; status?: string };
+};
+
+function placesKey() {
+  return (process.env.GOOGLE_PLACES_API_KEY || "").trim();
 }
 
-function pickStreet(addr: NonNullable<NominatimResult["address"]>) {
-  const road = addr.road || addr.pedestrian || addr.residential || "";
-  if (addr.house_number && road) return `${addr.house_number} ${road}`;
-  return road || addr.neighbourhood || "";
+function component(
+  components: AddressComponent[] | undefined,
+  type: string,
+  preferShort = false,
+) {
+  const match = components?.find((c) => c.types?.includes(type));
+  if (!match) return "";
+  if (preferShort) return (match.shortText || match.longText || "").trim();
+  return (match.longText || match.shortText || "").trim();
 }
 
-function stateAbbrev(state: string) {
-  const map: Record<string, string> = {
-    alabama: "AL",
-    alaska: "AK",
-    arizona: "AZ",
-    arkansas: "AR",
-    california: "CA",
-    colorado: "CO",
-    connecticut: "CT",
-    delaware: "DE",
-    florida: "FL",
-    georgia: "GA",
-    hawaii: "HI",
-    idaho: "ID",
-    illinois: "IL",
-    indiana: "IN",
-    iowa: "IA",
-    kansas: "KS",
-    kentucky: "KY",
-    louisiana: "LA",
-    maine: "ME",
-    maryland: "MD",
-    massachusetts: "MA",
-    michigan: "MI",
-    minnesota: "MN",
-    mississippi: "MS",
-    missouri: "MO",
-    montana: "MT",
-    nebraska: "NE",
-    nevada: "NV",
-    "new hampshire": "NH",
-    "new jersey": "NJ",
-    "new mexico": "NM",
-    "new york": "NY",
-    "north carolina": "NC",
-    "north dakota": "ND",
-    ohio: "OH",
-    oklahoma: "OK",
-    oregon: "OR",
-    pennsylvania: "PA",
-    "rhode island": "RI",
-    "south carolina": "SC",
-    "south dakota": "SD",
-    tennessee: "TN",
-    texas: "TX",
-    utah: "UT",
-    vermont: "VT",
-    virginia: "VA",
-    washington: "WA",
-    "west virginia": "WV",
-    wisconsin: "WI",
-    wyoming: "WY",
-    "district of columbia": "DC",
+function partsFromComponents(components: AddressComponent[] | undefined) {
+  const streetNumber = component(components, "street_number");
+  const route = component(components, "route");
+  const street = [streetNumber, route].filter(Boolean).join(" ").trim();
+  const city =
+    component(components, "locality") ||
+    component(components, "sublocality") ||
+    component(components, "postal_town") ||
+    component(components, "administrative_area_level_3") ||
+    component(components, "administrative_area_level_2");
+  const state = component(components, "administrative_area_level_1", true);
+  const zip = component(components, "postal_code");
+  const unit = component(components, "subpremise");
+  return { street, city, state, zip, unit };
+}
+
+async function autocomplete(query: string, sessionToken?: string): Promise<AddressSuggestion[]> {
+  const key = placesKey();
+  const body: Record<string, unknown> = {
+    input: query,
+    includedRegionCodes: ["us"],
+    locationBias: {
+      circle: {
+        center: PITTSBURGH,
+        radius: BIAS_RADIUS_METERS,
+      },
+    },
   };
-  const key = state.trim().toLowerCase();
-  if (map[key]) return map[key];
-  if (/^[A-Z]{2}$/i.test(state.trim())) return state.trim().toUpperCase();
-  return state.trim();
+  if (sessionToken) body.sessionToken = sessionToken;
+
+  const res = await fetch("https://places.googleapis.com/v1/places:autocomplete", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Goog-Api-Key": key,
+      "X-Goog-FieldMask":
+        "suggestions.placePrediction.placeId,suggestions.placePrediction.place,suggestions.placePrediction.text,suggestions.placePrediction.structuredFormat",
+    },
+    body: JSON.stringify(body),
+    next: { revalidate: 0 },
+  });
+
+  const payload = (await res.json().catch(() => null)) as AutocompleteResponse | null;
+  if (!res.ok) {
+    const message = payload?.error?.message || `Places autocomplete ${res.status}`;
+    throw new Error(message);
+  }
+
+  const out: AddressSuggestion[] = [];
+  for (const item of payload?.suggestions || []) {
+    const pred = item.placePrediction;
+    if (!pred) continue;
+    const placeId = pred.placeId || pred.place?.replace(/^places\//, "") || "";
+    if (!placeId) continue;
+    const label =
+      pred.text?.text ||
+      [pred.structuredFormat?.mainText?.text, pred.structuredFormat?.secondaryText?.text]
+        .filter(Boolean)
+        .join(", ") ||
+      placeId;
+    const main = pred.structuredFormat?.mainText?.text || label.split(",")[0]?.trim() || label;
+    out.push({
+      id: placeId,
+      placeId,
+      label,
+      street: main,
+      city: "",
+      state: "",
+      zip: "",
+    });
+    if (out.length >= MAX_RESULTS) break;
+  }
+  return out;
 }
 
-function normalize(result: NominatimResult): AddressSuggestion | null {
-  const addr = result.address || {};
-  const street = pickStreet(addr);
-  const city = pickLocality(addr);
-  const state = addr.state ? stateAbbrev(addr.state) : "";
-  const zip = (addr.postcode || "").split("-")[0]?.trim() || "";
-  if (!street && !result.display_name) return null;
+async function placeDetails(
+  placeId: string,
+  sessionToken?: string,
+): Promise<AddressSuggestion | null> {
+  const key = placesKey();
+  const id = placeId.replace(/^places\//, "");
+  const url = new URL(`https://places.googleapis.com/v1/places/${encodeURIComponent(id)}`);
+  if (sessionToken) url.searchParams.set("sessionToken", sessionToken);
+
+  const res = await fetch(url.toString(), {
+    headers: {
+      "X-Goog-Api-Key": key,
+      "X-Goog-FieldMask": "formattedAddress,addressComponents",
+    },
+    next: { revalidate: 0 },
+  });
+
+  const payload = (await res.json().catch(() => null)) as PlaceDetailsResponse | null;
+  if (!res.ok) {
+    const message = payload?.error?.message || `Places details ${res.status}`;
+    throw new Error(message);
+  }
+
+  const parts = partsFromComponents(payload?.addressComponents);
+  const street =
+    parts.street ||
+    payload?.formattedAddress?.split(",")[0]?.trim() ||
+    "";
+  if (!street && !payload?.formattedAddress) return null;
 
   const label =
-    result.display_name ||
-    [street, city, state, zip].filter(Boolean).join(", ");
+    payload?.formattedAddress ||
+    [street, parts.city, parts.state, parts.zip].filter(Boolean).join(", ");
 
   return {
-    id: String(result.place_id ?? label),
+    id,
+    placeId: id,
     label,
-    street: street || label.split(",")[0]?.trim() || label,
-    city,
-    state,
-    zip,
+    street: street || label,
+    city: parts.city,
+    state: parts.state,
+    zip: parts.zip,
   };
 }
 
 export async function GET(request: Request) {
   const clientKey = clientKeyFromRequest(request);
-  // Tighter than estimate submit: autocomplete fires often while typing.
   const limited = checkRateLimit(`addr:${clientKey}`, {
     windowMs: 60 * 1000,
-    max: 30,
+    max: 40,
   });
   if (!limited.ok) {
     return NextResponse.json(
-      { ok: false, error: "Too many address lookups. Please wait a moment." },
+      { ok: false, enabled: Boolean(placesKey()), error: "Too many address lookups. Please wait a moment." },
       {
         status: 429,
         headers: { "Retry-After": String(limited.retryAfterSec) },
@@ -177,54 +199,47 @@ export async function GET(request: Request) {
     );
   }
 
-  const { searchParams } = new URL(request.url);
-  const q = (searchParams.get("q") || "").trim().slice(0, 120);
-  if (q.length < MIN_QUERY_LEN) {
-    return NextResponse.json({ ok: true, suggestions: [] as AddressSuggestion[] });
-  }
-
-  try {
-    const suggestions = await enqueueNominatim(async () => {
-      const url = new URL(NOMINATIM_URL);
-      url.searchParams.set("q", q);
-      url.searchParams.set("format", "json");
-      url.searchParams.set("addressdetails", "1");
-      url.searchParams.set("limit", String(MAX_RESULTS));
-      url.searchParams.set("countrycodes", "us");
-
-      const res = await fetch(url.toString(), {
-        headers: {
-          Accept: "application/json",
-          "User-Agent": USER_AGENT,
-        },
-        // Nominatim asks not to cache aggressively for personal use; short CDN ok.
-        next: { revalidate: 0 },
-      });
-
-      if (!res.ok) {
-        throw new Error(`Nominatim ${res.status}`);
-      }
-
-      const raw = (await res.json()) as NominatimResult[];
-      if (!Array.isArray(raw)) return [] as AddressSuggestion[];
-
-      const out: AddressSuggestion[] = [];
-      for (const item of raw) {
-        const normalized = normalize(item);
-        if (normalized) out.push(normalized);
-      }
-      return out;
-    });
-
+  const key = placesKey();
+  if (!key) {
+    // Form still works with manual entry — no empty/broken dropdown payload.
     return NextResponse.json({
       ok: true,
-      suggestions,
-      attribution: "© OpenStreetMap contributors",
+      enabled: false,
+      suggestions: [] as AddressSuggestion[],
     });
+  }
+
+  const { searchParams } = new URL(request.url);
+  const placeId = (searchParams.get("placeId") || "").trim().slice(0, 256);
+  const sessionToken = (searchParams.get("session") || "").trim().slice(0, 64) || undefined;
+  const q = (searchParams.get("q") || "").trim().slice(0, 120);
+
+  try {
+    if (placeId) {
+      const suggestion = await placeDetails(placeId, sessionToken);
+      return NextResponse.json({
+        ok: true,
+        enabled: true,
+        suggestion,
+        suggestions: suggestion ? [suggestion] : [],
+      });
+    }
+
+    if (q.length < MIN_QUERY_LEN) {
+      return NextResponse.json({ ok: true, enabled: true, suggestions: [] as AddressSuggestion[] });
+    }
+
+    const suggestions = await autocomplete(q, sessionToken);
+    return NextResponse.json({ ok: true, enabled: true, suggestions });
   } catch (error) {
     console.error("[address-suggest]", error);
     return NextResponse.json(
-      { ok: false, error: "Address suggestions unavailable right now.", suggestions: [] },
+      {
+        ok: false,
+        enabled: true,
+        error: "Address suggestions unavailable right now.",
+        suggestions: [] as AddressSuggestion[],
+      },
       { status: 502 },
     );
   }

@@ -1,14 +1,8 @@
 import {
-  PROPERTY_TYPES,
   PROJECT_TYPES,
-  TIMELINES,
-  WORK_TYPES,
   type EstimateFieldErrors,
   type LeadAttribution,
-  type PropertyType,
   type ProjectType,
-  type Timeline,
-  type WorkType,
 } from "./types";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -46,15 +40,12 @@ export type ValidatedEstimateInput = {
   phone: string;
   email: string;
   address: string;
+  unit?: string;
   city?: string;
   state?: string;
   zip: string;
-  propertyType: PropertyType;
   projectType: ProjectType;
-  workType: WorkType;
   description: string;
-  timeline: Timeline;
-  projectSize?: string;
   consent: true;
   attribution: LeadAttribution;
   photos: File[];
@@ -99,34 +90,26 @@ export function validateEstimateFormData(
   if (address.length < 5) errors.address = "Enter the project street address.";
   if (address.length > 200) errors.address = "Address is too long.";
 
+  const unit = trim(form.get("unit"));
+  if (unit.length > 40) errors.unit = "Unit / apt is too long.";
+
   const city = trim(form.get("city"));
+  if (city.length < 2) errors.city = "Enter the city.";
   if (city.length > 100) errors.city = "City is too long.";
 
   const stateRaw = trim(form.get("state"));
-  if (stateRaw.length > 40) errors.state = "State is too long.";
   const state = /^[A-Za-z]{2}$/.test(stateRaw) ? stateRaw.toUpperCase() : stateRaw;
+  if (!/^[A-Z]{2}$/.test(state)) errors.state = "Enter a 2-letter state (e.g. PA).";
 
   const zip = trim(form.get("zip"));
   if (!ZIP_RE.test(zip)) errors.zip = "Enter a valid ZIP code.";
 
-  const propertyType = trim(form.get("propertyType")) as PropertyType;
-  if (!PROPERTY_TYPES.includes(propertyType)) errors.propertyType = "Select residential or commercial.";
-
   const projectType = trim(form.get("projectType")) as ProjectType;
   if (!PROJECT_TYPES.includes(projectType)) errors.projectType = "Select a project type.";
-
-  const workType = trim(form.get("workType")) as WorkType;
-  if (!WORK_TYPES.includes(workType)) errors.workType = "Select new installation, replacement, or renovation.";
 
   const description = trim(form.get("description"));
   if (description.length < 10) errors.description = "Add a short project description (at least a sentence).";
   if (description.length > 4000) errors.description = "Description is too long.";
-
-  const timeline = trim(form.get("timeline")) as Timeline;
-  if (!TIMELINES.includes(timeline)) errors.timeline = "Select a desired timeline.";
-
-  const projectSize = trim(form.get("projectSize"));
-  if (projectSize.length > 200) errors.projectSize = "Project size is too long.";
 
   const consent = trim(form.get("consent"));
   if (consent !== "yes") errors.consent = "Please confirm we may contact you about this request.";
@@ -192,15 +175,12 @@ export function validateEstimateFormData(
       phone: phoneDigits,
       email,
       address,
+      unit: unit || undefined,
       city: city || undefined,
       state: state || undefined,
       zip,
-      propertyType,
       projectType,
-      workType,
       description,
-      timeline,
-      projectSize: projectSize || undefined,
       consent: true,
       attribution,
       photos,

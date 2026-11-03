@@ -1,25 +1,43 @@
 # Native estimate form (replaces Jobber embed)
 
-This branch ships a first-party `/estimate` form. **Production can stay on Jobber until this PR is reviewed and merged.** Rollback = revert the PR (Jobber embed is archived at `components/estimate-form-jobber.tsx`).
+This branch ships a first-party `/estimate` form aligned with the archived Jobber work-request field set. **Production can stay on Jobber until this PR is reviewed and merged.** Rollback = revert the PR (Jobber embed is archived at `components/estimate-form-jobber.tsx`).
 
 ## Architecture
 
 | Piece | Role |
 | --- | --- |
-| `components/estimate-form.tsx` | Native mobile-friendly form UI |
+| `components/estimate-form.tsx` | Native mobile-friendly form UI (Jobber-parity fields) |
 | `components/address-autocomplete.tsx` | Street address suggestions (debounced) |
 | `components/estimate-form-jobber.tsx` | Archived Jobber embed (unused) |
 | `POST /api/estimate` | Validate → **save first** → email notify |
-| `GET /api/address-suggest` | Server proxy for OpenStreetMap Nominatim autocomplete |
+| `GET /api/address-suggest` | Server proxy for **Google Places Autocomplete (New)** + Place Details |
 | `GET /api/leads` | Admin retrieval (`LEADS_ADMIN_TOKEN`) |
 | `lib/estimate/store.ts` | Durable storage (Netlify Blobs or `.data/leads`) |
 | `lib/estimate/email.ts` | Resend or SMTP webhook notify |
 | `lib/analytics.ts` | `form_start` + `generate_lead` once per saved id |
 
+## Form fields (vs Jobber)
+
+| Field | Native | Jobber (typical / site mapping) |
+| --- | --- | --- |
+| Name | Required | Standard contact |
+| Email | Required | Standard contact |
+| Phone | Required | Standard contact |
+| Street address | Required + Places autocomplete | Property address |
+| Apt / unit | Optional | Address line 2 |
+| City / State / ZIP | Required (often filled by Places) | Property address |
+| Project type | Required — Metal Roofing, Metal Siding, Barn Siding (Board & Batten), Pole Building, Garage, Other | Jobber / site service labels |
+| Project details | Required | Request description |
+| Photos | Optional, de-emphasized | Often supported; kept as small add-on |
+| ~~New / replacement / renovation~~ | **Removed** | Not on Jobber parity form |
+| ~~Residential / commercial~~ | **Removed** | Prefer Jobber parity |
+| ~~Timeline / size / budget~~ | **Removed** | Prefer Jobber parity |
+
 ## Environment variables
 
 | Variable | Required? | Purpose |
 | --- | --- | --- |
+| `GOOGLE_PLACES_API_KEY` | Recommended | Server-only key for Places Autocomplete (New) + Place Details. **Never** expose as `NEXT_PUBLIC_*`. |
 | `RESEND_API_KEY` | Recommended | Send lead email via [Resend](https://resend.com) (free tier) |
 | `ESTIMATE_FROM_EMAIL` | Optional | Verified from-address (default Resend onboarding address) |
 | `ESTIMATE_NOTIFY_EMAIL` | Optional | Default `scott@heritagebuildgroup.com` |
@@ -30,19 +48,31 @@ This branch ships a first-party `/estimate` form. **Production can stay on Jobbe
 | `NETLIFY_BLOBS_SITE_ID` / `NETLIFY_BLOBS_TOKEN` | Aliases | Same as above |
 | `LEADS_LOCAL_DIR` | Optional | Local/dev store path (default `.data/leads`) |
 | `NEXT_PUBLIC_GA_ID` | Optional | Defaults to `G-JJ9HCGZZEM` |
-| `GOOGLE_PLACES_API_KEY` | **Not used** | Reserved note only — this form uses free Nominatim via server proxy (no Google key). Switch only if Places is preferred later. |
 
 If email env vars are missing, **leads still save**; `emailStatus` is `skipped` and the error is stored on the lead record.
 
-### Address autocomplete
+If `GOOGLE_PLACES_API_KEY` is missing, **the form still works** with manual address entry (no empty/broken dropdown).
 
-- Client calls `GET /api/address-suggest?q=…` (debounced). **No API keys in the browser.**
-- Server proxies [OpenStreetMap Nominatim](https://nominatim.org/) with a identifying `User-Agent`, per-IP rate limits, and ≤1 outbound request/second (Nominatim usage policy).
-- Selecting a suggestion fills street, city, state, and ZIP when available.
-- UI attribution: **© OpenStreetMap contributors**.
-- Street address + ZIP are **required**. City/state are optional and usually filled by autocomplete.
-- Budget is **not** collected.
-- Alternative: Google Places Autocomplete would need `GOOGLE_PLACES_API_KEY` (or similar) on the **server** proxy only — Places has free monthly credit but is not zero-cost forever. Prefer Nominatim unless Places is already in the stack.
+### Google Places setup (`GOOGLE_PLACES_API_KEY`)
+
+1. Open [Google Cloud Console](https://console.cloud.google.com/) → create or select a project.
+2. Enable **Places API (New)** (includes Autocomplete + Place Details). Legacy “Places API” alone is not enough for the New endpoints this proxy calls.
+3. Create an **API key** (Credentials).
+4. **Restrict the key**:
+   - Application restriction: prefer **IP** (server / Vercel / Netlify egress) or leave unrestricted only while testing.
+   - API restriction: allow only **Places API (New)** (and Place Details / Autocomplete as listed).
+5. Set `GOOGLE_PLACES_API_KEY` in Vercel and Netlify env (Preview + Production). Do **not** prefix with `NEXT_PUBLIC_`.
+6. Redeploy. Typing a street on `/estimate` should show a suggestion dropdown; selecting fills street, city, state, and ZIP.
+7. Billing: Places uses Google’s free monthly credit, then paid. Monitor usage in Cloud Console.
+
+**Bias:** the server proxy sets `includedRegionCodes: ["us"]` and a Pittsburgh-centered `locationBias` circle (~200 km) so PA/OH results near the service area rank higher.
+
+### Address autocomplete behavior
+
+- Client calls `GET /api/address-suggest?q=…&session=…` (debounced). **API key never leaves the server.**
+- Selecting a suggestion calls `GET /api/address-suggest?placeId=…&session=…` for Place Details, then fills street / city / state / ZIP.
+- No OpenStreetMap / Nominatim path and no OSM attribution.
+- Street + city + state + ZIP are **required**. Apt/unit is optional.
 
 ## Retrieving leads
 
@@ -87,8 +117,7 @@ Locally: inspect `.data/leads/` (gitignored).
 | Local `.data/leads` | Free; durable on a persistent disk only (ephemeral on most serverless FS) |
 | Resend | Free tier sufficient for estimate volume |
 | SMTP | Whatever your existing mailbox provider charges |
-| OpenStreetMap Nominatim | Free public API; rate-limited; attribution required |
-| Google Places (optional alt) | Free monthly credit, then paid — not wired unless chosen later |
+| Google Places (New) | Free monthly credit, then paid — key server-side only |
 | Jobber | Unchanged until this PR replaces production |
 
 ## Jobber rollback
@@ -100,4 +129,5 @@ Locally: inspect `.data/leads/` (gitignored).
 
 - Hosting today: Vercel production + Netlify Deploy Previews (`@netlify/plugin-nextjs`).
 - For durable Blobs on Vercel production, set `NETLIFY_SITE_ID` + `NETLIFY_AUTH_TOKEN` (or migrate production to Netlify). Without Blobs credentials, the API writes under `.data/leads` / writable FS — fine for local/preview; configure Blobs or another durable store before relying on production FS.
+- After setting `GOOGLE_PLACES_API_KEY`, trigger a **preview rebuild** (push or redeploy) so Netlify/Vercel pick up the env var.
 - Never commit secrets. `.env*` is gitignored.

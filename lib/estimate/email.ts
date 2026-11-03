@@ -1,10 +1,4 @@
-import {
-  PROPERTY_TYPE_LABELS,
-  PROJECT_TYPE_LABELS,
-  TIMELINE_LABELS,
-  WORK_TYPE_LABELS,
-  type LeadRecord,
-} from "./types";
+import { PROJECT_TYPE_LABELS, type LeadRecord } from "./types";
 
 export type EmailResult = { status: "sent" | "skipped" | "failed"; error?: string };
 
@@ -17,14 +11,11 @@ function leadEmailBody(lead: LeadRecord) {
     `Phone: ${lead.phone}`,
     `Email: ${lead.email}`,
     `Street: ${lead.address}`,
+    `Unit: ${lead.unit || "(none)"}`,
     `City: ${lead.city || "(not provided)"}`,
     `State: ${lead.state || "(not provided)"}`,
     `ZIP: ${lead.zip}`,
-    `Property: ${PROPERTY_TYPE_LABELS[lead.propertyType]}`,
     `Project type: ${PROJECT_TYPE_LABELS[lead.projectType]}`,
-    `Work type: ${WORK_TYPE_LABELS[lead.workType]}`,
-    `Timeline: ${TIMELINE_LABELS[lead.timeline]}`,
-    `Size: ${lead.projectSize || "(not provided)"}`,
     "",
     "Description:",
     lead.description,

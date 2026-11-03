@@ -11,15 +11,9 @@ import {
 } from "@/lib/analytics";
 import {
   PROJECT_TYPE_LABELS,
-  PROPERTY_TYPE_LABELS,
-  TIMELINE_LABELS,
-  WORK_TYPE_LABELS,
   projectTypeFromServiceSlug,
   type EstimateFieldErrors,
   type ProjectType,
-  type PropertyType,
-  type Timeline,
-  type WorkType,
 } from "@/lib/estimate/types";
 import { AddressAutocomplete } from "@/components/address-autocomplete";
 
@@ -30,15 +24,12 @@ type FormState = {
   phone: string;
   email: string;
   address: string;
+  unit: string;
   city: string;
   state: string;
   zip: string;
-  propertyType: PropertyType | "";
   projectType: ProjectType | "";
-  workType: WorkType | "";
   description: string;
-  timeline: Timeline | "";
-  projectSize: string;
   consent: boolean;
 };
 
@@ -47,15 +38,12 @@ const INITIAL: FormState = {
   phone: "",
   email: "",
   address: "",
+  unit: "",
   city: "",
   state: "",
   zip: "",
-  propertyType: "",
   projectType: "",
-  workType: "",
   description: "",
-  timeline: "",
-  projectSize: "",
   consent: false,
 };
 
@@ -267,22 +255,41 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
     >
       <fieldset className="estimate-section">
         <legend>Contact</legend>
+        <label htmlFor={`${formId}-name`}>
+          Name
+          <input
+            id={`${formId}-name`}
+            name="name"
+            autoComplete="name"
+            required
+            value={values.name}
+            onChange={(e) => setField("name", e.target.value)}
+            aria-invalid={Boolean(errors.name)}
+            aria-describedby={errors.name ? `${formId}-name-err` : undefined}
+          />
+          {errors.name ? (
+            <span id={`${formId}-name-err`} className="field-error">
+              {errors.name}
+            </span>
+          ) : null}
+        </label>
         <div className="form-row">
-          <label htmlFor={`${formId}-name`}>
-            Full name
+          <label htmlFor={`${formId}-email`}>
+            Email
             <input
-              id={`${formId}-name`}
-              name="name"
-              autoComplete="name"
+              id={`${formId}-email`}
+              name="email"
+              type="email"
+              autoComplete="email"
               required
-              value={values.name}
-              onChange={(e) => setField("name", e.target.value)}
-              aria-invalid={Boolean(errors.name)}
-              aria-describedby={errors.name ? `${formId}-name-err` : undefined}
+              value={values.email}
+              onChange={(e) => setField("email", e.target.value)}
+              aria-invalid={Boolean(errors.email)}
+              aria-describedby={errors.email ? `${formId}-email-err` : undefined}
             />
-            {errors.name ? (
-              <span id={`${formId}-name-err`} className="field-error">
-                {errors.name}
+            {errors.email ? (
+              <span id={`${formId}-email-err`} className="field-error">
+                {errors.email}
               </span>
             ) : null}
           </label>
@@ -308,27 +315,12 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
             ) : null}
           </label>
         </div>
-        <label htmlFor={`${formId}-email`}>
-          Email
-          <input
-            id={`${formId}-email`}
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            value={values.email}
-            onChange={(e) => setField("email", e.target.value)}
-            aria-invalid={Boolean(errors.email)}
-            aria-describedby={errors.email ? `${formId}-email-err` : undefined}
-          />
-          {errors.email ? (
-            <span id={`${formId}-email-err`} className="field-error">
-              {errors.email}
-            </span>
-          ) : null}
-        </label>
+      </fieldset>
+
+      <fieldset className="estimate-section">
+        <legend>Project address</legend>
         <label htmlFor={`${formId}-address`}>
-          Project street address
+          Street address
           <AddressAutocomplete
             id={`${formId}-address`}
             value={values.address}
@@ -353,13 +345,27 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
             }}
           />
         </label>
+        <label htmlFor={`${formId}-unit`}>
+          Apt / unit <span className="optional">(optional)</span>
+          <input
+            id={`${formId}-unit`}
+            name="unit"
+            autoComplete="address-line2"
+            value={values.unit}
+            onChange={(e) => setField("unit", e.target.value)}
+            aria-invalid={Boolean(errors.unit)}
+            placeholder="Suite, apt, building"
+          />
+          {errors.unit ? <span className="field-error">{errors.unit}</span> : null}
+        </label>
         <div className="form-row form-row--three">
           <label htmlFor={`${formId}-city`}>
-            City <span className="optional">(from address)</span>
+            City
             <input
               id={`${formId}-city`}
               name="city"
               autoComplete="address-level2"
+              required
               value={values.city}
               onChange={(e) => setField("city", e.target.value)}
               aria-invalid={Boolean(errors.city)}
@@ -367,11 +373,12 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
             {errors.city ? <span className="field-error">{errors.city}</span> : null}
           </label>
           <label htmlFor={`${formId}-state`}>
-            State <span className="optional">(from address)</span>
+            State
             <input
               id={`${formId}-state`}
               name="state"
               autoComplete="address-level1"
+              required
               value={values.state}
               onChange={(e) => setField("state", e.target.value)}
               aria-invalid={Boolean(errors.state)}
@@ -380,7 +387,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
             {errors.state ? <span className="field-error">{errors.state}</span> : null}
           </label>
           <label htmlFor={`${formId}-zip`}>
-            ZIP code
+            ZIP
             <input
               id={`${formId}-zip`}
               name="zip"
@@ -403,88 +410,27 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
 
       <fieldset className="estimate-section">
         <legend>Project</legend>
-        <div className="form-row">
-          <label htmlFor={`${formId}-property`}>
-            Residential or commercial
-            <select
-              id={`${formId}-property`}
-              name="propertyType"
-              required
-              value={values.propertyType}
-              onChange={(e) => setField("propertyType", e.target.value as PropertyType | "")}
-              aria-invalid={Boolean(errors.propertyType)}
-            >
-              <option value="">Select…</option>
-              {(Object.keys(PROPERTY_TYPE_LABELS) as PropertyType[]).map((key) => (
-                <option key={key} value={key}>
-                  {PROPERTY_TYPE_LABELS[key]}
-                </option>
-              ))}
-            </select>
-            {errors.propertyType ? <span className="field-error">{errors.propertyType}</span> : null}
-          </label>
-          <label htmlFor={`${formId}-project`}>
-            Project type
-            <select
-              id={`${formId}-project`}
-              name="projectType"
-              required
-              value={values.projectType}
-              onChange={(e) => setField("projectType", e.target.value as ProjectType | "")}
-              aria-invalid={Boolean(errors.projectType)}
-            >
-              <option value="">Select…</option>
-              {(Object.keys(PROJECT_TYPE_LABELS) as ProjectType[]).map((key) => (
-                <option key={key} value={key}>
-                  {PROJECT_TYPE_LABELS[key]}
-                </option>
-              ))}
-            </select>
-            {errors.projectType ? <span className="field-error">{errors.projectType}</span> : null}
-          </label>
-        </div>
-        <div className="form-row">
-          <label htmlFor={`${formId}-work`}>
-            New, replacement, or renovation
-            <select
-              id={`${formId}-work`}
-              name="workType"
-              required
-              value={values.workType}
-              onChange={(e) => setField("workType", e.target.value as WorkType | "")}
-              aria-invalid={Boolean(errors.workType)}
-            >
-              <option value="">Select…</option>
-              {(Object.keys(WORK_TYPE_LABELS) as WorkType[]).map((key) => (
-                <option key={key} value={key}>
-                  {WORK_TYPE_LABELS[key]}
-                </option>
-              ))}
-            </select>
-            {errors.workType ? <span className="field-error">{errors.workType}</span> : null}
-          </label>
-          <label htmlFor={`${formId}-timeline`}>
-            Desired timeline
-            <select
-              id={`${formId}-timeline`}
-              name="timeline"
-              required
-              value={values.timeline}
-              onChange={(e) => setField("timeline", e.target.value as Timeline | "")}
-              aria-invalid={Boolean(errors.timeline)}
-            >
-              <option value="">Select…</option>
-              {(Object.keys(TIMELINE_LABELS) as Timeline[]).map((key) => (
-                <option key={key} value={key}>
-                  {TIMELINE_LABELS[key]}
-                </option>
-              ))}
-            </select>
-            {errors.timeline ? <span className="field-error">{errors.timeline}</span> : null}
-          </label>
-        </div>
+        <label htmlFor={`${formId}-project`}>
+          Project type
+          <select
+            id={`${formId}-project`}
+            name="projectType"
+            required
+            value={values.projectType}
+            onChange={(e) => setField("projectType", e.target.value as ProjectType | "")}
+            aria-invalid={Boolean(errors.projectType)}
+          >
+            <option value="">Select…</option>
+            {(Object.keys(PROJECT_TYPE_LABELS) as ProjectType[]).map((key) => (
+              <option key={key} value={key}>
+                {PROJECT_TYPE_LABELS[key]}
+              </option>
+            ))}
+          </select>
+          {errors.projectType ? <span className="field-error">{errors.projectType}</span> : null}
+        </label>
         <label htmlFor={`${formId}-description`}>
-          Project description
+          Project details
           <textarea
             id={`${formId}-description`}
             name="description"
@@ -493,27 +439,12 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
             value={values.description}
             onChange={(e) => setField("description", e.target.value)}
             aria-invalid={Boolean(errors.description)}
-            placeholder="What are you looking to build or replace? Any sizes, materials, or access notes help."
+            placeholder="What are you looking to build or replace? Sizes, materials, or access notes help."
           />
           {errors.description ? <span className="field-error">{errors.description}</span> : null}
         </label>
-      </fieldset>
-
-      <fieldset className="estimate-section">
-        <legend>Optional details</legend>
-        <label htmlFor={`${formId}-size`}>
-          Project size <span className="optional">(optional)</span>
-          <input
-            id={`${formId}-size`}
-            name="projectSize"
-            placeholder='e.g. 40×60, ~2,400 sq ft, or "Not sure"'
-            value={values.projectSize}
-            onChange={(e) => setField("projectSize", e.target.value)}
-          />
-        </label>
-        <label className="upload" htmlFor={`${formId}-photos`}>
-          Project photos <span className="optional">(optional)</span>
-          <span>Up to {MAX_PHOTOS}</span>
+        <label className="upload upload--optional" htmlFor={`${formId}-photos`}>
+          Photos <span className="optional">(optional)</span>
           <input
             id={`${formId}-photos`}
             name="photos"
@@ -522,7 +453,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
             multiple
             onChange={(e) => onPhotosChange(e.target.files)}
           />
-          <small>JPEG, PNG, WebP, or HEIC · 4 MB each · not required</small>
+          <small>Optional · up to {MAX_PHOTOS} · JPEG/PNG/WebP/HEIC · 4 MB each</small>
           {photos.length ? (
             <small>
               Selected: {photos.map((f) => f.name).join(", ")}
