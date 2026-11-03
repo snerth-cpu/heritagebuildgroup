@@ -2,12 +2,61 @@ import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
 import { notifyLeadEmail } from "@/lib/estimate/email";
 import { checkRateLimit, clientKeyFromRequest } from "@/lib/estimate/rate-limit";
-import { saveLead, storageBackendLabel, updateLead } from "@/lib/estimate/store";
+import {
+  LeadStorageError,
+  saveLead,
+  storageBackendLabel,
+  storageDiagnostics,
+  updateLead,
+} from "@/lib/estimate/store";
 import { formatPhoneDisplay, validateEstimateFormData } from "@/lib/estimate/validate";
 import type { LeadRecord } from "@/lib/estimate/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+function isCustomerFacingProduction() {
+  // Dynamic env access — Deploy Previews set CONTEXT=deploy-preview with NODE_ENV=production.
+  return process.env["CONTEXT"] === "production" || process.env["VERCEL_ENV"] === "production";
+}
+
+function saveFailureResponse(error: unknown) {
+  const storageError = error instanceof LeadStorageError ? error : null;
+  const diagnostics = storageDiagnostics();
+  console.error("[estimate] save failed", {
+    code: storageError?.code || "unknown",
+    message: storageError?.message || (error instanceof Error ? error.message : String(error)),
+    causeDetail: storageError?.causeDetail,
+    diagnostics,
+  });
+
+  const publicMessage = "We could not save your request. Please call us or try again.";
+  if (isCustomerFacingProduction()) {
+    return NextResponse.json({ ok: false, errors: { form: publicMessage } }, { status: 500 });
+  }
+
+  const hint =
+    storageError?.code === "storage_unavailable"
+      ? "Storage backend unavailable (Netlify Blobs context missing and filesystem is not writable on this host)."
+      : storageError?.causeDetail
+        ? `Save failed (${storageError.code}).`
+        : "Save failed on the server.";
+
+  return NextResponse.json(
+    {
+      ok: false,
+      errors: {
+        form: `${publicMessage} ${hint}`,
+        // Non-production only — short machine code, no secrets.
+        detail: storageError?.code || "save_failed",
+      },
+      diagnostics: {
+        backendAttempt: diagnostics,
+      },
+    },
+    { status: 500 },
+  );
+}
 
 export async function POST(request: Request) {
   const clientKey = clientKeyFromRequest(request);
@@ -73,13 +122,10 @@ export async function POST(request: Request) {
   try {
     saved = await saveLead(draft, photoPayload);
   } catch (error) {
-    console.error("[estimate] save failed", error);
-    return NextResponse.json(
-      { ok: false, errors: { form: "We could not save your request. Please call us or try again." } },
-      { status: 500 },
-    );
+    return saveFailureResponse(error);
   }
 
+  // Email is best-effort after a successful save — never roll back or fail the request.
   const emailResult = await notifyLeadEmail(saved);
   const withEmail: LeadRecord = {
     ...saved,
@@ -88,7 +134,8 @@ export async function POST(request: Request) {
   };
   try {
     saved = await updateLead(withEmail);
-  } catch {
+  } catch (error) {
+    console.error("[estimate] email status update failed (lead already saved)", error);
     saved = withEmail;
   }
 
@@ -103,5 +150,6 @@ export async function POST(request: Request) {
     ok: true,
     id: saved.id,
     emailStatus: saved.emailStatus,
+    backend,
   });
 }

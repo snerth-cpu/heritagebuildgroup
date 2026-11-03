@@ -67,7 +67,8 @@ export type EstimateFieldErrors = Partial<
     | "description"
     | "photos"
     | "consent"
-    | "form",
+    | "form"
+    | "detail",
     string
   >
 >;

@@ -1,6 +1,7 @@
 import { randomUUID } from "crypto";
 import { mkdir, readdir, readFile, writeFile } from "fs/promises";
 import path from "path";
+import { getDeployStore, getStore } from "@netlify/blobs";
 import type { LeadPhoto, LeadRecord } from "./types";
 
 const LEADS_STORE_NAME = "hbg-estimate-leads";
@@ -12,36 +13,176 @@ export type StoredPhoto = {
   bytes: Uint8Array;
 };
 
-function localRoot() {
-  return process.env.LEADS_LOCAL_DIR || path.join(process.cwd(), ".data", "leads");
+export type StorageBackend =
+  | "netlify-blobs"
+  | "netlify-deploy-blobs"
+  | "netlify-blobs-token"
+  | "local-filesystem";
+
+export class LeadStorageError extends Error {
+  code: string;
+  causeDetail?: string;
+
+  constructor(code: string, message: string, causeDetail?: string) {
+    super(message);
+    this.name = "LeadStorageError";
+    this.code = code;
+    this.causeDetail = causeDetail;
+  }
 }
 
-async function tryGetNetlifyStore() {
-  try {
-    const { getStore } = await import("@netlify/blobs");
-    // On Netlify, site context is automatic. Off-Netlify, set NETLIFY_SITE_ID + NETLIFY_AUTH_TOKEN
-    // (or NETLIFY_BLOBS_TOKEN) so production/Vercel can still use the same private store.
-    const siteID = process.env.NETLIFY_SITE_ID || process.env.NETLIFY_BLOBS_SITE_ID;
-    const token =
-      process.env.NETLIFY_AUTH_TOKEN ||
-      process.env.NETLIFY_BLOBS_TOKEN ||
-      process.env.NETLIFY_TOKEN;
+type BlobStore = ReturnType<typeof getStore>;
 
-    if (siteID && token) {
-      return getStore({ name: LEADS_STORE_NAME, siteID, token });
-    }
+type ResolvedStore = {
+  store: BlobStore;
+  label: Exclude<StorageBackend, "local-filesystem">;
+};
 
-    // Runtime on Netlify provides context without explicit credentials.
-    if (process.env.NETLIFY === "true" || process.env.CONTEXT || process.env.NETLIFY_DEV === "true") {
-      return getStore(LEADS_STORE_NAME);
+/** Dynamic lookup avoids Next.js build-time inlining of `process.env.FOO` literals. */
+function env(name: string) {
+  return process.env[name];
+}
+
+function localRoot() {
+  return env("LEADS_LOCAL_DIR") || path.join(process.cwd(), ".data", "leads");
+}
+
+function errText(error: unknown) {
+  if (error instanceof Error) return `${error.name}: ${error.message}`.slice(0, 400);
+  return String(error).slice(0, 400);
+}
+
+function hasBlobsContext() {
+  const globalContext = (globalThis as { netlifyBlobsContext?: unknown }).netlifyBlobsContext;
+  return Boolean(globalContext || env("NETLIFY_BLOBS_CONTEXT"));
+}
+
+function isNetlifyRuntime() {
+  return (
+    env("NETLIFY") === "true" ||
+    env("NETLIFY_DEV") === "true" ||
+    Boolean(env("CONTEXT")) ||
+    hasBlobsContext()
+  );
+}
+
+function isServerlessReadonlyHost() {
+  // Deployed Netlify / Vercel filesystems are not durable for lead JSON.
+  // Local `netlify dev` sets NETLIFY_DEV and can use the filesystem.
+  if (env("NETLIFY_DEV") === "true") return false;
+  return env("NETLIFY") === "true" || Boolean(env("VERCEL"));
+}
+
+function explicitBlobsCredentials() {
+  const siteID = env("NETLIFY_SITE_ID") || env("NETLIFY_BLOBS_SITE_ID") || env("SITE_ID");
+  const token = env("NETLIFY_AUTH_TOKEN") || env("NETLIFY_BLOBS_TOKEN") || env("NETLIFY_TOKEN");
+  if (siteID && token) return { siteID, token };
+  return null;
+}
+
+let cachedStore: ResolvedStore | null | undefined;
+let cachedStoreErrors: string[] = [];
+
+/**
+ * Resolve a Netlify Blobs store.
+ * On Netlify, prefer automatic site context and do NOT pass siteID/token first —
+ * explicit credentials replace the injected runtime context and often break writes.
+ */
+async function resolveBlobStore(): Promise<ResolvedStore | null> {
+  if (cachedStore !== undefined) return cachedStore;
+
+  const errors: string[] = [];
+  const attempts: Array<{ label: ResolvedStore["label"]; open: () => BlobStore }> = [];
+
+  // 1) Automatic Netlify runtime context (Deploy Preview + production on Netlify).
+  if (hasBlobsContext() || isNetlifyRuntime()) {
+    attempts.push({
+      label: "netlify-blobs",
+      open: () => getStore({ name: LEADS_STORE_NAME, consistency: "strong" }),
+    });
+    attempts.push({
+      label: "netlify-deploy-blobs",
+      open: () => getDeployStore({ name: LEADS_STORE_NAME, consistency: "strong" }),
+    });
+  }
+
+  // 2) Explicit token path for off-Netlify hosts (e.g. Vercel) or local tooling.
+  const creds = explicitBlobsCredentials();
+  if (creds) {
+    attempts.push({
+      label: "netlify-blobs-token",
+      open: () =>
+        getStore({
+          name: LEADS_STORE_NAME,
+          consistency: "strong",
+          siteID: creds.siteID,
+          token: creds.token,
+        }),
+    });
+  }
+
+  // 3) Last chance: try automatic getStore even if env detection missed Netlify.
+  if (!attempts.length) {
+    attempts.push({
+      label: "netlify-blobs",
+      open: () => getStore({ name: LEADS_STORE_NAME, consistency: "strong" }),
+    });
+  }
+
+  for (const attempt of attempts) {
+    try {
+      const store = attempt.open();
+      // Cheap connectivity check — missing keys return null; auth/context errors throw.
+      await store.get("__hbg_health__", { type: "text" });
+      cachedStore = { store, label: attempt.label };
+      cachedStoreErrors = [];
+      return cachedStore;
+    } catch (error) {
+      errors.push(`${attempt.label}: ${errText(error)}`);
     }
-  } catch {
-    /* fall through to local */
+  }
+
+  cachedStoreErrors = errors;
+  cachedStore = null;
+  if (errors.length) {
+    console.error("[estimate/store] Netlify Blobs unavailable:", errors.join(" | "));
   }
   return null;
 }
 
-async function readIndex(store: Awaited<ReturnType<typeof tryGetNetlifyStore>>): Promise<string[]> {
+async function canWriteLocalFs() {
+  if (isServerlessReadonlyHost()) return false;
+  try {
+    const root = localRoot();
+    await mkdir(root, { recursive: true });
+    const probe = path.join(root, ".write-probe");
+    await writeFile(probe, String(Date.now()), "utf8");
+    return true;
+  } catch (error) {
+    console.error("[estimate/store] local filesystem not writable:", errText(error));
+    return false;
+  }
+}
+
+async function requireBackend(): Promise<
+  { kind: "blobs"; store: BlobStore; label: StorageBackend } | { kind: "local"; label: "local-filesystem" }
+> {
+  const blobs = await resolveBlobStore();
+  if (blobs) return { kind: "blobs", store: blobs.store, label: blobs.label };
+
+  if (await canWriteLocalFs()) {
+    return { kind: "local", label: "local-filesystem" };
+  }
+
+  const detail = cachedStoreErrors.slice(0, 3).join(" | ") || "no blob context; filesystem not writable";
+  throw new LeadStorageError(
+    "storage_unavailable",
+    "Lead storage is unavailable on this host.",
+    detail,
+  );
+}
+
+async function readIndex(store: BlobStore | null): Promise<string[]> {
   if (store) {
     const raw = await store.get(INDEX_KEY, { type: "text" });
     if (!raw) return [];
@@ -63,7 +204,7 @@ async function readIndex(store: Awaited<ReturnType<typeof tryGetNetlifyStore>>):
   }
 }
 
-async function writeIndex(store: Awaited<ReturnType<typeof tryGetNetlifyStore>>, ids: string[]) {
+async function writeIndex(store: BlobStore | null, ids: string[]) {
   const body = JSON.stringify(ids.slice(0, 5000));
   if (store) {
     await store.set(INDEX_KEY, body);
@@ -78,75 +219,87 @@ export async function saveLead(
   record: Omit<LeadRecord, "photos"> & { photos?: LeadPhoto[] },
   files: StoredPhoto[],
 ): Promise<LeadRecord> {
-  const store = await tryGetNetlifyStore();
+  const backend = await requireBackend();
+  const store = backend.kind === "blobs" ? backend.store : null;
   const id = record.id || randomUUID();
   const photos: LeadPhoto[] = [];
 
-  for (let i = 0; i < files.length; i += 1) {
-    const file = files[i];
-    const safeName = file.filename.replace(/[^\w.\-]+/g, "_").slice(0, 80) || `photo-${i + 1}`;
-    const key = `photos/${id}/${i}-${safeName}`;
-    const buffer = Buffer.from(file.bytes);
-    if (store) {
-      // Netlify Blobs accepts ArrayBuffer; Buffer typing is stricter under TS 5.x.
-      const ab = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
-      await store.set(key, ab as ArrayBuffer, {
-        metadata: { contentType: file.contentType, filename: safeName },
+  try {
+    for (let i = 0; i < files.length; i += 1) {
+      const file = files[i];
+      const safeName = file.filename.replace(/[^\w.\-]+/g, "_").slice(0, 80) || `photo-${i + 1}`;
+      const key = `photos/${id}/${i}-${safeName}`;
+      const buffer = Buffer.from(file.bytes);
+      if (store) {
+        // Netlify Blobs accepts ArrayBuffer; Buffer typing is stricter under TS 5.x.
+        const ab = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+        await store.set(key, ab as ArrayBuffer, {
+          metadata: { contentType: file.contentType, filename: safeName },
+        });
+      } else {
+        const root = localRoot();
+        const dir = path.join(root, "photos", id);
+        await mkdir(dir, { recursive: true });
+        await writeFile(path.join(dir, `${i}-${safeName}`), buffer);
+      }
+      photos.push({
+        key,
+        filename: safeName,
+        contentType: file.contentType,
+        size: file.bytes.byteLength,
       });
+    }
+
+    const lead: LeadRecord = { ...record, id, photos };
+    const payload = JSON.stringify(lead, null, 2);
+
+    if (store) {
+      await store.set(`leads/${id}.json`, payload);
     } else {
       const root = localRoot();
-      const dir = path.join(root, "photos", id);
-      await mkdir(dir, { recursive: true });
-      await writeFile(path.join(dir, `${i}-${safeName}`), buffer);
+      await mkdir(path.join(root, "leads"), { recursive: true });
+      await writeFile(path.join(root, "leads", `${id}.json`), payload, "utf8");
     }
-    photos.push({
-      key,
-      filename: safeName,
-      contentType: file.contentType,
-      size: file.bytes.byteLength,
-    });
+
+    const index = await readIndex(store);
+    if (!index.includes(id)) {
+      index.unshift(id);
+      await writeIndex(store, index);
+    }
+
+    return lead;
+  } catch (error) {
+    if (error instanceof LeadStorageError) throw error;
+    throw new LeadStorageError("save_failed", "Could not persist the lead record.", errText(error));
   }
-
-  const lead: LeadRecord = { ...record, id, photos };
-  const payload = JSON.stringify(lead, null, 2);
-
-  if (store) {
-    await store.set(`leads/${id}.json`, payload);
-  } else {
-    const root = localRoot();
-    await mkdir(path.join(root, "leads"), { recursive: true });
-    await writeFile(path.join(root, "leads", `${id}.json`), payload, "utf8");
-  }
-
-  const index = await readIndex(store);
-  if (!index.includes(id)) {
-    index.unshift(id);
-    await writeIndex(store, index);
-  }
-
-  return lead;
 }
 
 /** Update lead JSON in place without rewriting photo blobs. */
 export async function updateLead(lead: LeadRecord): Promise<LeadRecord> {
-  const store = await tryGetNetlifyStore();
+  const backend = await requireBackend();
   const payload = JSON.stringify(lead, null, 2);
-  if (store) {
-    await store.set(`leads/${lead.id}.json`, payload);
-  } else {
-    const root = localRoot();
-    await mkdir(path.join(root, "leads"), { recursive: true });
-    await writeFile(path.join(root, "leads", `${lead.id}.json`), payload, "utf8");
+  try {
+    if (backend.kind === "blobs") {
+      await backend.store.set(`leads/${lead.id}.json`, payload);
+    } else {
+      const root = localRoot();
+      await mkdir(path.join(root, "leads"), { recursive: true });
+      await writeFile(path.join(root, "leads", `${lead.id}.json`), payload, "utf8");
+    }
+  } catch (error) {
+    if (error instanceof LeadStorageError) throw error;
+    throw new LeadStorageError("update_failed", "Could not update the lead record.", errText(error));
   }
   return lead;
 }
 
 export async function getLead(id: string): Promise<LeadRecord | null> {
   if (!/^[0-9a-f-]{10,64}$/i.test(id)) return null;
-  const store = await tryGetNetlifyStore();
+  const backend = await requireBackend().catch(() => null);
+  if (!backend) return null;
 
-  if (store) {
-    const raw = await store.get(`leads/${id}.json`, { type: "text" });
+  if (backend.kind === "blobs") {
+    const raw = await backend.store.get(`leads/${id}.json`, { type: "text" });
     if (!raw) return null;
     try {
       return JSON.parse(raw) as LeadRecord;
@@ -164,7 +317,10 @@ export async function getLead(id: string): Promise<LeadRecord | null> {
 }
 
 export async function listLeads(limit = 50): Promise<LeadRecord[]> {
-  const store = await tryGetNetlifyStore();
+  const backend = await requireBackend().catch(() => null);
+  if (!backend) return [];
+
+  const store = backend.kind === "blobs" ? backend.store : null;
   const ids = (await readIndex(store)).slice(0, Math.min(200, Math.max(1, limit)));
   const leads: LeadRecord[] = [];
 
@@ -190,7 +346,21 @@ export async function listLeads(limit = 50): Promise<LeadRecord[]> {
   return leads;
 }
 
-export async function storageBackendLabel() {
-  const store = await tryGetNetlifyStore();
-  return store ? "netlify-blobs" : "local-filesystem";
+export async function storageBackendLabel(): Promise<StorageBackend> {
+  const blobs = await resolveBlobStore();
+  if (blobs) return blobs.label;
+  if (await canWriteLocalFs()) return "local-filesystem";
+  return "local-filesystem";
+}
+
+export function storageDiagnostics() {
+  return {
+    netlify: env("NETLIFY") === "true",
+    netlifyDev: env("NETLIFY_DEV") === "true",
+    context: env("CONTEXT") || null,
+    vercel: Boolean(env("VERCEL")),
+    hasBlobsContext: hasBlobsContext(),
+    hasExplicitCredentials: Boolean(explicitBlobsCredentials()),
+    blobErrors: cachedStoreErrors.slice(0, 3),
+  };
 }
