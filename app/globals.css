@@ -299,7 +299,7 @@
 .estimate-form--native .address-autocomplete__option.is-active,
 .estimate-form--native .address-autocomplete__option:hover,
 .estimate-form--native .address-autocomplete__option:focus{background:var(--paper);outline:none}
-@media(max-width:620px){
+@media(max-width:980px){
   .estimate-form--native .form-row--three{grid-template-columns:1fr}
 }
 @media(max-width:980px){
