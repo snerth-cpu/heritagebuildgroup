@@ -15,7 +15,6 @@ import {
   type EstimateFieldErrors,
   type ProjectType,
 } from "@/lib/estimate/types";
-import { AddressAutocomplete } from "@/components/address-autocomplete";
 
 const MAX_PHOTOS = 4;
 
@@ -111,24 +110,6 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
       delete next[key as keyof EstimateFieldErrors];
       delete next.form;
       return next;
-    });
-  };
-
-  const clearFieldErrors = (...keys: (keyof EstimateFieldErrors)[]) => {
-    setErrors((prev) => {
-      let changed = false;
-      const next = { ...prev };
-      for (const key of keys) {
-        if (next[key]) {
-          delete next[key];
-          changed = true;
-        }
-      }
-      if (next.form) {
-        delete next.form;
-        changed = true;
-      }
-      return changed ? next : prev;
     });
   };
 
@@ -248,6 +229,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
     <form
       id="estimate-form"
       className="estimate-form estimate-form--native"
+      autoComplete="on"
       onSubmit={onSubmit}
       noValidate
       onFocus={markFormStart}
@@ -260,6 +242,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
           <input
             id={`${formId}-name`}
             name="name"
+            type="text"
             autoComplete="name"
             required
             value={values.name}
@@ -321,35 +304,29 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
         <legend>Project address</legend>
         <label htmlFor={`${formId}-address`}>
           Street address
-          <AddressAutocomplete
+          <input
             id={`${formId}-address`}
-            value={values.address}
+            name="address"
+            type="text"
+            autoComplete="address-line1"
             required
-            error={errors.address}
-            onInteract={markFormStart}
-            onStreetChange={(street) => {
-              markFormStart();
-              setValues((prev) => ({ ...prev, address: street }));
-              clearFieldErrors("address");
-            }}
-            onSelect={(parts) => {
-              markFormStart();
-              setValues((prev) => ({
-                ...prev,
-                address: parts.street || prev.address,
-                city: parts.city || prev.city,
-                state: parts.state || prev.state,
-                zip: parts.zip || prev.zip,
-              }));
-              clearFieldErrors("address", "city", "state", "zip");
-            }}
+            value={values.address}
+            onChange={(e) => setField("address", e.target.value)}
+            aria-invalid={Boolean(errors.address)}
+            aria-describedby={errors.address ? `${formId}-address-err` : undefined}
           />
+          {errors.address ? (
+            <span id={`${formId}-address-err`} className="field-error">
+              {errors.address}
+            </span>
+          ) : null}
         </label>
         <label htmlFor={`${formId}-unit`}>
           Apt / unit <span className="optional">(optional)</span>
           <input
             id={`${formId}-unit`}
             name="unit"
+            type="text"
             autoComplete="address-line2"
             value={values.unit}
             onChange={(e) => setField("unit", e.target.value)}
@@ -364,6 +341,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
             <input
               id={`${formId}-city`}
               name="city"
+              type="text"
               autoComplete="address-level2"
               required
               value={values.city}
@@ -377,6 +355,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
             <input
               id={`${formId}-state`}
               name="state"
+              type="text"
               autoComplete="address-level1"
               required
               value={values.state}
@@ -391,6 +370,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
             <input
               id={`${formId}-zip`}
               name="zip"
+              type="text"
               inputMode="numeric"
               autoComplete="postal-code"
               required

@@ -7,10 +7,8 @@ This branch ships a first-party `/estimate` form aligned with the archived Jobbe
 | Piece | Role |
 | --- | --- |
 | `components/estimate-form.tsx` | Native mobile-friendly form UI (Jobber-parity fields) |
-| `components/address-autocomplete.tsx` | Street address suggestions (debounced) |
 | `components/estimate-form-jobber.tsx` | Archived Jobber embed (unused) |
 | `POST /api/estimate` | Validate → **save first** → email notify |
-| `GET /api/address-suggest` | Server proxy for **Google Places Autocomplete (New)** + Place Details |
 | `GET /api/leads` | Admin retrieval (`LEADS_ADMIN_TOKEN`) |
 | `lib/estimate/store.ts` | Durable storage (Netlify Blobs or `.data/leads`) |
 | `lib/estimate/email.ts` | Resend or SMTP webhook notify |
@@ -20,12 +18,12 @@ This branch ships a first-party `/estimate` form aligned with the archived Jobbe
 
 | Field | Native | Jobber (typical / site mapping) |
 | --- | --- | --- |
-| Name | Required | Standard contact |
-| Email | Required | Standard contact |
-| Phone | Required | Standard contact |
-| Street address | Required + Places autocomplete | Property address |
-| Apt / unit | Optional | Address line 2 |
-| City / State / ZIP | Required (often filled by Places) | Property address |
+| Name | Required (`autocomplete="name"`) | Standard contact |
+| Email | Required (`type="email"`, `autocomplete="email"`) | Standard contact |
+| Phone | Required (`type="tel"`, `autocomplete="tel"`) | Standard contact |
+| Street address | Required (`autocomplete="address-line1"`) | Property address |
+| Apt / unit | Optional (`autocomplete="address-line2"`) | Address line 2 |
+| City / State / ZIP | Required (`address-level2` / `address-level1` / `postal-code`) | Property address |
 | Project type | Required — Metal Roofing, Metal Siding, Barn Siding (Board & Batten), Pole Building, Garage, Window / Door Replacement, Other | Jobber / site service labels |
 | Project details | Required | Request description |
 | Photos | Optional, de-emphasized | Often supported; kept as small add-on |
@@ -33,11 +31,27 @@ This branch ships a first-party `/estimate` form aligned with the archived Jobbe
 | ~~Residential / commercial~~ | **Removed** | Prefer Jobber parity |
 | ~~Timeline / size / budget~~ | **Removed** | Prefer Jobber parity |
 
+## Address entry (browser autofill)
+
+Address fields are plain inputs inside a single `<form autoComplete="on">`. There is **no** Google Places, Nominatim, Mapbox, or other paid suggestion API.
+
+Browsers (especially mobile Safari/Chrome with saved addresses) can autofill via standard HTML `autocomplete` attributes:
+
+| Field | `autocomplete` |
+| --- | --- |
+| Street | `address-line1` |
+| Unit | `address-line2` |
+| City | `address-level2` |
+| State | `address-level1` |
+| ZIP | `postal-code` |
+| Name / email / phone | `name` / `email` / `tel` |
+
+Street, city, state, and ZIP remain **required** for manual entry. Apt/unit is optional. No API key or third-party address service is needed.
+
 ## Environment variables
 
 | Variable | Required? | Purpose |
 | --- | --- | --- |
-| `GOOGLE_PLACES_API_KEY` | Recommended | Server-only key for Places Autocomplete (New) + Place Details. **Never** expose as `NEXT_PUBLIC_*`. |
 | `RESEND_API_KEY` | Recommended | Send lead email via [Resend](https://resend.com) (free tier) |
 | `ESTIMATE_FROM_EMAIL` | Optional | Verified from-address (default Resend onboarding address) |
 | `ESTIMATE_NOTIFY_EMAIL` | Optional | Default `scott@heritagebuildgroup.com` |
@@ -50,49 +64,6 @@ This branch ships a first-party `/estimate` form aligned with the archived Jobbe
 | `NEXT_PUBLIC_GA_ID` | Optional | Defaults to `G-JJ9HCGZZEM` |
 
 If email env vars are missing, **leads still save**; `emailStatus` is `skipped` and the error is stored on the lead record.
-
-If `GOOGLE_PLACES_API_KEY` is missing, **the form still works** with manual address entry. The street field shows a non-blocking note: “Address suggestions unavailable — enter address manually” (not a silent empty dropdown).
-
-### Google Places setup (`GOOGLE_PLACES_API_KEY`)
-
-1. Open [Google Cloud Console](https://console.cloud.google.com/) → create or select a project.
-2. Enable **Places API (New)** (API Library → search “Places API (New)”). Legacy “Places API” alone is **not** enough for `places:autocomplete` / Place Details (New).
-3. Ensure billing is enabled on the project (Places needs a billing account; free monthly credit applies).
-4. Create an **API key** (APIs & Services → Credentials → Create credentials → API key).
-5. **Restrict the key** (recommended before production traffic):
-   - Application restriction: **None** while validating Deploy Previews, or **IP addresses** once you know Netlify/Vercel egress. Do **not** use HTTP referrer restriction — the key is used server-side only.
-   - API restriction: allow **Places API (New)** only.
-6. Set the env var (server-only — **never** `NEXT_PUBLIC_*`):
-
-#### Netlify (required for PR #18 Deploy Preview)
-
-1. Netlify → site **meek-hotteok-b000fa** (or your HBG site) → **Site configuration** → **Environment variables**.
-2. Add `GOOGLE_PLACES_API_KEY` = your key.
-3. Scopes: enable **Deploy Previews** and **Production** (and Branch deploys if you use them). Preview-only is enough to test PR #18.
-4. **Trigger a redeploy** of the PR preview (Deploys → “Clear cache and deploy site”, or push a commit / “Retry deploy” on the preview). Env vars are baked in at build/runtime for the Next server — existing preview builds will keep returning `enabled: false` until redeployed.
-5. Verify:
-   ```bash
-   curl -sS "https://deploy-preview-18--meek-hotteok-b000fa.netlify.app/api/address-suggest?q=123+main+pittsburgh"
-   # expect: {"ok":true,"enabled":true,"suggestions":[...]}
-   curl -sS "https://deploy-preview-18--meek-hotteok-b000fa.netlify.app/api/address-suggest?debug=1"
-   # expect: enabled true + debug.reason "configured" (no key leaked)
-   ```
-
-#### Vercel
-
-Project → Settings → Environment Variables → `GOOGLE_PLACES_API_KEY` for Preview + Production → Redeploy.
-
-7. Billing: Places uses Google’s free monthly credit, then paid. Monitor usage in Cloud Console.
-
-**Bias:** the server proxy sets `includedRegionCodes: ["us"]`, `regionCode: "us"`, and a Pittsburgh-centered `locationBias` circle (~200 km) so PA/OH results near the service area rank higher.
-
-### Address autocomplete behavior
-
-- Client probes `GET /api/address-suggest` on mount, then calls `GET /api/address-suggest?q=…&session=…` (debounced). **API key never leaves the server.**
-- Selecting a suggestion calls `GET /api/address-suggest?placeId=…&session=…` for Place Details, then fills street / city / state / ZIP.
-- Debug: `?debug=1` returns a safe `debug` object (`missing_GOOGLE_PLACES_API_KEY`, `configured`, or Google `status`/`message`/`code` — never the key). Server logs the same Google error summary.
-- No OpenStreetMap / Nominatim path and no OSM attribution. No Mapbox unless added later with its own token.
-- Street + city + state + ZIP are **required**. Apt/unit is optional.
 
 ## Retrieving leads
 
@@ -137,7 +108,6 @@ Locally: inspect `.data/leads/` (gitignored).
 | Local `.data/leads` | Free; durable on a persistent disk only (ephemeral on most serverless FS) |
 | Resend | Free tier sufficient for estimate volume |
 | SMTP | Whatever your existing mailbox provider charges |
-| Google Places (New) | Free monthly credit, then paid — key server-side only |
 | Jobber | Unchanged until this PR replaces production |
 
 ## Jobber rollback
@@ -149,5 +119,4 @@ Locally: inspect `.data/leads/` (gitignored).
 
 - Hosting today: Vercel production + Netlify Deploy Previews (`@netlify/plugin-nextjs`).
 - For durable Blobs on Vercel production, set `NETLIFY_SITE_ID` + `NETLIFY_AUTH_TOKEN` (or migrate production to Netlify). Without Blobs credentials, the API writes under `.data/leads` / writable FS — fine for local/preview; configure Blobs or another durable store before relying on production FS.
-- After setting `GOOGLE_PLACES_API_KEY`, trigger a **preview rebuild** (push or redeploy) so Netlify/Vercel pick up the env var.
 - Never commit secrets. `.env*` is gitignored.
