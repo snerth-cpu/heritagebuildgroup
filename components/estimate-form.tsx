@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { captureAttribution, pageContext, readAttribution, trackEvent } from "@/lib/analytics";
 
 const JOBBER_CONTAINER_ID = "fdc5a674-3e03-4178-a0d2-29eb4a6a2613-5089699";
 const JOBBER_FORM_URL = "https://clienthub.getjobber.com/client_hubs/fdc5a674-3e03-4178-a0d2-29eb4a6a2613/public/work_request/embedded_work_request_form?form_id=5089699";
@@ -32,7 +33,17 @@ function injectJobberScript() {
   container.insertAdjacentElement("afterend", script);
 }
 
-export function EstimateForm() {
+function serviceFromSearch() {
+  try {
+    return new URLSearchParams(window.location.search).get("service") || undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
+  const formStartSent = useRef(false);
+
   useEffect(() => {
     if (pendingCleanup != null) {
       window.clearTimeout(pendingCleanup);
@@ -42,6 +53,7 @@ export function EstimateForm() {
     const container = document.getElementById(JOBBER_CONTAINER_ID);
     if (!container) return;
 
+    captureAttribution();
     ensureJobberCss();
     injectJobberScript();
 
@@ -52,8 +64,29 @@ export function EstimateForm() {
     requestAnimationFrame(scrollToForm);
     window.addEventListener("hashchange", scrollToForm);
 
+    const markFormStart = () => {
+      if (formStartSent.current) return;
+      formStartSent.current = true;
+      const service = serviceSlug || serviceFromSearch();
+      trackEvent("form_start", {
+        ...pageContext(),
+        ...readAttribution(),
+        form_id: "jobber_work_request",
+        location: "estimate_form",
+        ...(service ? { service_slug: service } : {}),
+      });
+    };
+
+    const embed = document.getElementById("estimate-form");
+    const onPointer = () => markFormStart();
+    const onFocusIn = () => markFormStart();
+    embed?.addEventListener("pointerdown", onPointer, { once: true });
+    embed?.addEventListener("focusin", onFocusIn);
+
     return () => {
       window.removeEventListener("hashchange", scrollToForm);
+      embed?.removeEventListener("pointerdown", onPointer);
+      embed?.removeEventListener("focusin", onFocusIn);
       pendingCleanup = window.setTimeout(() => {
         document.querySelectorAll(`script[data-jobber-embed="true"]`).forEach((el) => el.remove());
         const node = document.getElementById(JOBBER_CONTAINER_ID);
@@ -62,12 +95,14 @@ export function EstimateForm() {
         pendingCleanup = null;
       }, 250);
     };
-  }, []);
+  }, [serviceSlug]);
 
   return (
     <div id="estimate-form" className="estimate-form jobber-embed">
       <div id={JOBBER_CONTAINER_ID} />
-      <p className="form-note">Submitted information will only be used to respond to your estimate request. It will not be sold or shared for marketing purposes.</p>
+      <p className="form-note">
+        Submitted information will only be used to respond to your quote request. It will not be sold or shared for marketing purposes.
+      </p>
       <p className="form-note">PA Registered & Fully Insured</p>
     </div>
   );

@@ -123,7 +123,7 @@ export function Header() {
             href={ESTIMATE_HREF}
             onClick={() => setOpen(false)}
           >
-            Get an Estimate
+            Request a Quote
           </Link>
         </nav>
       </div>
@@ -131,7 +131,7 @@ export function Header() {
   );
 }
 
-/** Fixed mobile call + estimate bar — hidden on contact and estimate pages. */
+/** Fixed mobile call + quote bar — hidden on contact and estimate pages. */
 export function MobileContactCta() {
   const pathname = usePathname();
   const hidden = pathname === CONTACT_HREF || pathname === "/estimate";
@@ -149,7 +149,7 @@ export function MobileContactCta() {
   return (
     <div className="mobile-contact-cta" role="group" aria-label="Contact options">
       <a href={BUSINESS_PHONE_HREF}>Call {BUSINESS_PHONE}</a>
-      <Link href={ESTIMATE_HREF}>Get an Estimate</Link>
+      <Link href={ESTIMATE_HREF}>Request a Quote</Link>
     </div>
   );
 }
@@ -160,8 +160,10 @@ export function Footer() {
       <div className="footer__top wrap">
         <Mark size="footer" />
         <div>
-          <p className="eyebrow">METAL EXTERIORS &amp; BUILDINGS • WESTERN PENNSYLVANIA</p>
-          <p>Serving Greater Pittsburgh, Cranberry Township, Butler County, Mercer County, and Erie County.</p>
+          <p className="eyebrow">METAL EXTERIORS &amp; BUILDINGS</p>
+          <p>
+            Serving the Pittsburgh region, Cranberry Township, Butler County, Mercer County, and nearby Ohio communities.
+          </p>
           <p className="footer__contact">
             <a href={BUSINESS_PHONE_HREF}>{BUSINESS_PHONE}</a>
             <a href={`mailto:${BUSINESS_EMAIL}`}>{BUSINESS_EMAIL}</a>
@@ -180,13 +182,13 @@ export function Footer() {
           </nav>
         </div>
         <Link className="arrow-link" href={ESTIMATE_HREF}>
-          REQUEST AN ESTIMATE <span>↗</span>
+          REQUEST A QUOTE <span>↗</span>
         </Link>
       </div>
       <div className="footer__bottom wrap">
         <p>© {new Date().getFullYear()} {LEGAL_NAME}</p>
         <p>PA Registered & Fully Insured · {BUSINESS_HIC}</p>
-        <p>Western Pennsylvania</p>
+        <p>Pittsburgh region &amp; nearby Ohio</p>
       </div>
     </footer>
   );
