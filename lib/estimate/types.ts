@@ -47,7 +47,9 @@ export type LeadRecord = {
   name: string;
   phone: string;
   email: string;
-  address?: string;
+  address: string;
+  city?: string;
+  state?: string;
   zip: string;
   propertyType: PropertyType;
   projectType: ProjectType;
@@ -55,7 +57,6 @@ export type LeadRecord = {
   description: string;
   timeline: Timeline;
   projectSize?: string;
-  budget?: string;
   consent: true;
   attribution: LeadAttribution;
   photos: LeadPhoto[];
@@ -72,6 +73,8 @@ export type EstimateFieldErrors = Partial<
     | "phone"
     | "email"
     | "address"
+    | "city"
+    | "state"
     | "zip"
     | "propertyType"
     | "projectType"
@@ -79,7 +82,6 @@ export type EstimateFieldErrors = Partial<
     | "description"
     | "timeline"
     | "projectSize"
-    | "budget"
     | "photos"
     | "consent"
     | "form",

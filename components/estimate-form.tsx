@@ -21,6 +21,8 @@ import {
   type Timeline,
   type WorkType,
 } from "@/lib/estimate/types";
+import { AddressAutocomplete } from "@/components/address-autocomplete";
+
 const MAX_PHOTOS = 4;
 
 type FormState = {
@@ -28,6 +30,8 @@ type FormState = {
   phone: string;
   email: string;
   address: string;
+  city: string;
+  state: string;
   zip: string;
   propertyType: PropertyType | "";
   projectType: ProjectType | "";
@@ -35,7 +39,6 @@ type FormState = {
   description: string;
   timeline: Timeline | "";
   projectSize: string;
-  budget: string;
   consent: boolean;
 };
 
@@ -44,6 +47,8 @@ const INITIAL: FormState = {
   phone: "",
   email: "",
   address: "",
+  city: "",
+  state: "",
   zip: "",
   propertyType: "",
   projectType: "",
@@ -51,7 +56,6 @@ const INITIAL: FormState = {
   description: "",
   timeline: "",
   projectSize: "",
-  budget: "",
   consent: false,
 };
 
@@ -119,6 +123,24 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
       delete next[key as keyof EstimateFieldErrors];
       delete next.form;
       return next;
+    });
+  };
+
+  const clearFieldErrors = (...keys: (keyof EstimateFieldErrors)[]) => {
+    setErrors((prev) => {
+      let changed = false;
+      const next = { ...prev };
+      for (const key of keys) {
+        if (next[key]) {
+          delete next[key];
+          changed = true;
+        }
+      }
+      if (next.form) {
+        delete next.form;
+        changed = true;
+      }
+      return changed ? next : prev;
     });
   };
 
@@ -305,16 +327,57 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
             </span>
           ) : null}
         </label>
-        <div className="form-row">
-          <label htmlFor={`${formId}-address`}>
-            Project address <span className="optional">(optional)</span>
+        <label htmlFor={`${formId}-address`}>
+          Project street address
+          <AddressAutocomplete
+            id={`${formId}-address`}
+            value={values.address}
+            required
+            error={errors.address}
+            onInteract={markFormStart}
+            onStreetChange={(street) => {
+              markFormStart();
+              setValues((prev) => ({ ...prev, address: street }));
+              clearFieldErrors("address");
+            }}
+            onSelect={(parts) => {
+              markFormStart();
+              setValues((prev) => ({
+                ...prev,
+                address: parts.street || prev.address,
+                city: parts.city || prev.city,
+                state: parts.state || prev.state,
+                zip: parts.zip || prev.zip,
+              }));
+              clearFieldErrors("address", "city", "state", "zip");
+            }}
+          />
+        </label>
+        <div className="form-row form-row--three">
+          <label htmlFor={`${formId}-city`}>
+            City <span className="optional">(from address)</span>
             <input
-              id={`${formId}-address`}
-              name="address"
-              autoComplete="street-address"
-              value={values.address}
-              onChange={(e) => setField("address", e.target.value)}
+              id={`${formId}-city`}
+              name="city"
+              autoComplete="address-level2"
+              value={values.city}
+              onChange={(e) => setField("city", e.target.value)}
+              aria-invalid={Boolean(errors.city)}
             />
+            {errors.city ? <span className="field-error">{errors.city}</span> : null}
+          </label>
+          <label htmlFor={`${formId}-state`}>
+            State <span className="optional">(from address)</span>
+            <input
+              id={`${formId}-state`}
+              name="state"
+              autoComplete="address-level1"
+              value={values.state}
+              onChange={(e) => setField("state", e.target.value)}
+              aria-invalid={Boolean(errors.state)}
+              placeholder="PA"
+            />
+            {errors.state ? <span className="field-error">{errors.state}</span> : null}
           </label>
           <label htmlFor={`${formId}-zip`}>
             ZIP code
@@ -438,28 +501,16 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
 
       <fieldset className="estimate-section">
         <legend>Optional details</legend>
-        <div className="form-row">
-          <label htmlFor={`${formId}-size`}>
-            Project size <span className="optional">(optional)</span>
-            <input
-              id={`${formId}-size`}
-              name="projectSize"
-              placeholder='e.g. 40×60, ~2,400 sq ft, or "Not sure"'
-              value={values.projectSize}
-              onChange={(e) => setField("projectSize", e.target.value)}
-            />
-          </label>
-          <label htmlFor={`${formId}-budget`}>
-            Budget range <span className="optional">(optional)</span>
-            <input
-              id={`${formId}-budget`}
-              name="budget"
-              placeholder="Rough range is fine"
-              value={values.budget}
-              onChange={(e) => setField("budget", e.target.value)}
-            />
-          </label>
-        </div>
+        <label htmlFor={`${formId}-size`}>
+          Project size <span className="optional">(optional)</span>
+          <input
+            id={`${formId}-size`}
+            name="projectSize"
+            placeholder='e.g. 40×60, ~2,400 sq ft, or "Not sure"'
+            value={values.projectSize}
+            onChange={(e) => setField("projectSize", e.target.value)}
+          />
+        </label>
         <label className="upload" htmlFor={`${formId}-photos`}>
           Project photos <span className="optional">(optional)</span>
           <span>Up to {MAX_PHOTOS}</span>

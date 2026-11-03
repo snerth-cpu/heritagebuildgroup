@@ -45,7 +45,9 @@ export type ValidatedEstimateInput = {
   name: string;
   phone: string;
   email: string;
-  address?: string;
+  address: string;
+  city?: string;
+  state?: string;
   zip: string;
   propertyType: PropertyType;
   projectType: ProjectType;
@@ -53,7 +55,6 @@ export type ValidatedEstimateInput = {
   description: string;
   timeline: Timeline;
   projectSize?: string;
-  budget?: string;
   consent: true;
   attribution: LeadAttribution;
   photos: File[];
@@ -95,7 +96,15 @@ export function validateEstimateFormData(
   if (!EMAIL_RE.test(email) || email.length > 200) errors.email = "Enter a valid email address.";
 
   const address = trim(form.get("address"));
+  if (address.length < 5) errors.address = "Enter the project street address.";
   if (address.length > 200) errors.address = "Address is too long.";
+
+  const city = trim(form.get("city"));
+  if (city.length > 100) errors.city = "City is too long.";
+
+  const stateRaw = trim(form.get("state"));
+  if (stateRaw.length > 40) errors.state = "State is too long.";
+  const state = /^[A-Za-z]{2}$/.test(stateRaw) ? stateRaw.toUpperCase() : stateRaw;
 
   const zip = trim(form.get("zip"));
   if (!ZIP_RE.test(zip)) errors.zip = "Enter a valid ZIP code.";
@@ -118,9 +127,6 @@ export function validateEstimateFormData(
 
   const projectSize = trim(form.get("projectSize"));
   if (projectSize.length > 200) errors.projectSize = "Project size is too long.";
-
-  const budget = trim(form.get("budget"));
-  if (budget.length > 120) errors.budget = "Budget note is too long.";
 
   const consent = trim(form.get("consent"));
   if (consent !== "yes") errors.consent = "Please confirm we may contact you about this request.";
@@ -185,7 +191,9 @@ export function validateEstimateFormData(
       name,
       phone: phoneDigits,
       email,
-      address: address || undefined,
+      address,
+      city: city || undefined,
+      state: state || undefined,
       zip,
       propertyType,
       projectType,
@@ -193,7 +201,6 @@ export function validateEstimateFormData(
       description,
       timeline,
       projectSize: projectSize || undefined,
-      budget: budget || undefined,
       consent: true,
       attribution,
       photos,
