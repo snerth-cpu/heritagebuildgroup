@@ -21,6 +21,8 @@ export type LeadService = {
   slug: ServiceSlug;
   path: `/${ServiceSlug}`;
   navLabel: string;
+  /** When false, omit from homepage “What We Build” cards (page still exists for Ads/SEO). */
+  showOnHome?: boolean;
   cardTitle: string;
   cardCopy: string;
   cardKind: string;
@@ -135,7 +137,7 @@ export const leadServices: LeadService[] = [
     path: "/metal-siding",
     navLabel: "Metal Siding",
     cardTitle: "METAL SIDING",
-    cardCopy: "Supply and install metal siding for homes and commercial walls, including board-and-batten.",
+    cardCopy: "Supply and install metal siding for homes, barns, and commercial walls—including board-and-batten.",
     cardKind: "siding",
     headline: "Metal Siding Installation & Replacement",
     heroTitle: "METAL SIDING INSTALLATION & REPLACEMENT.",
@@ -210,6 +212,7 @@ export const leadServices: LeadService[] = [
     slug: "barn-siding",
     path: "/barn-siding",
     navLabel: "Barn Siding",
+    showOnHome: false,
     cardTitle: "BARN SIDING",
     cardCopy: "Replace and upgrade siding on existing barns—distinct from new pole building construction.",
     cardKind: "siding",
@@ -422,6 +425,11 @@ export const leadServices: LeadService[] = [
 export function getLeadService(slug: string | null | undefined) {
   if (!slug) return undefined;
   return leadServices.find((service) => service.slug === slug);
+}
+
+/** Homepage “What We Build” cards — excludes secondary/Ads-only landings. */
+export function homeLeadServices() {
+  return leadServices.filter((service) => service.showOnHome !== false);
 }
 
 export function leadServiceSchema(service: LeadService) {

@@ -24,7 +24,6 @@ export function ServiceLinks() {
     <nav className="inline-links" aria-label="Related services">
       <Link href="/metal-roofing">Metal Roofing</Link>
       <Link href="/metal-siding">Metal Siding</Link>
-      <Link href="/barn-siding">Barn Siding</Link>
       <Link href="/pole-buildings">Pole Buildings</Link>
       <Link href="/garages">Garages</Link>
       <Link href="/additions">Additions</Link>

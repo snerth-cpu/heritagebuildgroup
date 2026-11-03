@@ -16,7 +16,6 @@ import {
 const serviceLinks = [
   ["Metal Roofing", "/metal-roofing"],
   ["Metal Siding", "/metal-siding"],
-  ["Barn Siding", "/barn-siding"],
   ["Pole Buildings", "/pole-buildings"],
   ["Garages", "/garages"],
   ["Additions", "/additions"],
@@ -172,7 +171,6 @@ export function Footer() {
           <nav className="footer__links" aria-label="Footer service links">
             <Link href="/metal-roofing">Metal Roofing</Link>
             <Link href="/metal-siding">Metal Siding</Link>
-            <Link href="/barn-siding">Barn Siding</Link>
             <Link href="/pole-buildings">Pole Buildings</Link>
             <Link href="/garages">Garages</Link>
             <Link href="/additions">Additions</Link>

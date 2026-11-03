@@ -4,7 +4,7 @@ import { AssetPanel, Button } from "@/components/ui";
 import { BeforeAfter } from "@/components/before-after";
 import { Mark } from "@/components/brand-logo";
 import { barnBeforeAfterPrimary, barnProjectImagesFlat } from "@/lib/projects";
-import { leadServices } from "@/lib/services";
+import { homeLeadServices } from "@/lib/services";
 import {
   pageMetadata,
   BUSINESS_PHONE,
@@ -74,8 +74,8 @@ export default function Home() {
           <p className="eyebrow">MAIN SERVICES</p>
           <h2>WHAT WE BUILD</h2>
         </div>
-        <div className="home-services__grid home-services__grid--five">
-          {leadServices.map((service) => (
+        <div className="home-services__grid home-services__grid--four">
+          {homeLeadServices().map((service) => (
             <Link href={service.path} className="home-service" key={service.path}>
               <AssetPanel kind={service.cardKind} contain={service.heroContain} />
               <div>
@@ -88,6 +88,8 @@ export default function Home() {
         </div>
         <p className="home-services__note">
           Also available:{" "}
+          <Link href="/barn-siding" className="text-link">Barn Siding Replacement</Link>
+          {" · "}
           <Link href="/commercial" className="text-link">Commercial Exteriors</Link>
           {" · "}
           <Link href="/additions" className="text-link">Home Additions</Link>
