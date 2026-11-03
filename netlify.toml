@@ -10,3 +10,15 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Prefer the native Function for estimate saves so Netlify Blobs context is available.
+# force=true beats the Next.js Runtime's /api rewrite. Vercel ignores this file.
+[[redirects]]
+  from = "/api/estimate"
+  to = "/.netlify/functions/estimate"
+  status = 200
+  force = true

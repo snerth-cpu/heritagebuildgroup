@@ -1,29 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { pageContext, readAttribution, trackEvent } from "@/lib/analytics";
-
-const JOBBER_ORIGINS = new Set([
-  "https://clienthub.getjobber.com",
-  "https://www.getjobber.com",
-  "https://getjobber.com",
-]);
-
-/**
- * Only fire generate_lead when Jobber is confirmed to send one of these, or when
- * the thank-you redirect lands with ?lead=success (configured in Jobber).
- * Do not treat iframe load, form open, or submit click as a lead.
- */
-const JOBBER_SUCCESS_SIGNALS = new Set([
-  "generate_lead",
-  "form_submitted",
-  "formsubmitted",
-  "work_request_submitted",
-  "request_submitted",
-  "submission_success",
-]);
-
-const LEAD_SUCCESS_KEY = "hbg_lead_success_tracked";
+import { captureAttribution, pageContext, readAttribution, trackEvent } from "@/lib/analytics";
 
 function ctaLocation(anchor: Element) {
   if (anchor.closest("footer")) return "footer";
@@ -42,22 +20,6 @@ function protocolFromHref(href: string) {
   } catch {
     return "";
   }
-}
-
-function stringSignal(value: unknown) {
-  return typeof value === "string" ? value.trim().toLowerCase() : "";
-}
-
-function isJobberSuccessMessage(origin: string, data: unknown) {
-  if (!JOBBER_ORIGINS.has(origin)) return false;
-
-  const direct = stringSignal(data);
-  if (direct) return JOBBER_SUCCESS_SIGNALS.has(direct);
-  if (!data || typeof data !== "object") return false;
-
-  const record = data as Record<string, unknown>;
-  const candidates = [record.event, record.type, record.action, record.name, record.message, record.status];
-  return candidates.some((value) => JOBBER_SUCCESS_SIGNALS.has(stringSignal(value)));
 }
 
 function serviceFromPage() {
@@ -82,27 +44,14 @@ function leadEventParams(extra?: Record<string, string | undefined>) {
   };
 }
 
-function trackGenerateLead(source: "jobber_postmessage" | "thank_you_redirect") {
-  try {
-    if (sessionStorage.getItem(LEAD_SUCCESS_KEY) === "1") return;
-    sessionStorage.setItem(LEAD_SUCCESS_KEY, "1");
-  } catch {
-    /* still fire once this page load */
-  }
-  trackEvent("generate_lead", leadEventParams({ location: "estimate_form", lead_source: source }));
-}
-
+/**
+ * Tracks click-to-call / email_click only.
+ * generate_lead is owned by the native estimate form after a confirmed API save —
+ * never on page visit, thank-you URL, or legacy Jobber postMessage.
+ */
 export function ConversionTracker() {
   useEffect(() => {
-    // Verified path: Jobber thank-you / redirect URL with ?lead=success
-    try {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("lead") === "success") {
-        trackGenerateLead("thank_you_redirect");
-      }
-    } catch {
-      /* ignore */
-    }
+    captureAttribution();
 
     const onClick = (event: MouseEvent) => {
       const target = event.target;
@@ -129,18 +78,9 @@ export function ConversionTracker() {
       }
     };
 
-    const onMessage = (event: MessageEvent) => {
-      // Best-effort only: Jobber does not document a public submit postMessage.
-      // Kept so a future documented signal can work without another deploy.
-      if (!isJobberSuccessMessage(event.origin, event.data)) return;
-      trackGenerateLead("jobber_postmessage");
-    };
-
     document.addEventListener("click", onClick, true);
-    window.addEventListener("message", onMessage);
     return () => {
       document.removeEventListener("click", onClick, true);
-      window.removeEventListener("message", onMessage);
     };
   }, []);
 
