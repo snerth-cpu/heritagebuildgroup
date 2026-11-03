@@ -5,8 +5,8 @@ import { getLead, listLeads, storageBackendLabel } from "@/lib/estimate/store";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-function unauthorized() {
-  return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+function unauthorized(extra?: Record<string, unknown>) {
+  return NextResponse.json({ ok: false, error: "Unauthorized", ...(extra || {}) }, { status: 401 });
 }
 
 function tokenFromRequest(request: Request) {
@@ -31,7 +31,14 @@ export async function GET(request: Request) {
   }
 
   const provided = tokenFromRequest(request);
-  if (!adminTokensMatch(provided, expected)) return unauthorized();
+  if (!adminTokensMatch(provided, expected)) {
+    // Length-only hints — never echo token contents. Helps catch paste/env mismatch.
+    return unauthorized({
+      reason: provided ? "token_mismatch" : "token_missing",
+      expectedLength: expected.length,
+      providedLength: provided.length,
+    });
+  }
 
   const url = new URL(request.url);
   const id = url.searchParams.get("id");
