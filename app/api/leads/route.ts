@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
-import { adminTokensMatch, normalizeAdminToken } from "@/lib/estimate/admin-token";
+import {
+  adminTokenFingerprint,
+  adminTokensMatch,
+  normalizeAdminToken,
+} from "@/lib/estimate/admin-token";
 import { getLead, listLeads, storageBackendLabel } from "@/lib/estimate/store";
 
 export const runtime = "nodejs";
@@ -32,11 +36,13 @@ export async function GET(request: Request) {
 
   const provided = tokenFromRequest(request);
   if (!adminTokensMatch(provided, expected)) {
-    // Length-only hints — never echo token contents. Helps catch paste/env mismatch.
+    // Safe hints only — never echo token contents.
     return unauthorized({
       reason: provided ? "token_mismatch" : "token_missing",
       expectedLength: expected.length,
       providedLength: provided.length,
+      expectedFingerprint: adminTokenFingerprint(expected),
+      providedFingerprint: adminTokenFingerprint(provided),
     });
   }
 

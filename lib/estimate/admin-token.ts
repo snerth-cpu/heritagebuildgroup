@@ -1,3 +1,5 @@
+import { createHash } from "crypto";
+
 /**
  * Normalize admin secrets from env / headers without logging values.
  * Handles common Vercel dashboard paste issues: whitespace, wrapping quotes, BOM.
@@ -12,6 +14,13 @@ export function normalizeAdminToken(raw: string | null | undefined) {
     value = value.slice(1, -1).trim();
   }
   return value;
+}
+
+/** Short non-reversible fingerprint for mismatch debugging (never the secret itself). */
+export function adminTokenFingerprint(raw: string | null | undefined) {
+  const value = normalizeAdminToken(raw);
+  if (!value) return null;
+  return createHash("sha256").update(value, "utf8").digest("hex").slice(0, 8);
 }
 
 export function adminTokensMatch(provided: string, expected: string) {
