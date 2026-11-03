@@ -15,8 +15,15 @@ import {
   type EstimateFieldErrors,
   type ProjectType,
 } from "@/lib/estimate/types";
+import { normalizePhone } from "@/lib/estimate/validate";
 
 const MAX_PHOTOS = 4;
+const PHONE_MAX_DIGITS = 10;
+
+/** Digits-only U.S. phone (no country code), capped at 10. */
+function phoneDigitsInput(raw: string) {
+  return normalizePhone(raw).slice(0, PHONE_MAX_DIGITS);
+}
 
 type FormState = {
   name: string;
@@ -285,9 +292,10 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
               inputMode="tel"
               autoComplete="tel"
               required
-              placeholder="(724) 555-0100"
+              maxLength={PHONE_MAX_DIGITS}
+              placeholder="7245550100"
               value={values.phone}
-              onChange={(e) => setField("phone", e.target.value)}
+              onChange={(e) => setField("phone", phoneDigitsInput(e.target.value))}
               aria-invalid={Boolean(errors.phone)}
               aria-describedby={errors.phone ? `${formId}-phone-err` : undefined}
             />
