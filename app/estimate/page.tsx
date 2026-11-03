@@ -12,13 +12,12 @@ export const metadata = pageMetadata({
 });
 
 type PageProps = {
-  searchParams?: Promise<{ service?: string; lead?: string }>;
+  searchParams?: Promise<{ service?: string; submitted?: string }>;
 };
 
 export default async function Page({ searchParams }: PageProps) {
   const params = (await searchParams) || {};
   const selected = getLeadService(params.service);
-  const leadSuccess = params.lead === "success";
 
   return (
     <section className="estimate">
@@ -28,7 +27,8 @@ export default async function Page({ searchParams }: PageProps) {
           <p className="eyebrow">REQUEST A QUOTE</p>
           <h1>TELL US ABOUT<br />YOUR PROJECT.</h1>
           <p>
-            Share your name, phone, project ZIP code, project type, and a short description. Email and dimensions help when you have them.
+            Share your name, phone, email, project ZIP, and what you need built or replaced. Photos and
+            sizes help when you have them.
           </p>
           {selected ? (
             <p className="estimate-selected" role="status">
@@ -69,7 +69,7 @@ export default async function Page({ searchParams }: PageProps) {
             <p>
               <strong>Required</strong>
               <br />
-              Name · Phone · Project ZIP · Project type · Short description
+              Name · Phone · Email · ZIP · Property type · Project type · Work type · Timeline · Description
             </p>
           </div>
           <div className="estimate__aside">
@@ -77,14 +77,9 @@ export default async function Page({ searchParams }: PageProps) {
             <p>
               <strong>Helpful</strong>
               <br />
-              Email · Approx. dimensions (or “Not sure”) · Desired start · Photos if the form allows
+              Street address · Approx. size · Budget · Photos
             </p>
           </div>
-          {leadSuccess ? (
-            <p className="estimate-success" role="status">
-              Thanks — your request was received. We will follow up using the contact details you submitted.
-            </p>
-          ) : null}
         </aside>
         <EstimateForm serviceSlug={selected?.slug} />
       </div>

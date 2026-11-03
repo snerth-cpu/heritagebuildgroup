@@ -31,8 +31,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <main>{children}</main>
         <Footer />
         <MobileContactCta />
-        <ConversionTracker />
+        {/* Single GA4 property — generate_lead fires from the native estimate form after save. */}
         <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />
+        <ConversionTracker />
       </body>
     </html>
   );
