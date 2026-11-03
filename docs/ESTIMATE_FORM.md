@@ -164,6 +164,13 @@ If you also use **Vercel** for production, add the same three variables there �
 
 ### Retrieve / export leads (after `LEADS_ADMIN_TOKEN` + Blob are set)
 
+Set `LEADS_ADMIN_TOKEN` in **Vercel → Project → Settings → Environment Variables → Production** as a plain value:
+
+- Environment: **Production** (and Preview if you want)
+- Do **not** wrap the value in quotes in the Vercel UI
+- Avoid leading/trailing spaces or a trailing newline
+- Redeploy Production after saving
+
 ```bash
 curl -H "Authorization: Bearer $LEADS_ADMIN_TOKEN" \
   "https://www.heritagebuildgroup.com/api/leads?limit=50"
@@ -171,4 +178,6 @@ curl -H "Authorization: Bearer $LEADS_ADMIN_TOKEN" \
 curl -H "Authorization: Bearer $LEADS_ADMIN_TOKEN" \
   "https://www.heritagebuildgroup.com/api/leads?id=<uuid>"
 ```
+
+If authorized calls return **401**, the token you typed does not match Production (wrong value, quotes stored in the env var, or Preview-only scope). Unauthorized calls should always return 401/503.
 - Never commit secrets. `.env*` is gitignored.

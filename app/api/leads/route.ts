@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { adminTokensMatch, normalizeAdminToken } from "@/lib/estimate/admin-token";
 import { getLead, listLeads, storageBackendLabel } from "@/lib/estimate/store";
 
 export const runtime = "nodejs";
@@ -10,14 +11,18 @@ function unauthorized() {
 
 function tokenFromRequest(request: Request) {
   const header = request.headers.get("authorization") || "";
-  if (header.toLowerCase().startsWith("bearer ")) return header.slice(7).trim();
+  if (header.toLowerCase().startsWith("bearer ")) {
+    return normalizeAdminToken(header.slice(7));
+  }
   const url = new URL(request.url);
-  return url.searchParams.get("token") || request.headers.get("x-leads-admin-token") || "";
+  return normalizeAdminToken(
+    url.searchParams.get("token") || request.headers.get("x-leads-admin-token") || "",
+  );
 }
 
 /** Password-protected lead retrieval. Not publicly listable without LEADS_ADMIN_TOKEN. */
 export async function GET(request: Request) {
-  const expected = process.env.LEADS_ADMIN_TOKEN;
+  const expected = normalizeAdminToken(process.env.LEADS_ADMIN_TOKEN);
   if (!expected) {
     return NextResponse.json(
       { ok: false, error: "LEADS_ADMIN_TOKEN is not configured on the server." },
@@ -26,7 +31,7 @@ export async function GET(request: Request) {
   }
 
   const provided = tokenFromRequest(request);
-  if (!provided || provided !== expected) return unauthorized();
+  if (!adminTokensMatch(provided, expected)) return unauthorized();
 
   const url = new URL(request.url);
   const id = url.searchParams.get("id");
