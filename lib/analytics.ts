@@ -1,6 +1,12 @@
 export const GA_MEASUREMENT_ID =
   process.env.NEXT_PUBLIC_GA_ID || "G-JJ9HCGZZEM";
 
+/** Live site hosts that may load production GA4 `G-JJ9HCGZZEM`. */
+export const PRODUCTION_GA_HOSTS = new Set([
+  "heritagebuildgroup.com",
+  "www.heritagebuildgroup.com",
+]);
+
 const ATTRIBUTION_KEY = "hbg_attribution";
 /** Per-submission-id dedupe so generate_lead fires once per successfully saved lead. */
 export const LEAD_SUCCESS_PREFIX = "hbg_lead_tracked:";
@@ -24,6 +30,51 @@ declare global {
 }
 
 export type GaEventParams = Record<string, string | number | boolean | undefined>;
+
+function normalizeHost(hostname: string) {
+  return hostname.trim().toLowerCase().replace(/:\d+$/, "").replace(/\.$/, "");
+}
+
+export function isProductionGaHost(hostname: string) {
+  return PRODUCTION_GA_HOSTS.has(normalizeHost(hostname));
+}
+
+/**
+ * Production GA4 only on the live heritagebuildgroup.com site.
+ * Uses Netlify/Vercel deploy context + hostname (www included).
+ * Preview / branch / temporary *.netlify.app / *.vercel.app → off.
+ */
+export function shouldEnableProductionGa(options?: {
+  hostname?: string | null;
+  /** Netlify: production | deploy-preview | branch-deploy | dev */
+  context?: string | null;
+  /** Vercel: production | preview | development */
+  vercelEnv?: string | null;
+  nodeEnv?: string | null;
+}) {
+  const context = options?.context ?? process.env.CONTEXT ?? null;
+  const vercelEnv = options?.vercelEnv ?? process.env.VERCEL_ENV ?? null;
+  const nodeEnv = options?.nodeEnv ?? process.env.NODE_ENV ?? null;
+
+  if (context && context !== "production") return false;
+  if (vercelEnv && vercelEnv !== "production") return false;
+  if (nodeEnv && nodeEnv !== "production") return false;
+
+  const hostname =
+    options?.hostname ??
+    (typeof window !== "undefined" ? window.location.hostname : null);
+
+  if (hostname) {
+    const host = normalizeHost(hostname);
+    if (host.endsWith(".netlify.app") || host.endsWith(".vercel.app") || host === "localhost") {
+      return false;
+    }
+    return isProductionGaHost(host);
+  }
+
+  // Server render without a request host: trust deploy context only when explicitly production.
+  return context === "production" || vercelEnv === "production";
+}
 
 export function pageContext() {
   return {
@@ -65,9 +116,11 @@ export function readAttribution(): Record<string, string> {
 /**
  * Install the standard gtag stub so early events queue as Arguments objects
  * (plain-array pushes are not reliably replayed by gtag.js).
+ * Only used when production GA is enabled for this host.
  */
 export function ensureGtag() {
   if (typeof window === "undefined") return;
+  if (!shouldEnableProductionGa()) return;
   window.dataLayer = window.dataLayer || [];
   if (typeof window.gtag === "function") return;
   window.gtag = function gtag() {
@@ -82,12 +135,17 @@ function gaInitPresent() {
 /** Resolves once the Next.js GA bootstrap is present, or after timeout (stub still works). */
 export function waitForGtag(timeoutMs = 4000): Promise<boolean> {
   if (typeof window === "undefined") return Promise.resolve(false);
+  if (!shouldEnableProductionGa()) return Promise.resolve(false);
   ensureGtag();
   if (gaInitPresent() && typeof window.gtag === "function") return Promise.resolve(true);
 
   return new Promise((resolve) => {
     const started = Date.now();
     const tick = () => {
+      if (!shouldEnableProductionGa()) {
+        resolve(false);
+        return;
+      }
       ensureGtag();
       if (gaInitPresent() && typeof window.gtag === "function") {
         resolve(true);
@@ -103,11 +161,13 @@ export function waitForGtag(timeoutMs = 4000): Promise<boolean> {
   });
 }
 
-/** Sends a GA4 event through the existing gtag install. Queues safely before the snippet is ready. */
+/** Sends a GA4 event through the existing gtag install. No-ops off production hosts. */
 export function trackEvent(name: string, params?: GaEventParams) {
   if (typeof window === "undefined") return;
+  if (!shouldEnableProductionGa()) return;
   ensureGtag();
-  window.gtag!("event", name, params);
+  if (typeof window.gtag !== "function") return;
+  window.gtag("event", name, params);
 }
 
 /**
@@ -120,6 +180,7 @@ export async function trackGenerateLeadOnce(
   extra?: GaEventParams,
 ): Promise<boolean> {
   if (typeof window === "undefined") return false;
+  if (!shouldEnableProductionGa()) return false;
   if (!submissionId || submissionId.length < 8) return false;
 
   const key = `${LEAD_SUCCESS_PREFIX}${submissionId}`;
@@ -131,6 +192,8 @@ export async function trackGenerateLeadOnce(
   }
 
   await waitForGtag();
+  if (!shouldEnableProductionGa()) return false;
+
   trackEvent("generate_lead", {
     ...pageContext(),
     ...readAttribution(),

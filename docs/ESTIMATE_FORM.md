@@ -82,7 +82,8 @@ Locally: inspect `.data/leads/` (gitignored).
 ## GA4 / Google Ads
 
 - Measurement ID: **`G-JJ9HCGZZEM`** (single tag via `@next/third-parties`).
-- `form_start` — first real interaction with the native form.
+- **Production hosts only:** `heritagebuildgroup.com` and `www.heritagebuildgroup.com`, and only when Netlify `CONTEXT=production` (or Vercel `VERCEL_ENV=production`). Netlify Deploy Previews / branch deploys / `*.netlify.app` / `*.vercel.app` do **not** load the tag or send events.
+- `form_start` — first real interaction with the native form (production only).
 - `generate_lead` — **only** after `POST /api/estimate` returns `{ ok: true, id }`, with `sessionStorage` dedupe per submission id. No PII in the event.
 - Direct visits to `/estimate?submitted=…` or any thank-you URL do **not** fire `generate_lead`.
 - Import GA4 `generate_lead` as the Google Ads primary conversion. **Do not** add a parallel primary `AW-` conversion for the same submit. No campaign/budget changes in this PR.

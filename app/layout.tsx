@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { headers } from "next/headers";
 import "./globals.css";
 import { ConversionTracker } from "@/components/conversion-tracker";
 import { Footer, Header, MobileContactCta } from "@/components/site-shell";
 import { JsonLd } from "@/components/seo";
-import { GA_MEASUREMENT_ID } from "@/lib/analytics";
+import { GA_MEASUREMENT_ID, shouldEnableProductionGa } from "@/lib/analytics";
 import { absoluteUrl, HOME_DESCRIPTION, HOME_TITLE, localBusinessSchema, SITE_NAME, SITE_URL, SOCIAL_IMAGE } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -22,7 +23,21 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+function requestHostname(headerList: Headers) {
+  const forwarded = headerList.get("x-forwarded-host");
+  const host = (forwarded || headerList.get("host") || "").split(",")[0]?.trim() || "";
+  return host.replace(/:\d+$/, "");
+}
+
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const headerList = await headers();
+  const enableProductionGa = shouldEnableProductionGa({
+    hostname: requestHostname(headerList),
+    context: process.env.CONTEXT,
+    vercelEnv: process.env.VERCEL_ENV,
+    nodeEnv: process.env.NODE_ENV,
+  });
+
   return (
     <html lang="en">
       <body>
@@ -31,8 +46,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <main>{children}</main>
         <Footer />
         <MobileContactCta />
-        {/* Single GA4 property — generate_lead fires from the native estimate form after save. */}
-        <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />
+        {/* Production GA4 only on heritagebuildgroup.com — never on Netlify/Vercel previews. */}
+        {enableProductionGa ? <GoogleAnalytics gaId={GA_MEASUREMENT_ID} /> : null}
         <ConversionTracker />
       </body>
     </html>
