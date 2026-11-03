@@ -21,6 +21,14 @@ type Suggestion = AddressParts & {
   label: string;
 };
 
+type SuggestPayload = {
+  ok?: boolean;
+  enabled?: boolean;
+  error?: string;
+  suggestion?: Suggestion;
+  suggestions?: Suggestion[];
+};
+
 type Props = {
   id: string;
   name?: string;
@@ -36,7 +44,8 @@ const DEBOUNCE_MS = 300;
 
 function newSessionToken() {
   try {
-    return crypto.randomUUID().replace(/-/g, "").slice(0, 36);
+    // Places session tokens: ≤36 URL/filename-safe ASCII chars (UUID v4 is ideal).
+    return crypto.randomUUID();
   } catch {
     return `s${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`;
   }
@@ -57,9 +66,12 @@ export function AddressAutocomplete({
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const sessionRef = useRef(newSessionToken());
+  const enabledRef = useRef(true);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [enabled, setEnabled] = useState(true);
+  /** null = probing; true = Places ready; false = unavailable (manual entry). */
+  const [enabled, setEnabled] = useState<boolean | null>(null);
+  const [unavailableNote, setUnavailableNote] = useState<string | null>(null);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [activeIndex, setActiveIndex] = useState(-1);
 
@@ -78,6 +90,33 @@ export function AddressAutocomplete({
     };
   }, []);
 
+  // Probe once on mount so missing key isn't a silent failure after 3 keystrokes.
+  useEffect(() => {
+    const controller = new AbortController();
+    (async () => {
+      try {
+        const res = await fetch("/api/address-suggest?q=", { signal: controller.signal });
+        const payload = (await res.json().catch(() => null)) as SuggestPayload | null;
+        if (controller.signal.aborted) return;
+        if (payload?.enabled === false) {
+          enabledRef.current = false;
+          setEnabled(false);
+          setUnavailableNote("Address suggestions unavailable — enter address manually");
+          return;
+        }
+        enabledRef.current = true;
+        setEnabled(true);
+        setUnavailableNote(null);
+      } catch {
+        if (controller.signal.aborted) return;
+        // Network blip — keep optimistic; typing will re-check.
+        enabledRef.current = true;
+        setEnabled(true);
+      }
+    })();
+    return () => controller.abort();
+  }, []);
+
   useEffect(() => {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -85,9 +124,19 @@ export function AddressAutocomplete({
     };
   }, []);
 
+  const markUnavailable = (message?: string) => {
+    enabledRef.current = false;
+    setEnabled(false);
+    setUnavailableNote(message || "Address suggestions unavailable — enter address manually");
+    setSuggestions([]);
+    setOpen(false);
+    setActiveIndex(-1);
+    setLoading(false);
+  };
+
   const fetchSuggestions = (query: string) => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (!enabled || query.trim().length < 3) {
+    if (!enabledRef.current || query.trim().length < 3) {
       abortRef.current?.abort();
       setSuggestions([]);
       setOpen(false);
@@ -109,23 +158,27 @@ export function AddressAutocomplete({
         const res = await fetch(`/api/address-suggest?${params}`, {
           signal: controller.signal,
         });
-        const payload = (await res.json().catch(() => null)) as
-          | {
-              ok?: boolean;
-              enabled?: boolean;
-              suggestions?: Suggestion[];
-            }
-          | null;
+        const payload = (await res.json().catch(() => null)) as SuggestPayload | null;
         if (controller.signal.aborted) return;
 
         if (payload?.enabled === false) {
-          setEnabled(false);
+          markUnavailable();
+          return;
+        }
+
+        if (!res.ok || payload?.ok === false) {
+          // Transient Google/proxy failure — keep trying on later keystrokes,
+          // but surface a non-blocking note so it isn't silent.
+          setUnavailableNote(
+            payload?.error || "Address suggestions unavailable — enter address manually",
+          );
           setSuggestions([]);
           setOpen(false);
           setActiveIndex(-1);
           return;
         }
 
+        setUnavailableNote(null);
         const next = Array.isArray(payload?.suggestions) ? payload!.suggestions! : [];
         setSuggestions(next);
         setOpen(next.length > 0);
@@ -134,6 +187,7 @@ export function AddressAutocomplete({
         if ((err as { name?: string })?.name === "AbortError") return;
         setSuggestions([]);
         setOpen(false);
+        setUnavailableNote("Address suggestions unavailable — enter address manually");
       } finally {
         if (!controller.signal.aborted) setLoading(false);
       }
@@ -143,7 +197,7 @@ export function AddressAutocomplete({
   const resolveAndApply = async (suggestion: Suggestion) => {
     const placeId = suggestion.placeId || suggestion.id;
     // Prefer Place Details so city/state/ZIP are complete.
-    if (placeId && enabled) {
+    if (placeId && enabledRef.current) {
       setLoading(true);
       try {
         const params = new URLSearchParams({
@@ -151,9 +205,7 @@ export function AddressAutocomplete({
           session: sessionRef.current,
         });
         const res = await fetch(`/api/address-suggest?${params}`);
-        const payload = (await res.json().catch(() => null)) as
-          | { suggestion?: Suggestion; suggestions?: Suggestion[] }
-          | null;
+        const payload = (await res.json().catch(() => null)) as SuggestPayload | null;
         const detailed =
           payload?.suggestion ||
           (Array.isArray(payload?.suggestions) ? payload!.suggestions![0] : null);
@@ -217,11 +269,15 @@ export function AddressAutocomplete({
     }
   };
 
-  const hint = !enabled
-    ? "Enter street address, then city, state, and ZIP below"
-    : loading
-      ? "Looking up addresses…"
-      : "Start typing — choose a suggestion to fill city, state, and ZIP";
+  const suggestionsOn = enabled === true;
+  const hint =
+    enabled === false || unavailableNote
+      ? unavailableNote || "Address suggestions unavailable — enter address manually"
+      : enabled === null
+        ? "Checking address suggestions…"
+        : loading
+          ? "Looking up addresses…"
+          : "Start typing — choose a suggestion to fill city, state, and ZIP";
 
   return (
     <div className="address-autocomplete" ref={wrapRef}>
@@ -236,15 +292,15 @@ export function AddressAutocomplete({
         aria-describedby={
           [error ? `${id}-err` : null, `${id}-hint`].filter(Boolean).join(" ") || undefined
         }
-        aria-autocomplete={enabled ? "list" : undefined}
-        aria-controls={enabled ? listId : undefined}
-        aria-expanded={enabled ? open : undefined}
-        role={enabled ? "combobox" : undefined}
+        aria-autocomplete={suggestionsOn ? "list" : undefined}
+        aria-controls={suggestionsOn ? listId : undefined}
+        aria-expanded={suggestionsOn ? open : undefined}
+        role={suggestionsOn ? "combobox" : undefined}
         onFocus={onInteract}
         onChange={(e) => {
           onInteract?.();
           onStreetChange(e.target.value);
-          if (enabled) fetchSuggestions(e.target.value);
+          if (enabledRef.current) fetchSuggestions(e.target.value);
         }}
         onKeyDown={onKeyDown}
       />
@@ -253,10 +309,18 @@ export function AddressAutocomplete({
           {error}
         </span>
       ) : null}
-      <span id={`${id}-hint`} className="address-autocomplete__hint">
+      <span
+        id={`${id}-hint`}
+        className={
+          enabled === false || unavailableNote
+            ? "address-autocomplete__hint address-autocomplete__hint--unavailable"
+            : "address-autocomplete__hint"
+        }
+        role={enabled === false || unavailableNote ? "status" : undefined}
+      >
         {hint}
       </span>
-      {enabled && open && suggestions.length ? (
+      {suggestionsOn && open && suggestions.length ? (
         <ul
           id={listId}
           className="address-autocomplete__list"

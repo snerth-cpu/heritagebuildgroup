@@ -291,6 +291,7 @@
 .estimate-form--native .form-row--three{grid-template-columns:1.4fr .7fr .9fr}
 .estimate-form--native .address-autocomplete{position:relative}
 .estimate-form--native .address-autocomplete__hint{display:block;margin-top:8px;font-size:11px;letter-spacing:0;text-transform:none;color:#777;line-height:1.4}
+.estimate-form--native .address-autocomplete__hint--unavailable{color:#5d5f5a}
 .estimate-form--native .upload--optional{margin-top:8px;padding-top:14px;border-top:1px dashed var(--line);opacity:.92}
 .estimate-form--native .upload--optional small{display:block;margin-top:8px;font-size:11px;letter-spacing:0;text-transform:none;color:#777;line-height:1.4}
 .estimate-form--native .address-autocomplete__list{position:absolute;z-index:30;left:0;right:0;top:calc(100% - 4px);margin:0;padding:0;list-style:none;background:#fff;border:1px solid var(--line);box-shadow:0 12px 28px rgba(24,24,22,.12);max-height:min(280px,50vh);overflow:auto}

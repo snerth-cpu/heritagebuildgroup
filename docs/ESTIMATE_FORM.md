@@ -26,7 +26,7 @@ This branch ships a first-party `/estimate` form aligned with the archived Jobbe
 | Street address | Required + Places autocomplete | Property address |
 | Apt / unit | Optional | Address line 2 |
 | City / State / ZIP | Required (often filled by Places) | Property address |
-| Project type | Required — Metal Roofing, Metal Siding, Barn Siding (Board & Batten), Pole Building, Garage, Other | Jobber / site service labels |
+| Project type | Required — Metal Roofing, Metal Siding, Barn Siding (Board & Batten), Pole Building, Garage, Window / Door Replacement, Other | Jobber / site service labels |
 | Project details | Required | Request description |
 | Photos | Optional, de-emphasized | Often supported; kept as small add-on |
 | ~~New / replacement / renovation~~ | **Removed** | Not on Jobber parity form |
@@ -51,27 +51,47 @@ This branch ships a first-party `/estimate` form aligned with the archived Jobbe
 
 If email env vars are missing, **leads still save**; `emailStatus` is `skipped` and the error is stored on the lead record.
 
-If `GOOGLE_PLACES_API_KEY` is missing, **the form still works** with manual address entry (no empty/broken dropdown).
+If `GOOGLE_PLACES_API_KEY` is missing, **the form still works** with manual address entry. The street field shows a non-blocking note: “Address suggestions unavailable — enter address manually” (not a silent empty dropdown).
 
 ### Google Places setup (`GOOGLE_PLACES_API_KEY`)
 
 1. Open [Google Cloud Console](https://console.cloud.google.com/) → create or select a project.
-2. Enable **Places API (New)** (includes Autocomplete + Place Details). Legacy “Places API” alone is not enough for the New endpoints this proxy calls.
-3. Create an **API key** (Credentials).
-4. **Restrict the key**:
-   - Application restriction: prefer **IP** (server / Vercel / Netlify egress) or leave unrestricted only while testing.
-   - API restriction: allow only **Places API (New)** (and Place Details / Autocomplete as listed).
-5. Set `GOOGLE_PLACES_API_KEY` in Vercel and Netlify env (Preview + Production). Do **not** prefix with `NEXT_PUBLIC_`.
-6. Redeploy. Typing a street on `/estimate` should show a suggestion dropdown; selecting fills street, city, state, and ZIP.
+2. Enable **Places API (New)** (API Library → search “Places API (New)”). Legacy “Places API” alone is **not** enough for `places:autocomplete` / Place Details (New).
+3. Ensure billing is enabled on the project (Places needs a billing account; free monthly credit applies).
+4. Create an **API key** (APIs & Services → Credentials → Create credentials → API key).
+5. **Restrict the key** (recommended before production traffic):
+   - Application restriction: **None** while validating Deploy Previews, or **IP addresses** once you know Netlify/Vercel egress. Do **not** use HTTP referrer restriction — the key is used server-side only.
+   - API restriction: allow **Places API (New)** only.
+6. Set the env var (server-only — **never** `NEXT_PUBLIC_*`):
+
+#### Netlify (required for PR #18 Deploy Preview)
+
+1. Netlify → site **meek-hotteok-b000fa** (or your HBG site) → **Site configuration** → **Environment variables**.
+2. Add `GOOGLE_PLACES_API_KEY` = your key.
+3. Scopes: enable **Deploy Previews** and **Production** (and Branch deploys if you use them). Preview-only is enough to test PR #18.
+4. **Trigger a redeploy** of the PR preview (Deploys → “Clear cache and deploy site”, or push a commit / “Retry deploy” on the preview). Env vars are baked in at build/runtime for the Next server — existing preview builds will keep returning `enabled: false` until redeployed.
+5. Verify:
+   ```bash
+   curl -sS "https://deploy-preview-18--meek-hotteok-b000fa.netlify.app/api/address-suggest?q=123+main+pittsburgh"
+   # expect: {"ok":true,"enabled":true,"suggestions":[...]}
+   curl -sS "https://deploy-preview-18--meek-hotteok-b000fa.netlify.app/api/address-suggest?debug=1"
+   # expect: enabled true + debug.reason "configured" (no key leaked)
+   ```
+
+#### Vercel
+
+Project → Settings → Environment Variables → `GOOGLE_PLACES_API_KEY` for Preview + Production → Redeploy.
+
 7. Billing: Places uses Google’s free monthly credit, then paid. Monitor usage in Cloud Console.
 
-**Bias:** the server proxy sets `includedRegionCodes: ["us"]` and a Pittsburgh-centered `locationBias` circle (~200 km) so PA/OH results near the service area rank higher.
+**Bias:** the server proxy sets `includedRegionCodes: ["us"]`, `regionCode: "us"`, and a Pittsburgh-centered `locationBias` circle (~200 km) so PA/OH results near the service area rank higher.
 
 ### Address autocomplete behavior
 
-- Client calls `GET /api/address-suggest?q=…&session=…` (debounced). **API key never leaves the server.**
+- Client probes `GET /api/address-suggest` on mount, then calls `GET /api/address-suggest?q=…&session=…` (debounced). **API key never leaves the server.**
 - Selecting a suggestion calls `GET /api/address-suggest?placeId=…&session=…` for Place Details, then fills street / city / state / ZIP.
-- No OpenStreetMap / Nominatim path and no OSM attribution.
+- Debug: `?debug=1` returns a safe `debug` object (`missing_GOOGLE_PLACES_API_KEY`, `configured`, or Google `status`/`message`/`code` — never the key). Server logs the same Google error summary.
+- No OpenStreetMap / Nominatim path and no OSM attribution. No Mapbox unless added later with its own token.
 - Street + city + state + ZIP are **required**. Apt/unit is optional.
 
 ## Retrieving leads

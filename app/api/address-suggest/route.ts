@@ -31,9 +31,17 @@ type PlacePrediction = {
   };
 };
 
-type AutocompleteResponse = {
+type GoogleErrorBody = {
+  error?: {
+    code?: number;
+    message?: string;
+    status?: string;
+    details?: unknown;
+  };
+};
+
+type AutocompleteResponse = GoogleErrorBody & {
   suggestions?: Array<{ placePrediction?: PlacePrediction }>;
-  error?: { message?: string; status?: string };
 };
 
 type AddressComponent = {
@@ -42,14 +50,28 @@ type AddressComponent = {
   types?: string[];
 };
 
-type PlaceDetailsResponse = {
+type PlaceDetailsResponse = GoogleErrorBody & {
   formattedAddress?: string;
   addressComponents?: AddressComponent[];
-  error?: { message?: string; status?: string };
 };
 
 function placesKey() {
   return (process.env.GOOGLE_PLACES_API_KEY || "").trim();
+}
+
+function wantDebug(request: Request) {
+  const { searchParams } = new URL(request.url);
+  return searchParams.get("debug") === "1";
+}
+
+/** Safe summary of a Google error — never includes the API key. */
+function googleErrorSummary(status: number, payload: GoogleErrorBody | null) {
+  return {
+    httpStatus: status,
+    code: payload?.error?.code ?? status,
+    status: payload?.error?.status || undefined,
+    message: payload?.error?.message || `Google Places request failed (${status})`,
+  };
 }
 
 function component(
@@ -83,6 +105,8 @@ async function autocomplete(query: string, sessionToken?: string): Promise<Addre
   const key = placesKey();
   const body: Record<string, unknown> = {
     input: query,
+    languageCode: "en",
+    regionCode: "us",
     includedRegionCodes: ["us"],
     locationBias: {
       circle: {
@@ -98,6 +122,7 @@ async function autocomplete(query: string, sessionToken?: string): Promise<Addre
     headers: {
       "Content-Type": "application/json",
       "X-Goog-Api-Key": key,
+      // Field mask is optional for Autocomplete (New); keep it explicit and nested.
       "X-Goog-FieldMask":
         "suggestions.placePrediction.placeId,suggestions.placePrediction.place,suggestions.placePrediction.text,suggestions.placePrediction.structuredFormat",
     },
@@ -107,8 +132,11 @@ async function autocomplete(query: string, sessionToken?: string): Promise<Addre
 
   const payload = (await res.json().catch(() => null)) as AutocompleteResponse | null;
   if (!res.ok) {
-    const message = payload?.error?.message || `Places autocomplete ${res.status}`;
-    throw new Error(message);
+    const summary = googleErrorSummary(res.status, payload);
+    console.error("[address-suggest] Places autocomplete error", summary);
+    const err = new Error(summary.message) as Error & { google?: typeof summary };
+    err.google = summary;
+    throw err;
   }
 
   const out: AddressSuggestion[] = [];
@@ -146,6 +174,8 @@ async function placeDetails(
   const id = placeId.replace(/^places\//, "");
   const url = new URL(`https://places.googleapis.com/v1/places/${encodeURIComponent(id)}`);
   if (sessionToken) url.searchParams.set("sessionToken", sessionToken);
+  url.searchParams.set("languageCode", "en");
+  url.searchParams.set("regionCode", "us");
 
   const res = await fetch(url.toString(), {
     headers: {
@@ -157,8 +187,11 @@ async function placeDetails(
 
   const payload = (await res.json().catch(() => null)) as PlaceDetailsResponse | null;
   if (!res.ok) {
-    const message = payload?.error?.message || `Places details ${res.status}`;
-    throw new Error(message);
+    const summary = googleErrorSummary(res.status, payload);
+    console.error("[address-suggest] Places details error", summary);
+    const err = new Error(summary.message) as Error & { google?: typeof summary };
+    err.google = summary;
+    throw err;
   }
 
   const parts = partsFromComponents(payload?.addressComponents);
@@ -184,6 +217,7 @@ async function placeDetails(
 }
 
 export async function GET(request: Request) {
+  const debug = wantDebug(request);
   const clientKey = clientKeyFromRequest(request);
   const limited = checkRateLimit(`addr:${clientKey}`, {
     windowMs: 60 * 1000,
@@ -191,7 +225,12 @@ export async function GET(request: Request) {
   });
   if (!limited.ok) {
     return NextResponse.json(
-      { ok: false, enabled: Boolean(placesKey()), error: "Too many address lookups. Please wait a moment." },
+      {
+        ok: false,
+        enabled: Boolean(placesKey()),
+        error: "Too many address lookups. Please wait a moment.",
+        ...(debug ? { debug: { reason: "rate_limited", retryAfterSec: limited.retryAfterSec } } : {}),
+      },
       {
         status: 429,
         headers: { "Retry-After": String(limited.retryAfterSec) },
@@ -206,13 +245,40 @@ export async function GET(request: Request) {
       ok: true,
       enabled: false,
       suggestions: [] as AddressSuggestion[],
+      ...(debug
+        ? {
+            debug: {
+              reason: "missing_GOOGLE_PLACES_API_KEY",
+              hint: "Set GOOGLE_PLACES_API_KEY on Netlify (Deploy Previews + Production) and redeploy. Enable Places API (New).",
+            },
+          }
+        : {}),
     });
   }
 
   const { searchParams } = new URL(request.url);
   const placeId = (searchParams.get("placeId") || "").trim().slice(0, 256);
-  const sessionToken = (searchParams.get("session") || "").trim().slice(0, 64) || undefined;
+  const sessionToken = (searchParams.get("session") || "").trim().slice(0, 36) || undefined;
   const q = (searchParams.get("q") || "").trim().slice(0, 120);
+
+  // Health / config probe — no Google call when neither q nor placeId.
+  if (!placeId && q.length < MIN_QUERY_LEN) {
+    return NextResponse.json({
+      ok: true,
+      enabled: true,
+      suggestions: [] as AddressSuggestion[],
+      ...(debug
+        ? {
+            debug: {
+              reason: "configured",
+              hasKey: true,
+              minQueryLen: MIN_QUERY_LEN,
+              endpoint: "places.googleapis.com/v1/places:autocomplete",
+            },
+          }
+        : {}),
+    });
+  }
 
   try {
     if (placeId) {
@@ -225,20 +291,35 @@ export async function GET(request: Request) {
       });
     }
 
-    if (q.length < MIN_QUERY_LEN) {
-      return NextResponse.json({ ok: true, enabled: true, suggestions: [] as AddressSuggestion[] });
-    }
-
     const suggestions = await autocomplete(q, sessionToken);
-    return NextResponse.json({ ok: true, enabled: true, suggestions });
+    return NextResponse.json({
+      ok: true,
+      enabled: true,
+      suggestions,
+      ...(debug ? { debug: { count: suggestions.length } } : {}),
+    });
   } catch (error) {
-    console.error("[address-suggest]", error);
+    const google =
+      error && typeof error === "object" && "google" in error
+        ? (error as { google?: ReturnType<typeof googleErrorSummary> }).google
+        : undefined;
+    console.error("[address-suggest]", google || error);
     return NextResponse.json(
       {
         ok: false,
         enabled: true,
         error: "Address suggestions unavailable right now.",
         suggestions: [] as AddressSuggestion[],
+        ...(debug
+          ? {
+              debug: {
+                reason: "google_error",
+                google: google || {
+                  message: error instanceof Error ? error.message : "Unknown error",
+                },
+              },
+            }
+          : {}),
       },
       { status: 502 },
     );

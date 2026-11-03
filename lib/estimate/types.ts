@@ -4,6 +4,7 @@ export const PROJECT_TYPES = [
   "board_and_batten",
   "pole_building",
   "garage",
+  "window_door_replacement",
   "other",
 ] as const;
 
@@ -78,6 +79,7 @@ export const PROJECT_TYPE_LABELS: Record<ProjectType, string> = {
   board_and_batten: "Barn Siding (Board & Batten)",
   pole_building: "Pole Building",
   garage: "Garage",
+  window_door_replacement: "Window / Door Replacement",
   other: "Other",
 };
 
