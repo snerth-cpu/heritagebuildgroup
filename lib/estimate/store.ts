@@ -5,6 +5,7 @@ import type { LeadPhoto, LeadRecord } from "./types";
 
 const LEADS_STORE_NAME = "hbg-estimate-leads";
 const INDEX_KEY = "index.json";
+const VERCEL_BLOB_PREFIX = "hbg-estimate-leads/";
 /** Blobs calls that hang (missing/broken Netlify context) must not freeze the function. */
 const BLOBS_OP_TIMEOUT_MS = 4000;
 
@@ -18,7 +19,9 @@ export type StorageBackend =
   | "netlify-blobs"
   | "netlify-deploy-blobs"
   | "netlify-blobs-token"
-  | "local-filesystem";
+  | "vercel-blob"
+  | "local-filesystem"
+  | "unavailable";
 
 export class LeadStorageError extends Error {
   code: string;
@@ -41,10 +44,24 @@ type BlobStore = {
   ) => Promise<unknown>;
 };
 
-type ResolvedStore = {
+type ResolvedNetlifyStore = {
+  kind: "netlify";
   store: BlobStore;
-  label: Exclude<StorageBackend, "local-filesystem">;
+  label: Exclude<StorageBackend, "local-filesystem" | "vercel-blob" | "unavailable">;
 };
+
+type ResolvedVercelStore = {
+  kind: "vercel";
+  label: "vercel-blob";
+  token: string;
+};
+
+type ResolvedLocalStore = {
+  kind: "local";
+  label: "local-filesystem";
+};
+
+type ResolvedBackend = ResolvedNetlifyStore | ResolvedVercelStore | ResolvedLocalStore;
 
 /** Dynamic lookup avoids Next.js build-time inlining of `process.env.FOO` literals. */
 function env(name: string) {
@@ -106,7 +123,11 @@ function explicitBlobsCredentials() {
   return null;
 }
 
-let cachedStore: ResolvedStore | null | undefined;
+function vercelBlobToken() {
+  return env("BLOB_READ_WRITE_TOKEN") || env("VERCEL_BLOB_READ_WRITE_TOKEN") || null;
+}
+
+let cachedNetlify: ResolvedNetlifyStore | null | undefined;
 let cachedStoreErrors: string[] = [];
 let blobsModulePromise: Promise<{
   getStore: (input: unknown, options?: unknown) => BlobStore;
@@ -138,33 +159,29 @@ async function loadBlobsModule() {
  * On Netlify, prefer automatic site context and do NOT pass siteID/token first —
  * explicit credentials replace the injected runtime context and often break writes.
  */
-async function resolveBlobStore(): Promise<ResolvedStore | null> {
-  if (cachedStore !== undefined) return cachedStore;
+async function resolveNetlifyBlobStore(): Promise<ResolvedNetlifyStore | null> {
+  if (cachedNetlify !== undefined) return cachedNetlify;
 
   const errors: string[] = [];
-
-  // Fast path: without Blobs context or explicit credentials, skip Blobs entirely.
-  // Calling getStore() when context is missing can hang inside Next-on-Netlify.
   const creds = explicitBlobsCredentials();
   if (!hasBlobsContext() && !creds) {
-    cachedStore = null;
+    cachedNetlify = null;
     cachedStoreErrors = [
       isNetlifyRuntime()
         ? "NETLIFY_BLOBS_CONTEXT missing in Next runtime (no Blobs auto-context)"
         : "not on Netlify and no NETLIFY_SITE_ID/NETLIFY_AUTH_TOKEN",
     ];
-    console.error("[estimate/store] skipping Blobs:", cachedStoreErrors[0]);
     return null;
   }
 
   const blobs = await loadBlobsModule();
   if (!blobs) {
-    cachedStore = null;
+    cachedNetlify = null;
     cachedStoreErrors = ["import @netlify/blobs failed or timed out"];
     return null;
   }
 
-  const attempts: Array<{ label: ResolvedStore["label"]; open: () => BlobStore }> = [];
+  const attempts: Array<{ label: ResolvedNetlifyStore["label"]; open: () => BlobStore }> = [];
 
   if (hasBlobsContext()) {
     attempts.push({
@@ -192,16 +209,16 @@ async function resolveBlobStore(): Promise<ResolvedStore | null> {
   for (const attempt of attempts) {
     try {
       const store = attempt.open();
-      cachedStore = { store, label: attempt.label };
+      cachedNetlify = { kind: "netlify", store, label: attempt.label };
       cachedStoreErrors = [];
-      return cachedStore;
+      return cachedNetlify;
     } catch (error) {
       errors.push(`${attempt.label}: ${errText(error)}`);
     }
   }
 
   cachedStoreErrors = errors;
-  cachedStore = null;
+  cachedNetlify = null;
   if (errors.length) {
     console.error("[estimate/store] Netlify Blobs unavailable:", errors.join(" | "));
   }
@@ -222,17 +239,22 @@ async function canWriteLocalFs() {
   }
 }
 
-async function requireBackend(): Promise<
-  { kind: "blobs"; store: BlobStore; label: StorageBackend } | { kind: "local"; label: "local-filesystem" }
-> {
-  const blobs = await resolveBlobStore();
-  if (blobs) return { kind: "blobs", store: blobs.store, label: blobs.label };
+async function requireBackend(): Promise<ResolvedBackend> {
+  const netlify = await resolveNetlifyBlobStore();
+  if (netlify) return netlify;
+
+  const token = vercelBlobToken();
+  if (token) {
+    return { kind: "vercel", label: "vercel-blob", token };
+  }
 
   if (await canWriteLocalFs()) {
     return { kind: "local", label: "local-filesystem" };
   }
 
-  const detail = cachedStoreErrors.slice(0, 3).join(" | ") || "no blob context; filesystem not writable";
+  const detail =
+    cachedStoreErrors.slice(0, 3).join(" | ") ||
+    "no Netlify Blobs / Vercel Blob token; filesystem not writable on this host";
   throw new LeadStorageError(
     "storage_unavailable",
     "Lead storage is unavailable on this host.",
@@ -254,9 +276,59 @@ async function blobsGet(store: BlobStore, key: string) {
   );
 }
 
-async function readIndex(store: BlobStore | null): Promise<string[]> {
-  if (store) {
-    const raw = await blobsGet(store, INDEX_KEY);
+async function vercelPut(
+  token: string,
+  key: string,
+  body: string | Buffer,
+  contentType: string,
+) {
+  const { put } = await import("@vercel/blob");
+  return withTimeout(
+    put(`${VERCEL_BLOB_PREFIX}${key}`, body, {
+      access: "private",
+      token,
+      contentType,
+      addRandomSuffix: false,
+      allowOverwrite: true,
+    }),
+    BLOBS_OP_TIMEOUT_MS * 2,
+    `vercel.blob.put(${key})`,
+  );
+}
+
+async function vercelGetText(token: string, key: string): Promise<string | null> {
+  const { list } = await import("@vercel/blob");
+  const prefix = `${VERCEL_BLOB_PREFIX}${key}`;
+  const listed = await withTimeout(
+    list({ prefix, token, limit: 5 }),
+    BLOBS_OP_TIMEOUT_MS,
+    `vercel.blob.list(${key})`,
+  );
+  const match = listed.blobs.find((b) => b.pathname === prefix) || listed.blobs[0];
+  if (!match) return null;
+  const res = await withTimeout(
+    fetch(match.url, { headers: { Authorization: `Bearer ${token}` } }),
+    BLOBS_OP_TIMEOUT_MS,
+    `vercel.blob.fetch(${key})`,
+  );
+  if (!res.ok) return null;
+  return res.text();
+}
+
+async function readIndex(backend: ResolvedBackend): Promise<string[]> {
+  if (backend.kind === "netlify") {
+    const raw = await blobsGet(backend.store, INDEX_KEY);
+    if (!raw) return [];
+    try {
+      const parsed = JSON.parse(raw) as string[];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
+  if (backend.kind === "vercel") {
+    const raw = await vercelGetText(backend.token, INDEX_KEY);
     if (!raw) return [];
     try {
       const parsed = JSON.parse(raw) as string[];
@@ -276,10 +348,14 @@ async function readIndex(store: BlobStore | null): Promise<string[]> {
   }
 }
 
-async function writeIndex(store: BlobStore | null, ids: string[]) {
+async function writeIndex(backend: ResolvedBackend, ids: string[]) {
   const body = JSON.stringify(ids.slice(0, 5000));
-  if (store) {
-    await blobsSet(store, INDEX_KEY, body);
+  if (backend.kind === "netlify") {
+    await blobsSet(backend.store, INDEX_KEY, body);
+    return;
+  }
+  if (backend.kind === "vercel") {
+    await vercelPut(backend.token, INDEX_KEY, body, "application/json");
     return;
   }
   const root = localRoot();
@@ -292,7 +368,6 @@ export async function saveLead(
   files: StoredPhoto[],
 ): Promise<LeadRecord> {
   const backend = await requireBackend();
-  const store = backend.kind === "blobs" ? backend.store : null;
   const id = record.id || randomUUID();
   const photos: LeadPhoto[] = [];
 
@@ -302,11 +377,13 @@ export async function saveLead(
       const safeName = file.filename.replace(/[^\w.\-]+/g, "_").slice(0, 80) || `photo-${i + 1}`;
       const key = `photos/${id}/${i}-${safeName}`;
       const buffer = Buffer.from(file.bytes);
-      if (store) {
+      if (backend.kind === "netlify") {
         const ab = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
-        await blobsSet(store, key, ab as ArrayBuffer, {
+        await blobsSet(backend.store, key, ab as ArrayBuffer, {
           metadata: { contentType: file.contentType, filename: safeName },
         });
+      } else if (backend.kind === "vercel") {
+        await vercelPut(backend.token, key, buffer, file.contentType || "application/octet-stream");
       } else {
         const root = localRoot();
         const dir = path.join(root, "photos", id);
@@ -324,24 +401,26 @@ export async function saveLead(
     const lead: LeadRecord = { ...record, id, photos };
     const payload = JSON.stringify(lead, null, 2);
 
-    if (store) {
-      await blobsSet(store, `leads/${id}.json`, payload);
+    if (backend.kind === "netlify") {
+      await blobsSet(backend.store, `leads/${id}.json`, payload);
+    } else if (backend.kind === "vercel") {
+      await vercelPut(backend.token, `leads/${id}.json`, payload, "application/json");
     } else {
       const root = localRoot();
       await mkdir(path.join(root, "leads"), { recursive: true });
       await writeFile(path.join(root, "leads", `${id}.json`), payload, "utf8");
     }
 
-    const index = await readIndex(store);
+    const index = await readIndex(backend);
     if (!index.includes(id)) {
       index.unshift(id);
-      await writeIndex(store, index);
+      await writeIndex(backend, index);
     }
 
     return lead;
   } catch (error) {
-    if (backend.kind === "blobs") {
-      cachedStore = undefined;
+    if (backend.kind === "netlify") {
+      cachedNetlify = undefined;
     }
     if (error instanceof LeadStorageError) throw error;
     throw new LeadStorageError("save_failed", "Could not persist the lead record.", errText(error));
@@ -353,8 +432,10 @@ export async function updateLead(lead: LeadRecord): Promise<LeadRecord> {
   const backend = await requireBackend();
   const payload = JSON.stringify(lead, null, 2);
   try {
-    if (backend.kind === "blobs") {
+    if (backend.kind === "netlify") {
       await blobsSet(backend.store, `leads/${lead.id}.json`, payload);
+    } else if (backend.kind === "vercel") {
+      await vercelPut(backend.token, `leads/${lead.id}.json`, payload, "application/json");
     } else {
       const root = localRoot();
       await mkdir(path.join(root, "leads"), { recursive: true });
@@ -372,8 +453,18 @@ export async function getLead(id: string): Promise<LeadRecord | null> {
   const backend = await requireBackend().catch(() => null);
   if (!backend) return null;
 
-  if (backend.kind === "blobs") {
+  if (backend.kind === "netlify") {
     const raw = await blobsGet(backend.store, `leads/${id}.json`);
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw) as LeadRecord;
+    } catch {
+      return null;
+    }
+  }
+
+  if (backend.kind === "vercel") {
+    const raw = await vercelGetText(backend.token, `leads/${id}.json`);
     if (!raw) return null;
     try {
       return JSON.parse(raw) as LeadRecord;
@@ -394,8 +485,7 @@ export async function listLeads(limit = 50): Promise<LeadRecord[]> {
   const backend = await requireBackend().catch(() => null);
   if (!backend) return [];
 
-  const store = backend.kind === "blobs" ? backend.store : null;
-  const ids = (await readIndex(store)).slice(0, Math.min(200, Math.max(1, limit)));
+  const ids = (await readIndex(backend)).slice(0, Math.min(200, Math.max(1, limit)));
   const leads: LeadRecord[] = [];
 
   for (const id of ids) {
@@ -403,7 +493,7 @@ export async function listLeads(limit = 50): Promise<LeadRecord[]> {
     if (lead) leads.push(lead);
   }
 
-  if (!leads.length && !store) {
+  if (!leads.length && backend.kind === "local") {
     try {
       const dir = path.join(localRoot(), "leads");
       const files = (await readdir(dir)).filter((f) => f.endsWith(".json")).sort().reverse();
@@ -420,10 +510,12 @@ export async function listLeads(limit = 50): Promise<LeadRecord[]> {
 }
 
 export async function storageBackendLabel(): Promise<StorageBackend> {
-  const blobs = await resolveBlobStore();
-  if (blobs) return blobs.label;
-  if (await canWriteLocalFs()) return "local-filesystem";
-  return "local-filesystem";
+  try {
+    const backend = await requireBackend();
+    return backend.label;
+  } catch {
+    return "unavailable";
+  }
 }
 
 export function storageDiagnostics() {
@@ -434,6 +526,7 @@ export function storageDiagnostics() {
     vercel: Boolean(env("VERCEL")),
     hasBlobsContext: hasBlobsContext(),
     hasExplicitCredentials: Boolean(explicitBlobsCredentials()),
+    hasVercelBlobToken: Boolean(vercelBlobToken()),
     blobErrors: cachedStoreErrors.slice(0, 3),
   };
 }

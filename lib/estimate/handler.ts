@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { notifyEstimateEmails, notifyLeadEmail } from "./email";
+import { notifyEstimateEmails } from "./email";
 import { checkRateLimit, clientKeyFromRequest } from "./rate-limit";
 import {
   LeadStorageError,
@@ -42,7 +42,7 @@ function saveFailureResponse(error: unknown) {
 
   const hint =
     storageError?.code === "storage_unavailable"
-      ? "Storage backend unavailable (Netlify Blobs context missing and filesystem is not writable on this host)."
+      ? "Storage unavailable on this host. On Vercel set BLOB_READ_WRITE_TOKEN (or NETLIFY_SITE_ID + NETLIFY_AUTH_TOKEN) and RESEND_API_KEY."
       : storageError?.causeDetail
         ? `Save failed (${storageError.code}).`
         : "Save failed on the server.";
@@ -138,19 +138,22 @@ export async function handleEstimatePost(request: Request) {
   try {
     saved = await saveLead(draft, photoPayload);
   } catch (error) {
-    // Email-first fallback when durable storage is unavailable (common on Next-on-Netlify
-    // without Blobs context). Prefer not to lose the lead entirely.
+    // Email-first fallback when durable storage is unavailable (common on Vercel without
+    // Blob/Netlify tokens). Prefer not to lose the lead entirely.
     const emailOnly: LeadRecord = { ...draft, photos: [] };
-    const emailResult = await notifyLeadEmail(emailOnly);
-    if (emailResult.status === "sent") {
+    const emails = await notifyEstimateEmails(emailOnly);
+    if (emails.staff.status === "sent" || emails.customer.status === "sent") {
       console.error("[estimate] storage failed; lead delivered via email-only fallback", {
         id,
         storage: error instanceof LeadStorageError ? error.code : "unknown",
+        staffEmail: emails.staff.status,
+        customerEmail: emails.customer.status,
       });
       return json({
         ok: true,
         id,
-        emailStatus: emailResult.status,
+        emailStatus: emails.staff.status,
+        customerEmailStatus: emails.customer.status,
         backend: "email-only",
       });
     }

@@ -58,7 +58,8 @@ Street, city, state, and ZIP remain **required** for manual entry. Apt/unit is o
 | `SMTP_HOST` / `SMTP_USER` / `SMTP_PASS` | Alt to Resend | SMTP credentials |
 | `SMTP_WEBHOOK_URL` | Optional | HTTP relay if using SMTP_* without nodemailer |
 | `LEADS_ADMIN_TOKEN` | Recommended | Bearer token for `GET /api/leads` |
-| `NETLIFY_SITE_ID` + `NETLIFY_AUTH_TOKEN` | For Blobs off-Netlify | Use Netlify Blobs from Vercel/local |
+| `BLOB_READ_WRITE_TOKEN` | **Required on Vercel** for durable save | [Vercel Blob](https://vercel.com/docs/storage/vercel-blob) read/write token |
+| `NETLIFY_SITE_ID` + `NETLIFY_AUTH_TOKEN` | Alt durable store | Use Netlify Blobs from Vercel/local instead of Vercel Blob |
 | `NETLIFY_BLOBS_SITE_ID` / `NETLIFY_BLOBS_TOKEN` | Aliases | Same as above |
 | `LEADS_LOCAL_DIR` | Optional | Local/dev store path (default `.data/leads`) |
 | `NEXT_PUBLIC_GA_ID` | Optional | Defaults to `G-JJ9HCGZZEM` |
@@ -149,6 +150,7 @@ If you also use **Vercel** for production, add the same three variables there �
 
 - Hosting today: Vercel production + Netlify Deploy Previews (`@netlify/plugin-nextjs`).
 - **Netlify (preview + prod):** `/api/estimate` is rewritten to a native Netlify Function (`netlify/functions/estimate.mts`) so `@netlify/blobs` gets automatic site context. No manual Blobs tokens are required on Netlify. Local `.data/leads` is **not** used on Netlify’s read-only filesystem.
-- **Vercel / off-Netlify:** the Next.js `app/api/estimate` route handles POSTs. Set `NETLIFY_SITE_ID` + `NETLIFY_AUTH_TOKEN` (or `NETLIFY_BLOBS_*` aliases) for durable Blobs. Without them, local FS is used when writable; otherwise the handler tries an email-only fallback, then returns a clear save error.
-- Email (`RESEND_API_KEY` / SMTP) is optional when Blobs/FS save works — leads still save when email is skipped/failed.
+- **Vercel production (current live host):** `/api/estimate` runs as a Next.js route. Durable save needs **`BLOB_READ_WRITE_TOKEN`** (Vercel Blob) **or** `NETLIFY_SITE_ID` + `NETLIFY_AUTH_TOKEN`. Also set **`RESEND_API_KEY`** + **`ESTIMATE_FROM_EMAIL`** on Vercel (Production) — preview-only Netlify env does not apply to `www.heritagebuildgroup.com`.
+- Without durable storage, the handler falls back to **email-only** success if Resend can deliver to scott@ and/or the customer; otherwise the form shows “We could not save your request…”.
+- Email is still best-effort after a successful Blob/FS save — a failed notify never drops a stored lead.
 - Never commit secrets. `.env*` is gitignored.
