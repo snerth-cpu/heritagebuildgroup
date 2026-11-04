@@ -3,11 +3,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Mark } from "@/components/brand-logo";
+import { PhoneLink } from "@/components/phone-link";
 import {
   BUSINESS_EMAIL,
   BUSINESS_HIC,
-  BUSINESS_PHONE,
-  BUSINESS_PHONE_HREF,
   CONTACT_HREF,
   ESTIMATE_HREF,
   LEGAL_NAME,
@@ -117,9 +116,7 @@ export function Header() {
               {label}
             </Link>
           ))}
-          <a className="nav__phone" href={BUSINESS_PHONE_HREF} onClick={() => setOpen(false)}>
-            {BUSINESS_PHONE}
-          </a>
+          <PhoneLink className="nav__phone" onClick={() => setOpen(false)} />
           <Link
             className={`nav__cta${estimateActive ? " active" : ""}`}
             href={ESTIMATE_HREF}
@@ -150,7 +147,7 @@ export function MobileContactCta() {
   if (hidden) return null;
   return (
     <div className="mobile-contact-cta" role="group" aria-label="Contact options">
-      <a href={BUSINESS_PHONE_HREF}>Call {BUSINESS_PHONE}</a>
+      <PhoneLink prefix="Call " />
       <Link href={ESTIMATE_HREF}>Request a Quote</Link>
     </div>
   );
@@ -165,7 +162,7 @@ export function Footer() {
           <p className="eyebrow">METAL EXTERIORS &amp; BUILDINGS</p>
           <p>{SERVICE_AREA_STATEMENT}</p>
           <p className="footer__contact">
-            <a href={BUSINESS_PHONE_HREF}>{BUSINESS_PHONE}</a>
+            <PhoneLink />
             <a href={`mailto:${BUSINESS_EMAIL}`}>{BUSINESS_EMAIL}</a>
           </p>
           <nav className="footer__links" aria-label="Footer service links">

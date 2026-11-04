@@ -5,10 +5,9 @@ import { BeforeAfter } from "@/components/before-after";
 import { Mark } from "@/components/brand-logo";
 import { barnBeforeAfterPrimary, barnProjectImagesFlat } from "@/lib/projects";
 import { homeLeadServices } from "@/lib/services";
+import { PhoneLink } from "@/components/phone-link";
 import {
   pageMetadata,
-  BUSINESS_PHONE,
-  BUSINESS_PHONE_HREF,
   BUSINESS_TRUST_LINE,
   ESTIMATE_HREF,
   HOME_TITLE,
@@ -63,9 +62,7 @@ export default function Home() {
           <p className="hero__trust">{BUSINESS_TRUST_LINE}</p>
           <div className="button-row">
             <Button href={ESTIMATE_HREF} light>REQUEST A QUOTE</Button>
-            <a href={BUSINESS_PHONE_HREF} className="text-button">
-              CALL {BUSINESS_PHONE}
-            </a>
+            <PhoneLink className="text-button" prefix="CALL " />
           </div>
         </div>
       </section>
@@ -181,9 +178,7 @@ export default function Home() {
           </div>
           <div className="button-row">
             <Button href={ESTIMATE_HREF} light>REQUEST A QUOTE</Button>
-            <a href={BUSINESS_PHONE_HREF} className="text-button text-button--on-dark">
-              CALL {BUSINESS_PHONE}
-            </a>
+            <PhoneLink className="text-button text-button--on-dark" prefix="CALL " />
           </div>
         </div>
       </section>

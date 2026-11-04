@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { Mark } from "@/components/brand-logo";
+import { PhoneLink } from "@/components/phone-link";
 import {
   BUSINESS_EMAIL,
-  BUSINESS_PHONE,
-  BUSINESS_PHONE_HREF,
   BUSINESS_TRUST_LINE,
   ESTIMATE_HREF,
   pageMetadata,
@@ -33,9 +32,16 @@ export default function Page() {
         <p className="contact__trust">{BUSINESS_TRUST_LINE}</p>
 
         <div className="contact-primary">
-          <a className="button" href={BUSINESS_PHONE_HREF}>
-            CALL {BUSINESS_PHONE} <span aria-hidden="true">↗</span>
-          </a>
+          <PhoneLink
+            className="button"
+            prefix="CALL "
+            suffix={
+              <>
+                {" "}
+                <span aria-hidden="true">↗</span>
+              </>
+            }
+          />
           <Link className="button button--ghost" href={ESTIMATE_HREF}>
             REQUEST AN ESTIMATE <span aria-hidden="true">↗</span>
           </Link>
@@ -45,7 +51,7 @@ export default function Page() {
           <article>
             <span>01</span>
             <h2>CALL US</h2>
-            <a href={BUSINESS_PHONE_HREF}>{BUSINESS_PHONE}</a>
+            <PhoneLink />
           </article>
           <article>
             <span>02</span>

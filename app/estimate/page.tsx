@@ -2,7 +2,8 @@ import Link from "next/link";
 import { EstimateForm } from "@/components/estimate-form";
 import { Mark } from "@/components/brand-logo";
 import { getLeadService, leadServices, estimateHrefForService } from "@/lib/services";
-import { BUSINESS_EMAIL, BUSINESS_PHONE, BUSINESS_PHONE_HREF, pageMetadata } from "@/lib/seo";
+import { PhoneLink } from "@/components/phone-link";
+import { BUSINESS_EMAIL, pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "Request a Quote | Metal Roofing, Siding & Buildings",
@@ -61,7 +62,7 @@ export default async function Page({ searchParams }: PageProps) {
             })}
           </nav>
           <p className="estimate-contact">
-            <a href={BUSINESS_PHONE_HREF}>{BUSINESS_PHONE}</a>
+            <PhoneLink />
             <a href={`mailto:${BUSINESS_EMAIL}`}>{BUSINESS_EMAIL}</a>
           </p>
           <div className="estimate__aside">
