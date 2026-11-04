@@ -14,18 +14,21 @@ Tracks **Calls to a phone number on your website** via Google’s forwarding-num
 
 From Google Ads → Goals → Conversions → your **Calls to a phone number on your website** action → tag setup:
 
-| Variable | Example | Notes |
-| --- | --- | --- |
-| `NEXT_PUBLIC_GOOGLE_ADS_ID` | `AW-1234567890` | Ads tag / conversion ID |
-| `NEXT_PUBLIC_GOOGLE_ADS_PHONE_CONVERSION_LABEL` | `AbCdefGhIjkLmNoP` | Label from that phone conversion action |
+Defaults (HBG website-call conversion):
 
-Or one combined value:
-
-| Variable | Example |
+| Constant | Value |
 | --- | --- |
-| `NEXT_PUBLIC_GOOGLE_ADS_PHONE_CONVERSION` | `AW-1234567890/AbCdefGhIjkLmNoP` |
+| Ads ID | `AW-18397255791` |
+| Phone conversion label | `fIerCNGoirIdEO-wv8RE` |
+| `phone_conversion_number` | `(724) 719-7237` |
 
-Until these are set, the phone snippet does **not** load (safe no-op).
+Optional env overrides:
+
+| Variable | Notes |
+| --- | --- |
+| `NEXT_PUBLIC_GOOGLE_ADS_ID` | Override Ads tag ID |
+| `NEXT_PUBLIC_GOOGLE_ADS_PHONE_CONVERSION_LABEL` | Override phone conversion label |
+| `NEXT_PUBLIC_GOOGLE_ADS_PHONE_CONVERSION` | Combined `AW-…/label` override |
 
 ## Tag Assistant validation (before Production)
 

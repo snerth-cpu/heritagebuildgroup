@@ -3,16 +3,18 @@ export const GA_MEASUREMENT_ID =
 
 /**
  * Google Ads account ID (`AW-…`) for website call conversion tracking.
- * Prefer env so secrets/labels are not hard-coded; leave unset until Tag Assistant validation.
+ * Default is HBG’s Ads tag; override with `NEXT_PUBLIC_GOOGLE_ADS_ID` if needed.
  */
-export const GOOGLE_ADS_ID = (process.env.NEXT_PUBLIC_GOOGLE_ADS_ID || "").trim();
+export const GOOGLE_ADS_ID = (
+  process.env.NEXT_PUBLIC_GOOGLE_ADS_ID || "AW-18397255791"
+).trim();
 
 /**
  * Conversion label from the “Calls to a phone number on your website” action.
  * Combined send id is `${GOOGLE_ADS_ID}/${GOOGLE_ADS_PHONE_CONVERSION_LABEL}`.
  */
 export const GOOGLE_ADS_PHONE_CONVERSION_LABEL = (
-  process.env.NEXT_PUBLIC_GOOGLE_ADS_PHONE_CONVERSION_LABEL || ""
+  process.env.NEXT_PUBLIC_GOOGLE_ADS_PHONE_CONVERSION_LABEL || "fIerCNGoirIdEO-wv8RE"
 ).trim();
 
 /** Optional combined override: `AW-XXXXXXXXXX/XXXXXXXXXXXXXXXXXXXX`. */
