@@ -4,8 +4,9 @@ import { Mark } from "@/components/brand-logo";
 import { pageMetadata, serviceAreas, ESTIMATE_HREF } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "Metal Roofing & Siding Service Areas in Western PA",
-  description: "HBG Construction serves Greater Pittsburgh, Cranberry Township, Butler County, Mercer County, and Erie County with metal roofing, siding, and building construction.",
+  title: "Metal Roofing & Siding Service Areas | Western PA & Northeast Ohio",
+  description:
+    "Serving Western Pennsylvania and Northeast Ohio. HBG Construction installs metal roofing, siding, and building construction for homes and commercial properties.",
   path: "/service-areas",
 });
 
@@ -23,9 +24,9 @@ export default function Page() {
         <div className="wrap page-hero__grid">
           <div>
             <Mark size="cta" className="brand--on-dark" />
-            <p className="eyebrow">WESTERN PENNSYLVANIA</p>
+            <p className="eyebrow">WESTERN PENNSYLVANIA · NORTHEAST OHIO</p>
             <h1>METAL EXTERIORS &amp; BUILDINGS ACROSS THE REGION.</h1>
-            <p>HBG Construction installs metal roofing and metal siding and builds pole buildings for homes and commercial properties across Greater Pittsburgh, Cranberry Township, Butler County, Mercer County, Erie County, and nearby Western Pennsylvania markets.</p>
+            <p>Serving Western Pennsylvania and Northeast Ohio. HBG Construction installs metal roofing and metal siding and builds pole buildings for homes and commercial properties.</p>
             <Link className="button" href={ESTIMATE_HREF}>REQUEST AN ESTIMATE <span>↗</span></Link>
           </div>
           <AssetPanel kind="roof" />
@@ -56,7 +57,7 @@ export default function Page() {
       <section className="location-copy wrap">
         <div className="location-copy__intro">
           <p className="eyebrow">REGIONAL SCOPE</p>
-          <p className="lead">From Pittsburgh to Erie County, the work stays the same: durable metal, clean details, solid buildings, and clear communication.</p>
+          <p className="lead">Serving Western Pennsylvania and Northeast Ohio, the work stays the same: durable metal, clean details, solid buildings, and clear communication.</p>
         </div>
         <div className="location-copy__grid">
           <article>

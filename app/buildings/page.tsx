@@ -6,7 +6,7 @@ import { ESTIMATE_HREF, pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata({
   title: "Pole Buildings, Barns & Garages | Pittsburgh PA",
   description:
-    "HBG Construction builds pole buildings, barns, garages, and additions across Western Pennsylvania—with metal exteriors when the job calls for them.",
+    "HBG Construction builds pole buildings, barns, garages, and additions across Western Pennsylvania and Northeast Ohio—with metal exteriors when the job calls for them.",
   path: "/buildings",
 });
 

@@ -1,5 +1,5 @@
 import { barnProjectImagesFlat, poleBuildingBoardAndBatten } from "@/lib/projects";
-import { absoluteUrl, ESTIMATE_HREF, SITE_URL } from "@/lib/seo";
+import { absoluteUrl, ESTIMATE_HREF, SERVICE_AREA_REGION, SERVICE_AREA_SHORT, SITE_URL } from "@/lib/seo";
 
 export type ServiceSlug =
   | "metal-roofing"
@@ -51,11 +51,9 @@ export type LeadService = {
 };
 
 /** Short, accurate service-area line for lead pages. Not statewide. */
-export const LEAD_SERVICE_AREA =
-  "the Pittsburgh region, Cranberry Township, Butler County, Mercer County, and nearby Ohio communities";
+export const LEAD_SERVICE_AREA = SERVICE_AREA_REGION;
 
-export const LEAD_SERVICE_AREA_SHORT =
-  "Pittsburgh region · Cranberry · Butler & Mercer Counties · nearby Ohio";
+export const LEAD_SERVICE_AREA_SHORT = SERVICE_AREA_SHORT;
 
 export function estimateHrefForService(slug?: string | null) {
   if (!slug) return ESTIMATE_HREF;
@@ -442,11 +440,12 @@ export function leadServiceSchema(service: LeadService) {
     url: absoluteUrl(service.path),
     provider: { "@id": `${SITE_URL}/#business` },
     areaServed: [
+      { "@type": "AdministrativeArea", name: "Western Pennsylvania" },
       { "@type": "City", name: "Pittsburgh", containedInPlace: { "@type": "State", name: "Pennsylvania" } },
       { "@type": "City", name: "Cranberry Township", containedInPlace: { "@type": "State", name: "Pennsylvania" } },
       { "@type": "AdministrativeArea", name: "Butler County, Pennsylvania" },
       { "@type": "AdministrativeArea", name: "Mercer County, Pennsylvania" },
-      { "@type": "AdministrativeArea", name: "nearby Ohio communities" },
+      { "@type": "AdministrativeArea", name: "Northeast Ohio" },
     ],
   };
 }

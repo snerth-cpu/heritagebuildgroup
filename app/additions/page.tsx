@@ -6,7 +6,7 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata({
   title: "Home Additions Pittsburgh PA | Room & Structure Expansions",
   description:
-    "HBG Construction plans and builds home and property additions across Western Pennsylvania.",
+    "HBG Construction plans and builds home and property additions across Western Pennsylvania and Northeast Ohio.",
   path: "/additions",
 });
 

@@ -5,7 +5,7 @@ import { ESTIMATE_HREF, SITE_URL, absoluteUrl, pageMetadata } from "@/lib/seo";
 
 const TITLE = "Commercial Metal Roofing & Siding Pittsburgh, PA | HBG Construction";
 const DESCRIPTION =
-  "Commercial metal roofing, siding, and exterior renovations across Pittsburgh and Western Pennsylvania. HBG Construction installs and manages the work.";
+  "Commercial metal roofing, siding, and exterior renovations across Western Pennsylvania and Northeast Ohio. HBG Construction installs and manages the work.";
 const PAGE_PATH = "/commercial";
 
 export const metadata = pageMetadata({
@@ -19,7 +19,7 @@ const faqs = [
   {
     question: "Do you install commercial metal roofing and siding in Pittsburgh?",
     answer:
-      "Yes. HBG Construction installs commercial metal roofing and siding in Pittsburgh and across Western Pennsylvania, including Cranberry Township, Butler County, Mercer County, and Erie County.",
+      "Yes. HBG Construction installs commercial metal roofing and siding in Pittsburgh and across Western Pennsylvania and Northeast Ohio.",
   },
   {
     question: "Do you work on existing buildings and new construction?",
@@ -49,12 +49,12 @@ const serviceSchema = {
   url: pageUrl,
   provider: { "@id": `${SITE_URL}/#business` },
   areaServed: [
+    { "@type": "AdministrativeArea", name: "Western Pennsylvania" },
     { "@type": "City", name: "Pittsburgh", containedInPlace: { "@type": "State", name: "Pennsylvania" } },
     { "@type": "City", name: "Cranberry Township", containedInPlace: { "@type": "State", name: "Pennsylvania" } },
     { "@type": "AdministrativeArea", name: "Butler County, Pennsylvania" },
     { "@type": "AdministrativeArea", name: "Mercer County, Pennsylvania" },
-    { "@type": "AdministrativeArea", name: "Erie County, Pennsylvania" },
-    { "@type": "AdministrativeArea", name: "Western Pennsylvania" },
+    { "@type": "AdministrativeArea", name: "Northeast Ohio" },
   ],
 };
 
@@ -75,9 +75,9 @@ export default function Page() {
       <JsonLd data={faqSchema} />
 
       <PageHero
-        kicker="PITTSBURGH • WESTERN PENNSYLVANIA"
+        kicker="WESTERN PENNSYLVANIA · NORTHEAST OHIO"
         title="COMMERCIAL METAL ROOFING AND SIDING."
-        copy="Commercial metal roofing, siding, and exterior updates for existing buildings and new construction across Western Pennsylvania."
+        copy="Commercial metal roofing, siding, and exterior updates for existing buildings and new construction across Western Pennsylvania and Northeast Ohio."
         kind="commercial"
       />
 
@@ -132,12 +132,11 @@ export default function Page() {
         heading="Service area"
         copy={
           <>
-            Commercial metal roofing and siding across{" "}
+            Serving Western Pennsylvania and Northeast Ohio—including{" "}
             <Link href="/service-areas/pittsburgh-pa" className="text-link">Pittsburgh</Link>,{" "}
             <Link href="/service-areas/cranberry-township-pa" className="text-link">Cranberry Township</Link>,{" "}
-            <Link href="/service-areas/butler-county-pa" className="text-link">Butler County</Link>,{" "}
-            <Link href="/service-areas/mercer-county-pa" className="text-link">Mercer County</Link>
-            , Erie County, and Western Pennsylvania.
+            <Link href="/service-areas/butler-county-pa" className="text-link">Butler County</Link>, and{" "}
+            <Link href="/service-areas/mercer-county-pa" className="text-link">Mercer County</Link>.
           </>
         }
       />

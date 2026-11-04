@@ -11,6 +11,8 @@ import {
   CONTACT_HREF,
   ESTIMATE_HREF,
   LEGAL_NAME,
+  SERVICE_AREA_REGION,
+  SERVICE_AREA_STATEMENT,
 } from "@/lib/seo";
 
 const serviceLinks = [
@@ -161,9 +163,7 @@ export function Footer() {
         <Mark size="footer" />
         <div>
           <p className="eyebrow">METAL EXTERIORS &amp; BUILDINGS</p>
-          <p>
-            Serving the Pittsburgh region, Cranberry Township, Butler County, Mercer County, and nearby Ohio communities.
-          </p>
+          <p>{SERVICE_AREA_STATEMENT}</p>
           <p className="footer__contact">
             <a href={BUSINESS_PHONE_HREF}>{BUSINESS_PHONE}</a>
             <a href={`mailto:${BUSINESS_EMAIL}`}>{BUSINESS_EMAIL}</a>
@@ -188,7 +188,7 @@ export function Footer() {
       <div className="footer__bottom wrap">
         <p>© {new Date().getFullYear()} {LEGAL_NAME}</p>
         <p>PA Registered & Fully Insured · {BUSINESS_HIC}</p>
-        <p>Pittsburgh region &amp; nearby Ohio</p>
+        <p>{SERVICE_AREA_REGION}</p>
       </div>
     </footer>
   );

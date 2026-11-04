@@ -7,7 +7,7 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "Metal Roofing & Siding Projects",
-  description: "Project photos from HBG Construction metal roofing, metal siding, and exterior builds across Western Pennsylvania.",
+  description: "Project photos from HBG Construction metal roofing, metal siding, and exterior builds across Western Pennsylvania and Northeast Ohio.",
   path: "/projects",
 });
 

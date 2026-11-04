@@ -170,7 +170,7 @@ export default function Page() {
             <p className="eyebrow">NEXT PROJECT</p>
             <h2>TELL US ABOUT YOURS.</h2>
             <p className="cta-band__copy">
-              Metal siding, metal roofing, pole buildings, garages, and exterior work across the Pittsburgh region.
+              Metal siding, metal roofing, pole buildings, garages, and exterior work across Western Pennsylvania and Northeast Ohio.
             </p>
           </div>
           <Button href={ESTIMATE_HREF} light>

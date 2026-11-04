@@ -12,7 +12,7 @@ import {
 export const metadata = pageMetadata({
   title: "Contact HBG Construction",
   description:
-    "Call, email, or request an estimate from HBG Construction for pole buildings, garages, additions, and metal exterior projects in Western Pennsylvania.",
+    "Call, email, or request an estimate from HBG Construction for pole buildings, garages, additions, and metal exterior projects in Western Pennsylvania and Northeast Ohio.",
   path: "/contact",
 });
 
