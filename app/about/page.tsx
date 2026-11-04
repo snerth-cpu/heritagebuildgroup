@@ -3,9 +3,9 @@ import { Mark } from "@/components/brand-logo";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "About HBG Construction | Western Pennsylvania Builder",
+  title: "About HBG Construction | Western Pennsylvania & Northeast Ohio",
   description:
-    "HBG Construction is a Western Pennsylvania contractor for metal roofing, metal siding, pole buildings, garages, and commercial exteriors.",
+    "HBG Construction is a contractor for metal roofing, metal siding, pole buildings, garages, and commercial exteriors. Serving Western Pennsylvania and Northeast Ohio.",
   path: "/about",
 });
 
@@ -19,9 +19,7 @@ export default function Page() {
           <h1>LOCAL BUILDERS FOR EXTERIORS AND CUSTOM BUILDINGS.</h1>
         </div>
         <p>
-          HBG Construction serves homeowners and commercial property teams across Greater Pittsburgh, Cranberry Township, Butler County, Mercer County, and Erie County.
-          <br /><br />
-          We focus on metal roofing, metal siding, pole buildings, garages, additions, and commercial exterior work—with clear estimates and one point of contact through the job.
+          Serving Western Pennsylvania and Northeast Ohio. HBG Construction works with homeowners and commercial property teams on metal roofing, metal siding, pole buildings, garages, additions, and commercial exterior work—with clear estimates and one point of contact through the job.
         </p>
       </section>
       <AssetPanel kind="teamwork" className="about-visual" />

@@ -7,7 +7,7 @@ import { BUSINESS_EMAIL, BUSINESS_PHONE, BUSINESS_PHONE_HREF, pageMetadata } fro
 export const metadata = pageMetadata({
   title: "Request a Quote | Metal Roofing, Siding & Buildings",
   description:
-    "Request a quote from HBG Construction for metal roofing, metal siding, barn siding, pole buildings, or garages in the Pittsburgh region and nearby Ohio communities.",
+    "Request a quote from HBG Construction for metal roofing, metal siding, barn siding, pole buildings, or garages in Western Pennsylvania and Northeast Ohio.",
   path: "/estimate",
 });
 

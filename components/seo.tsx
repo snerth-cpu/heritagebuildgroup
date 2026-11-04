@@ -9,7 +9,7 @@ export function JsonLd({ data }: { data: object }) {
 export function ServiceAreaLinks({ heading = "Service areas", copy }: { heading?: string; copy?: ReactNode }) {
   return (
     <section className="related-links wrap" aria-labelledby="service-area-links">
-      <p className="eyebrow">WESTERN PENNSYLVANIA</p>
+      <p className="eyebrow">WESTERN PENNSYLVANIA · NORTHEAST OHIO</p>
       <div>
         <h2 id="service-area-links">{heading}</h2>
         {copy ? <p className="related-links__copy">{copy}</p> : null}

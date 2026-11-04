@@ -7,14 +7,20 @@ export const BUSINESS_PHONE = "(724) 719-7237";
 export const BUSINESS_PHONE_HREF = "tel:+17247197237";
 export const BUSINESS_EMAIL = "scott@heritagebuildgroup.com";
 export const BUSINESS_HIC = "PA HIC #PA223621";
+/** Canonical service-area statement (footer and standalone lines). */
+export const SERVICE_AREA_STATEMENT = "Serving Western Pennsylvania and Northeast Ohio.";
+/** Region phrase for use inside sentences (in / across / serve …). */
+export const SERVICE_AREA_REGION = "Western Pennsylvania and Northeast Ohio";
+/** Compact trust / eyebrow form. */
+export const SERVICE_AREA_SHORT = "Western Pennsylvania · Northeast Ohio";
 export const BUSINESS_TRUST_LINE =
-  "PA registered & fully insured · HIC #PA223621 · Pittsburgh region, Butler & Mercer Counties, nearby Ohio";
+  `PA registered & fully insured · HIC #PA223621 · ${SERVICE_AREA_SHORT}`;
 export const SOCIAL_IMAGE = "/images/metal-exterior-wide.png";
 export const ESTIMATE_HREF = "/estimate#estimate-form";
 export const CONTACT_HREF = "/contact";
 export const HOME_TITLE = "HBG Construction | Metal Roofing, Siding & Pole Buildings";
 export const HOME_DESCRIPTION =
-  "HBG Construction supplies and installs metal roofing and siding, and builds pole buildings and garages in the Pittsburgh region, Cranberry Township, Butler County, Mercer County, and nearby Ohio communities.";
+  `HBG Construction supplies and installs metal roofing and siding, and builds pole buildings and garages in ${SERVICE_AREA_REGION}.`;
 
 // Remaining before complete LocalBusiness markup:
 // TODO: BUSINESS_STREET_ADDRESS, CITY, STATE, POSTAL_CODE — do not publish until approved
@@ -64,11 +70,12 @@ export const serviceAreas = [
 
 /** Areas we serve, including those without a dedicated landing page. */
 export const serviceAreaNames = [
+  "Western Pennsylvania",
   "Greater Pittsburgh",
   "Cranberry Township",
   "Butler County",
   "Mercer County",
-  "nearby Ohio communities",
+  "Northeast Ohio",
 ] as const;
 
 export const localBusinessSchema = {
@@ -84,14 +91,15 @@ export const localBusinessSchema = {
   logo: absoluteUrl("/brand/hbg-primary.png"),
   image: absoluteUrl(SOCIAL_IMAGE),
   description:
-    "HBG Construction supplies and installs metal roofing and metal siding, and builds pole buildings and detached garages in the Pittsburgh region, Cranberry Township, Butler County, Mercer County, and nearby Ohio communities.",
+    `HBG Construction supplies and installs metal roofing and metal siding, and builds pole buildings and detached garages in ${SERVICE_AREA_REGION}.`,
   areaServed: [
+    { "@type": "AdministrativeArea", name: "Western Pennsylvania" },
     { "@type": "City", name: "Pittsburgh", containedInPlace: { "@type": "State", name: "Pennsylvania" } },
     { "@type": "AdministrativeArea", name: "Greater Pittsburgh" },
     { "@type": "City", name: "Cranberry Township", containedInPlace: { "@type": "State", name: "Pennsylvania" } },
     { "@type": "AdministrativeArea", name: "Butler County, Pennsylvania" },
     { "@type": "AdministrativeArea", name: "Mercer County, Pennsylvania" },
-    { "@type": "AdministrativeArea", name: "nearby Ohio communities" },
+    { "@type": "AdministrativeArea", name: "Northeast Ohio" },
   ],
   knowsAbout: [
     "Metal roofing",

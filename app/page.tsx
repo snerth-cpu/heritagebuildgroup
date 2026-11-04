@@ -13,6 +13,7 @@ import {
   ESTIMATE_HREF,
   HOME_TITLE,
   HOME_DESCRIPTION,
+  SERVICE_AREA_SHORT,
 } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -50,7 +51,7 @@ export default function Home() {
         </div>
         <div className="hero__shade" />
         <div className="wrap hero__content">
-          <p className="eyebrow">PITTSBURGH REGION · NEARBY OHIO</p>
+          <p className="eyebrow">{SERVICE_AREA_SHORT.toUpperCase()}</p>
           <h1 className="hero__brand">
             <Mark size="hero" priority />
             <span className="visually-hidden">HBG Construction</span>
@@ -164,7 +165,7 @@ export default function Home() {
           <Link href="/service-areas/cranberry-township-pa">CRANBERRY TOWNSHIP</Link>
           <Link href="/service-areas/butler-county-pa">BUTLER COUNTY</Link>
           <Link href="/service-areas/mercer-county-pa">MERCER COUNTY</Link>
-          <span>NEARBY OHIO</span>
+          <span>NORTHEAST OHIO</span>
         </div>
         <Link className="simple-link service-area__all" href="/service-areas">
           VIEW SERVICE AREAS ↗
