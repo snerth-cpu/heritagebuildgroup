@@ -89,6 +89,7 @@ Locally: inspect `.data/leads/` (gitignored).
 - `generate_lead` — **only** after `POST /api/estimate` returns `{ ok: true, id }`, with `sessionStorage` dedupe per submission id. No PII in the event.
 - Direct visits to `/estimate?submitted=…` or any thank-you URL do **not** fire `generate_lead`.
 - Import GA4 `generate_lead` as the Google Ads primary conversion. **Do not** add a parallel primary `AW-` conversion for the same submit. No campaign/budget changes in this PR.
+- Website **phone-call** conversions use a separate Google Ads action (“Calls to a phone number on your website”) — see `docs/GOOGLE_ADS_PHONE_CALLS.md`. That does not replace `generate_lead`.
 
 ### Tag Assistant checks
 

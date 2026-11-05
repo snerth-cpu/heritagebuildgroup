@@ -1,6 +1,7 @@
 import { Mark } from "@/components/brand-logo";
 import { barnProjectImagesFlat, poleBuildingBoardAndBatten } from "@/lib/projects";
-import { BUSINESS_PHONE, BUSINESS_PHONE_HREF, ESTIMATE_HREF } from "@/lib/seo";
+import { PhoneLink } from "@/components/phone-link";
+import { ESTIMATE_HREF } from "@/lib/seo";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -83,9 +84,7 @@ export function PageHero({
           <div className="button-row page-hero__actions">
             <Button href={estimateHref}>{estimateLabel}</Button>
             {showCall ? (
-              <a href={BUSINESS_PHONE_HREF} className="text-button text-button--on-dark">
-                CALL {BUSINESS_PHONE}
-              </a>
+              <PhoneLink className="text-button text-button--on-dark" prefix="CALL " />
             ) : null}
           </div>
         </div>
@@ -156,9 +155,7 @@ export function ProjectCTA({
             {estimateLabel}
           </Button>
           {showCall ? (
-            <a href={BUSINESS_PHONE_HREF} className="text-button text-button--on-dark">
-              CALL {BUSINESS_PHONE}
-            </a>
+            <PhoneLink className="text-button text-button--on-dark" prefix="CALL " />
           ) : null}
         </div>
       </div>

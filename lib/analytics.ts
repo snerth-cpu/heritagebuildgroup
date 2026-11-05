@@ -1,11 +1,42 @@
 export const GA_MEASUREMENT_ID =
   process.env.NEXT_PUBLIC_GA_ID || "G-JJ9HCGZZEM";
 
+/**
+ * Google Ads account ID (`AW-…`) for website call conversion tracking.
+ * Default is HBG’s Ads tag; override with `NEXT_PUBLIC_GOOGLE_ADS_ID` if needed.
+ */
+export const GOOGLE_ADS_ID = (
+  process.env.NEXT_PUBLIC_GOOGLE_ADS_ID || "AW-18397255791"
+).trim();
+
+/**
+ * Conversion label from the “Calls to a phone number on your website” action.
+ * Combined send id is `${GOOGLE_ADS_ID}/${GOOGLE_ADS_PHONE_CONVERSION_LABEL}`.
+ */
+export const GOOGLE_ADS_PHONE_CONVERSION_LABEL = (
+  process.env.NEXT_PUBLIC_GOOGLE_ADS_PHONE_CONVERSION_LABEL || "fIerCNGoirIdEO-wv8RE"
+).trim();
+
+/** Optional combined override: `AW-XXXXXXXXXX/XXXXXXXXXXXXXXXXXXXX`. */
+export const GOOGLE_ADS_PHONE_CONVERSION =
+  (process.env.NEXT_PUBLIC_GOOGLE_ADS_PHONE_CONVERSION || "").trim() ||
+  (GOOGLE_ADS_ID && GOOGLE_ADS_PHONE_CONVERSION_LABEL
+    ? `${GOOGLE_ADS_ID}/${GOOGLE_ADS_PHONE_CONVERSION_LABEL}`
+    : "");
+
 /** Live site hosts that may load production GA4 `G-JJ9HCGZZEM`. */
 export const PRODUCTION_GA_HOSTS = new Set([
   "heritagebuildgroup.com",
   "www.heritagebuildgroup.com",
 ]);
+
+/**
+ * Temporary Tag Assistant / preview verification only.
+ * Never set on Production. When `1`, marketing tags may load off heritagebuildgroup.com.
+ */
+export function isTagDebugEnabled() {
+  return (process.env.NEXT_PUBLIC_ENABLE_TAG_DEBUG || "").trim() === "1";
+}
 
 const ATTRIBUTION_KEY = "hbg_attribution";
 /** Per-submission-id dedupe so generate_lead fires once per successfully saved lead. */
@@ -26,6 +57,7 @@ declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void;
     dataLayer?: unknown[];
+    __hbgAdsPhoneConfigured?: boolean;
   }
 }
 
@@ -52,6 +84,22 @@ export function shouldEnableProductionGa(options?: {
   vercelEnv?: string | null;
   nodeEnv?: string | null;
 }) {
+  if (isTagDebugEnabled()) {
+    const hostname =
+      options?.hostname ??
+      (typeof window !== "undefined" ? window.location.hostname : null);
+    // Debug mode is for local / preview Tag Assistant only — never force-on for unknown hosts.
+    if (!hostname) return true;
+    const host = normalizeHost(hostname);
+    return (
+      host === "localhost" ||
+      host === "127.0.0.1" ||
+      host.endsWith(".vercel.app") ||
+      host.endsWith(".netlify.app") ||
+      isProductionGaHost(host)
+    );
+  }
+
   const context = options?.context ?? process.env.CONTEXT ?? null;
   const vercelEnv = options?.vercelEnv ?? process.env.VERCEL_ENV ?? null;
   const nodeEnv = options?.nodeEnv ?? process.env.NODE_ENV ?? null;
@@ -74,6 +122,29 @@ export function shouldEnableProductionGa(options?: {
 
   // Server render without a request host: trust deploy context only when explicitly production.
   return context === "production" || vercelEnv === "production";
+}
+
+/** True when Ads website-call conversion IDs are configured (not when only GA4 is present). */
+export function hasGoogleAdsPhoneConversionConfig() {
+  if (GOOGLE_ADS_PHONE_CONVERSION) {
+    return /^AW-\d+\/[A-Za-z0-9_-]+$/.test(GOOGLE_ADS_PHONE_CONVERSION);
+  }
+  return Boolean(GOOGLE_ADS_ID && GOOGLE_ADS_PHONE_CONVERSION_LABEL);
+}
+
+export function googleAdsAccountId() {
+  if (GOOGLE_ADS_ID && /^AW-\d+$/.test(GOOGLE_ADS_ID)) return GOOGLE_ADS_ID;
+  const match = GOOGLE_ADS_PHONE_CONVERSION.match(/^(AW-\d+)\//);
+  return match?.[1] || "";
+}
+
+export function shouldEnableGoogleAdsPhoneConversion(options?: {
+  hostname?: string | null;
+  context?: string | null;
+  vercelEnv?: string | null;
+  nodeEnv?: string | null;
+}) {
+  return shouldEnableProductionGa(options) && hasGoogleAdsPhoneConversionConfig();
 }
 
 export function pageContext() {
@@ -168,6 +239,59 @@ export function trackEvent(name: string, params?: GaEventParams) {
   ensureGtag();
   if (typeof window.gtag !== "function") return;
   window.gtag("event", name, params);
+}
+
+/**
+ * Configure Google Ads account + website phone-call conversion on the existing gtag
+ * (same gtag.js as GA4 — no second tag script). Idempotent per page load.
+ */
+export async function configureGoogleAdsPhoneConversion(options: {
+  phoneDisplay: string;
+  phoneCssClass: string;
+  phoneLinkClass: string;
+}): Promise<boolean> {
+  if (typeof window === "undefined") return false;
+  if (!shouldEnableGoogleAdsPhoneConversion()) return false;
+  if (window.__hbgAdsPhoneConfigured) return true;
+
+  const sendTo = GOOGLE_ADS_PHONE_CONVERSION;
+  const accountId = googleAdsAccountId();
+  if (!sendTo || !accountId) return false;
+
+  await waitForGtag();
+  if (!shouldEnableGoogleAdsPhoneConversion()) return false;
+  if (typeof window.gtag !== "function") return false;
+  if (window.__hbgAdsPhoneConfigured) return true;
+
+  window.__hbgAdsPhoneConfigured = true;
+
+  // Account-level config once (remarketing / click cookies). Do not fire a conversion event here.
+  window.gtag("config", accountId);
+
+  window.gtag("config", sendTo, {
+    phone_conversion_number: options.phoneDisplay,
+    phone_conversion_css_class: options.phoneCssClass,
+    phone_conversion_callback: (formattedNumber: string, plainNumber: string) => {
+      try {
+        const formatted = String(formattedNumber || "").trim();
+        const plain = String(plainNumber || "").replace(/\D/g, "");
+        if (!formatted || !plain) return;
+
+        document.querySelectorAll(`.${options.phoneCssClass}`).forEach((node) => {
+          node.textContent = formatted;
+        });
+
+        const href = plain.startsWith("1") && plain.length === 11 ? `tel:+${plain}` : `tel:+1${plain}`;
+        document.querySelectorAll(`a.${options.phoneLinkClass}`).forEach((node) => {
+          if (node instanceof HTMLAnchorElement) node.href = href;
+        });
+      } catch {
+        /* never break the page if replacement fails — keep business number */
+      }
+    },
+  });
+
+  return true;
 }
 
 /**

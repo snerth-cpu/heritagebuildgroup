@@ -3,9 +3,14 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import { headers } from "next/headers";
 import "./globals.css";
 import { ConversionTracker } from "@/components/conversion-tracker";
+import { GoogleAdsPhoneConversion } from "@/components/google-ads-phone";
 import { Footer, Header, MobileContactCta } from "@/components/site-shell";
 import { JsonLd } from "@/components/seo";
-import { GA_MEASUREMENT_ID, shouldEnableProductionGa } from "@/lib/analytics";
+import {
+  GA_MEASUREMENT_ID,
+  shouldEnableGoogleAdsPhoneConversion,
+  shouldEnableProductionGa,
+} from "@/lib/analytics";
 import { absoluteUrl, HOME_DESCRIPTION, HOME_TITLE, localBusinessSchema, SITE_NAME, SITE_URL, SOCIAL_IMAGE } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -31,12 +36,14 @@ function requestHostname(headerList: Headers) {
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const headerList = await headers();
-  const enableProductionGa = shouldEnableProductionGa({
+  const hostOpts = {
     hostname: requestHostname(headerList),
     context: process.env.CONTEXT,
     vercelEnv: process.env.VERCEL_ENV,
     nodeEnv: process.env.NODE_ENV,
-  });
+  };
+  const enableProductionGa = shouldEnableProductionGa(hostOpts);
+  const enableAdsPhone = shouldEnableGoogleAdsPhoneConversion(hostOpts);
 
   return (
     <html lang="en">
@@ -46,8 +53,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <main>{children}</main>
         <Footer />
         <MobileContactCta />
-        {/* Production GA4 only on heritagebuildgroup.com — never on Netlify/Vercel previews. */}
+        {/* Single gtag.js via GA4; Ads phone config reuses it — never a second tag script. */}
         {enableProductionGa ? <GoogleAnalytics gaId={GA_MEASUREMENT_ID} /> : null}
+        {enableAdsPhone ? <GoogleAdsPhoneConversion /> : null}
         <ConversionTracker />
       </body>
     </html>

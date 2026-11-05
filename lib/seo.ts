@@ -3,8 +3,14 @@ import type { Metadata } from "next";
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.heritagebuildgroup.com";
 export const SITE_NAME = "HBG Construction";
 export const LEGAL_NAME = "Heritage Build Group LLC";
+/** Display form — must match Google Ads `phone_conversion_number` exactly. */
 export const BUSINESS_PHONE = "(724) 719-7237";
-export const BUSINESS_PHONE_HREF = "tel:+17247197237";
+export const BUSINESS_PHONE_E164 = "+17247197237";
+export const BUSINESS_PHONE_HREF = `tel:${BUSINESS_PHONE_E164}`;
+/** CSS class Google Ads replaces with a forwarding number (text nodes only). */
+export const PHONE_TRACKING_CLASS = "hbg-phone";
+/** Class on clickable tel: anchors so hrefs can be updated with the forwarding number. */
+export const PHONE_LINK_CLASS = "hbg-phone-link";
 export const BUSINESS_EMAIL = "scott@heritagebuildgroup.com";
 export const BUSINESS_HIC = "PA HIC #PA223621";
 /** Canonical service-area statement (footer and standalone lines). */

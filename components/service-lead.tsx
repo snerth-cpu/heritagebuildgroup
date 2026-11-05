@@ -15,7 +15,7 @@ import {
   type LeadService,
   estimateHrefForService,
 } from "@/lib/services";
-import { BUSINESS_PHONE, BUSINESS_PHONE_HREF } from "@/lib/seo";
+import { PhoneLink } from "@/components/phone-link";
 
 const LEAD_PROCESS = [
   ["01", "Tell us about the project", "Share the building, ZIP code, and what you need."],
@@ -58,9 +58,7 @@ export function ServiceLeadPage({
             ))}
             <div className="button-row service-lead__actions">
               <Button href={quoteHref}>REQUEST A QUOTE</Button>
-              <a href={BUSINESS_PHONE_HREF} className="text-button text-button--ink">
-                CALL {BUSINESS_PHONE}
-              </a>
+              <PhoneLink className="text-button text-button--ink" prefix="CALL " />
             </div>
           </div>
         </div>
