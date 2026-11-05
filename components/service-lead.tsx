@@ -64,8 +64,10 @@ export function ServiceLeadPage({
         </div>
         {children}
         {service.photos.map((photo) => (
-          <div
-            className={`asset-panel wide-visual${photo.contain ? " asset-panel--contain" : ""}`}
+          <figure
+            className={`asset-panel wide-visual${photo.contain ? " asset-panel--contain" : ""}${
+              photo.representative ? " asset-panel--representative" : ""
+            }`}
             key={photo.src + photo.alt}
           >
             {photo.contain ? (
@@ -86,7 +88,12 @@ export function ServiceLeadPage({
                 style={{ objectFit: "cover", objectPosition: photo.position || "center" }}
               />
             )}
-          </div>
+            {photo.representative || photo.caption ? (
+              <figcaption className="asset-panel__caption">
+                {photo.caption || "Representative example — not an HBG Construction project photo."}
+              </figcaption>
+            ) : null}
+          </figure>
         ))}
       </section>
 

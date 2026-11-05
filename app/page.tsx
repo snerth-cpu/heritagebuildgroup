@@ -4,7 +4,7 @@ import { AssetPanel, Button } from "@/components/ui";
 import { BeforeAfter } from "@/components/before-after";
 import { Mark } from "@/components/brand-logo";
 import { barnBeforeAfterPrimary, barnProjectImagesFlat } from "@/lib/projects";
-import { homeLeadServices } from "@/lib/services";
+import { serviceCategories } from "@/lib/service-categories";
 import { PhoneLink } from "@/components/phone-link";
 import {
   pageMetadata,
@@ -55,9 +55,9 @@ export default function Home() {
             <Mark size="hero" priority />
             <span className="visually-hidden">HBG Construction</span>
           </h1>
-          <p className="hero__offer">Metal Roofing, Siding &amp; Pole Buildings</p>
+          <p className="hero__offer">Exterior Construction — Roofing, Siding, Windows &amp; Doors, Pole Buildings</p>
           <p className="hero__copy">
-            Metal roofing and siding, barn siding replacement, pole building kits and construction, and detached garages.
+            Full exterior construction for homes and working buildings across Western Pennsylvania and Northeast Ohio.
           </p>
           <p className="hero__trust">{BUSINESS_TRUST_LINE}</p>
           <div className="button-row">
@@ -67,41 +67,53 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="home-services wrap">
-        <div className="home-heading">
-          <p className="eyebrow">MAIN SERVICES</p>
-          <h2>WHAT WE BUILD</h2>
+      <section className="home-services wrap" id="services">
+        <div className="home-heading home-heading--split">
+          <div>
+            <p className="eyebrow">EXTERIOR SERVICES</p>
+            <h2>WHAT WE BUILD</h2>
+          </div>
+          <p>Roofing, siding, windows &amp; doors, and pole buildings—organized so you can find the right scope fast.</p>
         </div>
-        <div className="home-services__grid home-services__grid--four">
-          {homeLeadServices().map((service) => (
-            <Link href={service.path} className="home-service" key={service.path}>
-              <AssetPanel kind={service.cardKind} contain={service.heroContain} />
-              <div>
-                <h3>{service.cardTitle}</h3>
-                <p>{service.cardCopy}</p>
-                <span>LEARN MORE ↗</span>
+
+        <div className="home-categories">
+          {serviceCategories.map((category) => (
+            <section className="home-category" key={category.id} aria-labelledby={`cat-${category.id}`}>
+              <div className="home-category__intro">
+                <p className="eyebrow">{category.eyebrow}</p>
+                <h3 id={`cat-${category.id}`}>{category.title}</h3>
+                <p>{category.summary}</p>
               </div>
-            </Link>
+              <div className={`home-category__grid home-category__grid--${category.items.length}`}>
+                {category.items.map((item) => (
+                  <Link href={item.href} className="home-service" key={`${category.id}-${item.label}`}>
+                    <AssetPanel kind={item.imageKind} contain={item.contain} />
+                    <div>
+                      <h4>{item.label}</h4>
+                      {!item.realProjectPhoto ? (
+                        <p className="home-service__note">Representative example</p>
+                      ) : (
+                        <p className="home-service__note">HBG project photo</p>
+                      )}
+                      <span>LEARN MORE ↗</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
           ))}
         </div>
-        <p className="home-services__note">
-          Also available:{" "}
-          <Link href="/barn-siding" className="text-link">Barn Siding Replacement</Link>
-          {" · "}
-          <Link href="/commercial" className="text-link">Commercial Exteriors</Link>
-          {" · "}
-          <Link href="/additions" className="text-link">Home Additions</Link>
-        </p>
+
       </section>
 
       <section className="home-transformation">
         <div className="wrap">
           <div className="home-heading home-heading--split">
             <div>
-              <p className="eyebrow">FEATURED PROJECTS</p>
-              <h2>REAL WORK</h2>
+              <p className="eyebrow">OUR WORK</p>
+              <h2>REAL PROJECTS</h2>
             </div>
-            <p>Before-and-after photos from completed metal exterior projects.</p>
+            <p>Before-and-after photos from completed HBG metal exterior projects—not representative stock.</p>
           </div>
           <div className="home-compares">
             <div className="home-compare">
@@ -121,8 +133,8 @@ export default function Home() {
             </div>
           </div>
           <div className="home-featured-links">
-            <Link className="simple-link" href="/projects">
-              SEE ALL PROJECTS <span>↗</span>
+            <Link className="button" href="/projects">
+              VIEW OUR PROJECTS <span>↗</span>
             </Link>
           </div>
         </div>

@@ -4,6 +4,12 @@ export const PROJECT_TYPES = [
   "board_and_batten",
   "pole_building",
   "garage",
+  "shingle_roofing",
+  "vinyl_siding",
+  "fiber_cement_siding",
+  "window_replacement",
+  "door_replacement",
+  "garage_door",
   "window_door_replacement",
   "other",
 ] as const;
@@ -84,6 +90,12 @@ export const PROJECT_TYPE_LABELS: Record<ProjectType, string> = {
   board_and_batten: "Barn Siding (Board & Batten)",
   pole_building: "Pole Building",
   garage: "Garage",
+  shingle_roofing: "Shingle Roofing",
+  vinyl_siding: "Vinyl Siding",
+  fiber_cement_siding: "Fiber-Cement Siding",
+  window_replacement: "Window Replacement",
+  door_replacement: "Exterior Door Replacement",
+  garage_door: "Garage Door",
   window_door_replacement: "Window / Door Replacement",
   other: "Other",
 };
@@ -101,6 +113,18 @@ export function projectTypeFromServiceSlug(slug?: string | null): ProjectType | 
       return "pole_building";
     case "garages":
       return "garage";
+    case "shingle-roofing":
+      return "shingle_roofing";
+    case "vinyl-siding":
+      return "vinyl_siding";
+    case "fiber-cement-siding":
+      return "fiber_cement_siding";
+    case "window-replacement":
+      return "window_replacement";
+    case "door-replacement":
+      return "door_replacement";
+    case "garage-doors":
+      return "garage_door";
     default:
       return undefined;
   }

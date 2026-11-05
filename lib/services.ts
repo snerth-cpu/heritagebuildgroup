@@ -6,7 +6,13 @@ export type ServiceSlug =
   | "metal-siding"
   | "barn-siding"
   | "pole-buildings"
-  | "garages";
+  | "garages"
+  | "shingle-roofing"
+  | "vinyl-siding"
+  | "fiber-cement-siding"
+  | "window-replacement"
+  | "door-replacement"
+  | "garage-doors";
 
 export type ServiceFaq = { question: string; answer: string };
 
@@ -15,7 +21,14 @@ export type ServicePhoto = {
   alt: string;
   position?: string;
   contain?: boolean;
+  /** When true, UI must label the image as representative — not an HBG project photo. */
+  representative?: boolean;
+  caption?: string;
 };
+
+/** Shared caption for non-HBG imagery on expanded service pages. */
+export const REPRESENTATIVE_IMAGE_CAPTION =
+  "Representative example — not an HBG Construction project photo.";
 
 export type LeadService = {
   slug: ServiceSlug;
@@ -418,6 +431,401 @@ export const leadServices: LeadService[] = [
     asksScope: false,
     asksBuildingStatus: true,
   },
+  {
+    slug: "shingle-roofing",
+    path: "/shingle-roofing",
+    navLabel: "Shingle Roofing",
+    showOnHome: false,
+    cardTitle: "SHINGLE ROOFING",
+    cardCopy: "Asphalt shingle roofing for homes—install and replacement scoped in writing.",
+    cardKind: "shingle",
+    headline: "Asphalt Shingle Roofing Installation & Replacement",
+    heroTitle: "ASPHALT SHINGLE ROOFING.",
+    kicker: "SHINGLE ROOFING • HOMES",
+    heroCopy: `We install and replace asphalt shingle roofing for homes across ${LEAD_SERVICE_AREA}.`,
+    heroKind: "shingle",
+    metaTitle: "Asphalt Shingle Roofing | Install & Replacement",
+    metaDescription: `Asphalt shingle roofing installation and replacement in ${LEAD_SERVICE_AREA}. Request a quote from HBG Construction.`,
+    lead: "Shingle roofing is planned around the existing roof structure, ventilation, and how the roof meets walls and trim.",
+    body: [
+      "We scope asphalt shingle systems—including underlayment and flashing details—in a written estimate before work starts.",
+      "Replacement projects are planned around tear-off needs, decking condition, and weather protection during the job.",
+    ],
+    depth: [
+      {
+        eyebrow: "HOMES",
+        title: "A clean, durable finish.",
+        copy: "Architectural and standard asphalt shingles scoped to match the house and local weather.",
+      },
+      {
+        eyebrow: "REPLACEMENT",
+        title: "Clear scope before tear-off.",
+        copy: "What comes off, what goes back on, and how edges and penetrations are finished—written up front.",
+      },
+    ],
+    photos: [
+      {
+        src: "/images/representative/shingle-roofing.jpg",
+        alt: "Representative asphalt shingle roof on a suburban home",
+        representative: true,
+        caption: REPRESENTATIVE_IMAGE_CAPTION,
+        position: "center 40%",
+      },
+    ],
+    related: [
+      { label: "Metal Roofing", href: "/metal-roofing" },
+      { label: "Window Replacement", href: "/window-replacement" },
+      { label: "Vinyl Siding", href: "/vinyl-siding" },
+      { label: "Garages", href: "/garages" },
+    ],
+    faqs: [
+      {
+        question: "Do you install asphalt shingle roofs?",
+        answer:
+          "Yes. HBG Construction installs and replaces asphalt shingle roofing for homes. Share photos and your ZIP code when you request a quote.",
+      },
+      {
+        question: "Do you also install metal roofing?",
+        answer:
+          "Yes. Metal roofing is a primary service—see our Metal Roofing page if that is a better fit for the building.",
+      },
+      {
+        question: "Where do you install shingle roofs?",
+        answer: `We serve ${LEAD_SERVICE_AREA}.`,
+      },
+    ],
+    projectTypeLabel: "Shingle Roofing",
+    asksScope: true,
+    asksBuildingStatus: true,
+  },
+  {
+    slug: "vinyl-siding",
+    path: "/vinyl-siding",
+    navLabel: "Vinyl Siding",
+    showOnHome: false,
+    cardTitle: "VINYL SIDING",
+    cardCopy: "Vinyl siding installation and replacement for homes.",
+    cardKind: "vinyl",
+    headline: "Vinyl Siding Installation & Replacement",
+    heroTitle: "VINYL SIDING INSTALLATION & REPLACEMENT.",
+    kicker: "VINYL SIDING • HOMES",
+    heroCopy: `We install and replace vinyl siding for homes across ${LEAD_SERVICE_AREA}.`,
+    heroKind: "vinyl",
+    metaTitle: "Vinyl Siding Installation & Replacement",
+    metaDescription: `Vinyl siding installation and replacement in ${LEAD_SERVICE_AREA}. Request a quote from HBG Construction.`,
+    lead: "Vinyl siding updates curb appeal with a low-maintenance exterior finish.",
+    body: [
+      "We plan panels, corners, openings, and trim so the finished wall reads as one job.",
+      "Replacement work accounts for existing wraps, trim condition, and how the new siding meets windows and doors.",
+    ],
+    depth: [
+      {
+        eyebrow: "INSTALL",
+        title: "Finished details matter.",
+        copy: "Corners, J-channels, and openings get the same attention as the field panels.",
+      },
+      {
+        eyebrow: "REPLACEMENT",
+        title: "Update what you have.",
+        copy: "Tired vinyl or damaged walls can be replaced with a clean, consistent exterior.",
+      },
+    ],
+    photos: [
+      {
+        src: "/images/representative/vinyl-siding.jpg",
+        alt: "Representative vinyl siding on a suburban home",
+        representative: true,
+        caption: REPRESENTATIVE_IMAGE_CAPTION,
+        position: "center 45%",
+      },
+    ],
+    related: [
+      { label: "Fiber-Cement Siding", href: "/fiber-cement-siding" },
+      { label: "Metal Siding", href: "/metal-siding" },
+      { label: "Window Replacement", href: "/window-replacement" },
+      { label: "Door Replacement", href: "/door-replacement" },
+    ],
+    faqs: [
+      {
+        question: "Do you install vinyl siding?",
+        answer: "Yes. We install and replace vinyl siding for residential exteriors.",
+      },
+      {
+        question: "How is this different from metal siding?",
+        answer:
+          "Vinyl is a residential cladding option. Metal siding—including board-and-batten—is covered on our Metal Siding page.",
+      },
+      {
+        question: "Where do you install vinyl siding?",
+        answer: `We serve ${LEAD_SERVICE_AREA}.`,
+      },
+    ],
+    projectTypeLabel: "Vinyl Siding",
+    asksScope: true,
+    asksBuildingStatus: true,
+  },
+  {
+    slug: "fiber-cement-siding",
+    path: "/fiber-cement-siding",
+    navLabel: "Fiber-Cement Siding",
+    showOnHome: false,
+    cardTitle: "FIBER-CEMENT SIDING",
+    cardCopy: "Fiber-cement siding for a durable, painted exterior look.",
+    cardKind: "fiber",
+    headline: "Fiber-Cement Siding Installation",
+    heroTitle: "FIBER-CEMENT SIDING.",
+    kicker: "FIBER-CEMENT • HOMES",
+    heroCopy: `We install fiber-cement siding for homes across ${LEAD_SERVICE_AREA}.`,
+    heroKind: "fiber",
+    metaTitle: "Fiber-Cement Siding Installation",
+    metaDescription: `Fiber-cement siding installation in ${LEAD_SERVICE_AREA}. Request a quote from HBG Construction.`,
+    lead: "Fiber-cement siding gives a crisp, painted exterior with strong weather performance.",
+    body: [
+      "We scope lap or panel styles, trim packages, and how the siding meets openings.",
+      "Installation follows manufacturer guidance for fasteners, clearances, and weather barriers as written in your estimate.",
+    ],
+    depth: [
+      {
+        eyebrow: "DURABLE LOOK",
+        title: "Painted lines that hold up.",
+        copy: "A clean exterior profile with durable boards and finished trim.",
+      },
+      {
+        eyebrow: "DETAILED INSTALL",
+        title: "Openings and edges done right.",
+        copy: "Windows, doors, and corners are planned so the wall finishes as one system.",
+      },
+    ],
+    photos: [
+      {
+        src: "/images/representative/fiber-cement-siding.jpg",
+        alt: "Representative fiber-cement siding on a craftsman-style home",
+        representative: true,
+        caption: REPRESENTATIVE_IMAGE_CAPTION,
+        position: "center 45%",
+      },
+    ],
+    related: [
+      { label: "Vinyl Siding", href: "/vinyl-siding" },
+      { label: "Metal Siding", href: "/metal-siding" },
+      { label: "Window Replacement", href: "/window-replacement" },
+      { label: "Shingle Roofing", href: "/shingle-roofing" },
+    ],
+    faqs: [
+      {
+        question: "Do you install fiber-cement siding?",
+        answer: "Yes. Fiber-cement siding installation is available for residential exteriors.",
+      },
+      {
+        question: "Is this the same as vinyl or metal siding?",
+        answer:
+          "No. Fiber-cement is its own product line. See Vinyl Siding or Metal Siding if those better match your project.",
+      },
+      {
+        question: "Where do you install fiber-cement siding?",
+        answer: `We serve ${LEAD_SERVICE_AREA}.`,
+      },
+    ],
+    projectTypeLabel: "Fiber-Cement Siding",
+    asksScope: true,
+    asksBuildingStatus: true,
+  },
+  {
+    slug: "window-replacement",
+    path: "/window-replacement",
+    navLabel: "Window Replacement",
+    showOnHome: false,
+    cardTitle: "WINDOW REPLACEMENT",
+    cardCopy: "Exterior window replacement for better comfort and curb appeal.",
+    cardKind: "windows",
+    headline: "Window Replacement",
+    heroTitle: "WINDOW REPLACEMENT.",
+    kicker: "WINDOWS • EXTERIOR",
+    heroCopy: `We replace exterior windows for homes across ${LEAD_SERVICE_AREA}.`,
+    heroKind: "windows",
+    metaTitle: "Window Replacement",
+    metaDescription: `Exterior window replacement in ${LEAD_SERVICE_AREA}. Request a quote from HBG Construction.`,
+    lead: "Window replacement is scoped around sizes, operation, and how each opening finishes against the exterior.",
+    body: [
+      "We measure openings, confirm styles, and write a clear install scope—including trim and exterior seal details.",
+      "Projects can be a few windows or a full-home replacement depending on what you need.",
+    ],
+    depth: [
+      {
+        eyebrow: "FIT & FINISH",
+        title: "Openings done cleanly.",
+        copy: "Frames, exterior seals, and trim planned so each window looks finished from the curb.",
+      },
+      {
+        eyebrow: "COMFORT",
+        title: "Better seals, clearer glass.",
+        copy: "Replacement windows help with drafts, fogged glass, and tired hardware.",
+      },
+    ],
+    photos: [
+      {
+        src: "/images/representative/window-replacement.jpg",
+        alt: "Representative replacement windows on a home exterior",
+        representative: true,
+        caption: REPRESENTATIVE_IMAGE_CAPTION,
+        position: "center 45%",
+      },
+    ],
+    related: [
+      { label: "Door Replacement", href: "/door-replacement" },
+      { label: "Vinyl Siding", href: "/vinyl-siding" },
+      { label: "Fiber-Cement Siding", href: "/fiber-cement-siding" },
+      { label: "Garage Doors", href: "/garage-doors" },
+    ],
+    faqs: [
+      {
+        question: "Do you replace windows?",
+        answer: "Yes. Exterior window replacement is available for homes. Share counts and photos when you request a quote.",
+      },
+      {
+        question: "Can windows and doors be quoted together?",
+        answer: "Yes. Tell us both scopes on the estimate form so we can plan one visit when it makes sense.",
+      },
+      {
+        question: "Where do you replace windows?",
+        answer: `We serve ${LEAD_SERVICE_AREA}.`,
+      },
+    ],
+    projectTypeLabel: "Window Replacement",
+    asksScope: false,
+    asksBuildingStatus: true,
+  },
+  {
+    slug: "door-replacement",
+    path: "/door-replacement",
+    navLabel: "Door Replacement",
+    showOnHome: false,
+    cardTitle: "EXTERIOR DOORS",
+    cardCopy: "Exterior entry door replacement with clean install and finish details.",
+    cardKind: "doors",
+    headline: "Exterior Door Replacement",
+    heroTitle: "EXTERIOR DOOR REPLACEMENT.",
+    kicker: "EXTERIOR DOORS",
+    heroCopy: `We replace exterior entry doors for homes across ${LEAD_SERVICE_AREA}.`,
+    heroKind: "doors",
+    metaTitle: "Exterior Door Replacement",
+    metaDescription: `Exterior door replacement in ${LEAD_SERVICE_AREA}. Request a quote from HBG Construction.`,
+    lead: "A new exterior door should fit the opening, seal well, and finish cleanly against the trim.",
+    body: [
+      "We scope door style, sidelights when needed, hardware expectations, and exterior finish details.",
+      "Install includes careful removal of the existing unit and sealing the new door to the exterior.",
+    ],
+    depth: [
+      {
+        eyebrow: "ENTRY",
+        title: "Curb appeal that works.",
+        copy: "Style and finish chosen to suit the house—not a one-size package.",
+      },
+      {
+        eyebrow: "INSTALL",
+        title: "Sealed and square.",
+        copy: "Operation, weather seal, and exterior trim are part of a proper replacement.",
+      },
+    ],
+    photos: [
+      {
+        src: "/images/representative/door-replacement.jpg",
+        alt: "Representative exterior entry door on a home porch",
+        representative: true,
+        caption: REPRESENTATIVE_IMAGE_CAPTION,
+        position: "center 45%",
+      },
+    ],
+    related: [
+      { label: "Window Replacement", href: "/window-replacement" },
+      { label: "Garage Doors", href: "/garage-doors" },
+      { label: "Vinyl Siding", href: "/vinyl-siding" },
+      { label: "Fiber-Cement Siding", href: "/fiber-cement-siding" },
+    ],
+    faqs: [
+      {
+        question: "Do you replace exterior doors?",
+        answer: "Yes. Exterior entry door replacement is available. Include photos of the existing opening with your quote request.",
+      },
+      {
+        question: "Do you install garage doors too?",
+        answer: "Yes—see our Garage Doors page for garage door installation and replacement.",
+      },
+      {
+        question: "Where do you replace exterior doors?",
+        answer: `We serve ${LEAD_SERVICE_AREA}.`,
+      },
+    ],
+    projectTypeLabel: "Exterior Door Replacement",
+    asksScope: false,
+    asksBuildingStatus: true,
+  },
+  {
+    slug: "garage-doors",
+    path: "/garage-doors",
+    navLabel: "Garage Doors",
+    showOnHome: false,
+    cardTitle: "GARAGE DOORS",
+    cardCopy: "Garage door installation and replacement for homes and detached garages.",
+    cardKind: "garageDoor",
+    headline: "Garage Door Installation & Replacement",
+    heroTitle: "GARAGE DOOR INSTALLATION & REPLACEMENT.",
+    kicker: "GARAGE DOORS",
+    heroCopy: `We install and replace garage doors across ${LEAD_SERVICE_AREA}.`,
+    heroKind: "garageDoor",
+    metaTitle: "Garage Door Installation & Replacement",
+    metaDescription: `Garage door installation and replacement in ${LEAD_SERVICE_AREA}. Request a quote from HBG Construction.`,
+    lead: "Garage doors are sized to the opening and how you use the garage day to day.",
+    body: [
+      "We scope single or double doors, insulation needs, and opener coordination when included in the estimate.",
+      "This page is for garage door units. New detached garage buildings are covered under Garages.",
+    ],
+    depth: [
+      {
+        eyebrow: "INSTALL / REPLACE",
+        title: "Fit the opening.",
+        copy: "Panels, tracks, and hardware planned for reliable operation.",
+      },
+      {
+        eyebrow: "NOT A NEW GARAGE",
+        title: "Building vs. door.",
+        copy: "Need a new detached garage structure? See our Garages page.",
+      },
+    ],
+    photos: [
+      {
+        src: "/images/representative/garage-door.jpg",
+        alt: "Representative garage door on a two-car garage",
+        representative: true,
+        caption: REPRESENTATIVE_IMAGE_CAPTION,
+        position: "center 50%",
+      },
+    ],
+    related: [
+      { label: "Garages", href: "/garages" },
+      { label: "Door Replacement", href: "/door-replacement" },
+      { label: "Window Replacement", href: "/window-replacement" },
+      { label: "Pole Buildings", href: "/pole-buildings" },
+    ],
+    faqs: [
+      {
+        question: "Do you install and replace garage doors?",
+        answer: "Yes. Garage door installation and replacement are available for homes and detached garages.",
+      },
+      {
+        question: "Is this the same as building a new garage?",
+        answer:
+          "No. This page covers the garage door unit. New detached garage construction is on our Garages page.",
+      },
+      {
+        question: "Where do you install garage doors?",
+        answer: `We serve ${LEAD_SERVICE_AREA}.`,
+      },
+    ],
+    projectTypeLabel: "Garage Door",
+    asksScope: false,
+    asksBuildingStatus: true,
+  },
 ];
 
 export function getLeadService(slug: string | null | undefined) {
@@ -428,6 +836,11 @@ export function getLeadService(slug: string | null | undefined) {
 /** Homepage “What We Build” cards — excludes secondary/Ads-only landings. */
 export function homeLeadServices() {
   return leadServices.filter((service) => service.showOnHome !== false);
+}
+
+/** Expanded exterior services (not in the primary four homepage cards). */
+export function secondaryLeadServices() {
+  return leadServices.filter((service) => service.showOnHome === false);
 }
 
 export function leadServiceSchema(service: LeadService) {

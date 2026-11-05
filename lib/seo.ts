@@ -24,9 +24,9 @@ export const BUSINESS_TRUST_LINE =
 export const SOCIAL_IMAGE = "/images/metal-exterior-wide.png";
 export const ESTIMATE_HREF = "/estimate#estimate-form";
 export const CONTACT_HREF = "/contact";
-export const HOME_TITLE = "HBG Construction | Metal Roofing, Siding & Pole Buildings";
+export const HOME_TITLE = "HBG Construction | Exterior Construction";
 export const HOME_DESCRIPTION =
-  `HBG Construction supplies and installs metal roofing and siding, and builds pole buildings and garages in ${SERVICE_AREA_REGION}.`;
+  `HBG Construction provides exterior construction—roofing, siding, windows & doors, and pole buildings—in ${SERVICE_AREA_REGION}.`;
 
 // Remaining before complete LocalBusiness markup:
 // TODO: BUSINESS_STREET_ADDRESS, CITY, STATE, POSTAL_CODE — do not publish until approved
