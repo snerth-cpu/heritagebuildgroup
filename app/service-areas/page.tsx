@@ -66,7 +66,7 @@ export default function Page() {
           </article>
           <article>
             <h2>Pole buildings and barns</h2>
-            <p>Post-frame buildings for barns, garages, workshops, storage, and light-commercial use are planned around how you use the property.</p>
+            <p>Post-frame buildings for barns, garages, storage, and light-commercial use are planned around how you use the property.</p>
           </article>
           <article>
             <h2>Commercial exterior projects</h2>

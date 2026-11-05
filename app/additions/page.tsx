@@ -46,7 +46,7 @@ export default function Page() {
         <article>
           <p className="eyebrow">UTILITY &amp; WORK SPACE</p>
           <h2>Practical square footage.</h2>
-          <p>Mudrooms, workshops, and utility expansions scoped for use, then built to match the rest of the project.</p>
+          <p>Mudrooms, utility spaces, and expansions scoped for use, then built to match the rest of the project.</p>
         </article>
       </section>
       <ServiceAreaLinks heading="Addition service areas" />

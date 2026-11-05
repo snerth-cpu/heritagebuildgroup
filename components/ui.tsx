@@ -24,6 +24,37 @@ const projectImages: Record<string, { src: string; alt: string; position?: strin
   pole: { src: poleBuildingBoardAndBatten.src, alt: poleBuildingBoardAndBatten.alt, position: "center 55%" },
   progress: { src: "/images/04_installation_wide_panels.jpeg", alt: "Exterior metal installation in progress" },
   teamwork: { src: "/images/05_installation_close.jpeg", alt: "Installation crew working on the metal exterior" },
+  // Representative-only kinds for expanded services (never mixed into Projects / REAL WORK).
+  shingle: {
+    src: "/images/representative/shingle-roofing.jpg",
+    alt: "Representative asphalt shingle roof on a suburban home",
+    position: "center 40%",
+  },
+  vinyl: {
+    src: "/images/representative/vinyl-siding.jpg",
+    alt: "Representative vinyl siding on a suburban home",
+    position: "center 45%",
+  },
+  fiber: {
+    src: "/images/representative/fiber-cement-siding.jpg",
+    alt: "Representative fiber-cement siding on a craftsman-style home",
+    position: "center 45%",
+  },
+  windows: {
+    src: "/images/representative/window-replacement.jpg",
+    alt: "Representative replacement windows on a home exterior",
+    position: "center 45%",
+  },
+  doors: {
+    src: "/images/representative/door-replacement.jpg",
+    alt: "Representative exterior entry door on a home porch",
+    position: "center 45%",
+  },
+  garageDoor: {
+    src: "/images/representative/garage-door.jpg",
+    alt: "Representative garage door on a two-car garage",
+    position: "center 50%",
+  },
 };
 
 export function Button({ href, children, light = false }: { href: string; children: React.ReactNode; light?: boolean }) {
@@ -32,24 +63,48 @@ export function Button({ href, children, light = false }: { href: string; childr
 export function SectionHead({ kicker, title, copy }: { kicker: string; title: string; copy?: string }) {
   return <div className="section-head"><p className="eyebrow">{kicker}</p><h2>{title}</h2>{copy && <p className="section-copy">{copy}</p>}</div>;
 }
-export function AssetPanel({ kind = "finished", label, className = "", contain = false }: { kind?: string; label?: string; className?: string; contain?: boolean }) {
+const REPRESENTATIVE_KINDS = new Set(["shingle", "vinyl", "fiber", "windows", "doors", "garageDoor"]);
+
+export function AssetPanel({
+  kind = "finished",
+  label,
+  className = "",
+  contain = false,
+  caption,
+}: {
+  kind?: string;
+  label?: string;
+  className?: string;
+  contain?: boolean;
+  caption?: string;
+}) {
   const image = projectImages[kind] || projectImages.finished;
+  const showCaption =
+    caption ||
+    (REPRESENTATIVE_KINDS.has(kind) ? "Representative image — not an HBG project" : undefined);
   if (contain) {
-    return <div className={`asset-panel asset-panel--${kind} asset-panel--contain ${className}`}>
-      <Image className="asset-panel__photo" src={image.src} alt={image.alt} width={1024} height={768} sizes="(max-width: 800px) 100vw, 60vw" />{label && <span>{label}</span>}
-    </div>;
+    return (
+      <figure className={`asset-panel asset-panel--${kind} asset-panel--contain ${className}`}>
+        <Image className="asset-panel__photo" src={image.src} alt={image.alt} width={1024} height={768} sizes="(max-width: 800px) 100vw, 60vw" />
+        {label && <span>{label}</span>}
+        {showCaption ? <figcaption className="asset-panel__caption">{showCaption}</figcaption> : null}
+      </figure>
+    );
   }
-  return <div className={`asset-panel asset-panel--${kind} ${className}`}>
-    <Image
-      src={image.src}
-      alt={image.alt}
-      fill
-      sizes={kind === "hero" ? "100vw" : "(max-width: 800px) 100vw, 60vw"}
-      priority={kind === "hero"}
-      style={{ objectFit: "cover", objectPosition: image.position || "center" }}
-    />
-    {label && <span>{label}</span>}
-  </div>;
+  return (
+    <figure className={`asset-panel asset-panel--${kind} ${className}`}>
+      <Image
+        src={image.src}
+        alt={image.alt}
+        fill
+        sizes={kind === "hero" ? "100vw" : "(max-width: 800px) 100vw, 60vw"}
+        priority={kind === "hero"}
+        style={{ objectFit: "cover", objectPosition: image.position || "center" }}
+      />
+      {label && <span>{label}</span>}
+      {showCaption ? <figcaption className="asset-panel__caption">{showCaption}</figcaption> : null}
+    </figure>
+  );
 }
 
 type PageHeroProps = {

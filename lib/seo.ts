@@ -24,9 +24,9 @@ export const BUSINESS_TRUST_LINE =
 export const SOCIAL_IMAGE = "/images/metal-exterior-wide.png";
 export const ESTIMATE_HREF = "/estimate#estimate-form";
 export const CONTACT_HREF = "/contact";
-export const HOME_TITLE = "HBG Construction | Metal Roofing, Siding & Pole Buildings";
+export const HOME_TITLE = "HBG Construction | Roofing, Siding & Contracting";
 export const HOME_DESCRIPTION =
-  `HBG Construction supplies and installs metal roofing and siding, and builds pole buildings and garages in ${SERVICE_AREA_REGION}.`;
+  `Roofing, siding & contracting from HBG Construction. Serving Western Pennsylvania and Northeast Ohio with windows, doors, garages, and pole buildings.`;
 
 // Remaining before complete LocalBusiness markup:
 // TODO: BUSINESS_STREET_ADDRESS, CITY, STATE, POSTAL_CODE — do not publish until approved

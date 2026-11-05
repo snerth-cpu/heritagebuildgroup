@@ -13,7 +13,7 @@ export const metadata = pageMetadata({
 const offerings = [
   {
     title: "POLE BUILDINGS",
-    copy: "Post-frame barns, workshops, storage, and light-commercial buildings.",
+    copy: "Post-frame barns, storage, and light-commercial buildings.",
     href: "/pole-buildings",
     kind: "pole",
   },

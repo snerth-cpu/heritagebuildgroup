@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Mark } from "@/components/brand-logo";
 import { PhoneLink } from "@/components/phone-link";
+import { serviceCategories, uniqueCategoryLinks } from "@/lib/service-categories";
 import {
   BUSINESS_EMAIL,
   BUSINESS_HIC,
@@ -14,22 +15,15 @@ import {
   SERVICE_AREA_STATEMENT,
 } from "@/lib/seo";
 
-const serviceLinks = [
-  ["Metal Roofing", "/metal-roofing"],
-  ["Metal Siding", "/metal-siding"],
-  ["Pole Buildings", "/pole-buildings"],
-  ["Garages", "/garages"],
-  ["Additions", "/additions"],
-  ["Commercial Exteriors", "/commercial"],
-] as const;
-
 const primaryLinks = [
-  ["Projects", "/projects"],
+  ["Our Work", "/projects"],
   ["About", "/about"],
   ["Contact", CONTACT_HREF],
 ] as const;
 
 const lightHeaderPaths = new Set(["/about", "/estimate", "/projects", "/contact", "/service-areas"]);
+
+const allServiceHrefs = new Set(uniqueCategoryLinks().map((item) => item.href));
 
 export { Mark } from "@/components/brand-logo";
 
@@ -39,7 +33,12 @@ export function Header() {
   const pathname = usePathname();
   const onLight = lightHeaderPaths.has(pathname) || pathname.startsWith("/service-areas/");
   const estimateActive = pathname === "/estimate";
-  const servicesActive = serviceLinks.some(([, href]) => pathname === href || pathname.startsWith(`${href}/`));
+  const servicesActive =
+    allServiceHrefs.has(pathname) ||
+    pathname.startsWith("/barn-siding") ||
+    pathname.startsWith("/commercial") ||
+    pathname.startsWith("/additions") ||
+    pathname.startsWith("/buildings");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -82,33 +81,70 @@ export function Header() {
           <div className={`nav__dropdown${servicesOpen ? " nav__dropdown--open" : ""}`} ref={dropdownRef}>
             <button
               type="button"
-              className={`nav__dropdown-trigger${servicesActive ? " active" : ""}`}
+              className={`nav__dropdown-trigger${servicesActive ? " active" : ""}${servicesOpen ? " is-open" : ""}`}
               aria-expanded={servicesOpen}
               aria-haspopup="true"
-              onClick={() => setServicesOpen((value) => !value)}
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                setServicesOpen((value) => !value);
+              }}
             >
-              Services <span aria-hidden="true">▾</span>
+              Services <span aria-hidden="true">{servicesOpen ? "▴" : "▾"}</span>
             </button>
-            <div className="nav__dropdown-panel" role="menu">
-              {serviceLinks.map(([label, href]) => (
-                <Link
-                  key={href}
-                  href={href}
-                  role="menuitem"
-                  className={pathname === href ? "active" : ""}
-                  onClick={() => {
-                    setOpen(false);
-                    setServicesOpen(false);
-                  }}
-                >
-                  {label}
-                </Link>
-              ))}
-            </div>
+            {servicesOpen ? (
+              <div
+                className="nav__dropdown-panel nav__dropdown-panel--mega"
+                role="menu"
+                aria-label="Services"
+              >
+                <div className="nav__mega-toolbar">
+                  <span className="nav__mega-toolbar-label">Services</span>
+                  <button
+                    type="button"
+                    className="nav__dropdown-close"
+                    aria-label="Close services menu"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      setServicesOpen(false);
+                    }}
+                  >
+                    Close
+                  </button>
+                </div>
+                <div className="nav__mega-grid">
+                  {serviceCategories.map((category) => (
+                    <div className="nav__mega-col" key={category.id}>
+                      <p className="nav__dropdown-heading" id={`nav-cat-${category.id}`}>
+                        {category.title}
+                      </p>
+                      <ul className="nav__mega-list" aria-labelledby={`nav-cat-${category.id}`}>
+                        {category.items.map((item) => (
+                          <li key={`${category.id}-${item.label}`}>
+                            <Link
+                              href={item.href}
+                              role="menuitem"
+                              className={pathname === item.href ? "active" : ""}
+                              onClick={() => {
+                                setOpen(false);
+                                setServicesOpen(false);
+                              }}
+                            >
+                              {item.label}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </div>
           {primaryLinks.map(([label, href]) => (
             <Link
-              className={pathname === href ? "active" : ""}
+              className={pathname === href || (href === "/projects" && pathname.startsWith("/projects/")) ? "active" : ""}
               key={href}
               href={href}
               onClick={() => setOpen(false)}
@@ -154,25 +190,28 @@ export function MobileContactCta() {
 }
 
 export function Footer() {
+  const serviceLinks = uniqueCategoryLinks();
   return (
     <footer className="footer">
       <div className="footer__top wrap">
         <Mark size="footer" />
         <div>
-          <p className="eyebrow">METAL EXTERIORS &amp; BUILDINGS</p>
+          <p className="eyebrow">EXTERIOR CONSTRUCTION</p>
           <p>{SERVICE_AREA_STATEMENT}</p>
           <p className="footer__contact">
             <PhoneLink />
             <a href={`mailto:${BUSINESS_EMAIL}`}>{BUSINESS_EMAIL}</a>
           </p>
           <nav className="footer__links" aria-label="Footer service links">
-            <Link href="/metal-roofing">Metal Roofing</Link>
-            <Link href="/metal-siding">Metal Siding</Link>
-            <Link href="/pole-buildings">Pole Buildings</Link>
-            <Link href="/garages">Garages</Link>
+            {serviceLinks.map((item) => (
+              <Link href={item.href} key={item.href}>
+                {item.label}
+              </Link>
+            ))}
+            <Link href="/barn-siding">Barn Siding</Link>
             <Link href="/additions">Additions</Link>
             <Link href="/commercial">Commercial Exteriors</Link>
-            <Link href="/projects">Projects</Link>
+            <Link href="/projects">Our Work</Link>
             <Link href="/about">About</Link>
             <Link href={CONTACT_HREF}>Contact</Link>
             <Link href="/service-areas">Service Areas</Link>

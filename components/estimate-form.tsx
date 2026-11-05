@@ -10,6 +10,7 @@ import {
   trackGenerateLeadOnce,
 } from "@/lib/analytics";
 import {
+  ESTIMATE_FORM_PROJECT_TYPES,
   PROJECT_TYPE_LABELS,
   projectTypeFromServiceSlug,
   type EstimateFieldErrors,
@@ -409,7 +410,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
             aria-invalid={Boolean(errors.projectType)}
           >
             <option value="">Select…</option>
-            {(Object.keys(PROJECT_TYPE_LABELS) as ProjectType[]).map((key) => (
+            {ESTIMATE_FORM_PROJECT_TYPES.map((key) => (
               <option key={key} value={key}>
                 {PROJECT_TYPE_LABELS[key]}
               </option>

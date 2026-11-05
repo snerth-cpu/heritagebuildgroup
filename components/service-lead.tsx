@@ -44,7 +44,7 @@ export function ServiceLeadPage({
         kind={service.heroKind}
         contain={service.heroContain}
         estimateHref={quoteHref}
-        estimateLabel="REQUEST A QUOTE"
+        estimateLabel="REQUEST A FREE ESTIMATE"
         showCall
       />
 
@@ -57,15 +57,17 @@ export function ServiceLeadPage({
               <p key={paragraph}>{paragraph}</p>
             ))}
             <div className="button-row service-lead__actions">
-              <Button href={quoteHref}>REQUEST A QUOTE</Button>
+              <Button href={quoteHref}>REQUEST A FREE ESTIMATE</Button>
               <PhoneLink className="text-button text-button--ink" prefix="CALL " />
             </div>
           </div>
         </div>
         {children}
         {service.photos.map((photo) => (
-          <div
-            className={`asset-panel wide-visual${photo.contain ? " asset-panel--contain" : ""}`}
+          <figure
+            className={`asset-panel wide-visual${photo.contain ? " asset-panel--contain" : ""}${
+              photo.representative ? " asset-panel--representative" : ""
+            }`}
             key={photo.src + photo.alt}
           >
             {photo.contain ? (
@@ -86,7 +88,12 @@ export function ServiceLeadPage({
                 style={{ objectFit: "cover", objectPosition: photo.position || "center" }}
               />
             )}
-          </div>
+            {photo.representative || photo.caption ? (
+              <figcaption className="asset-panel__caption">
+                {photo.caption || "Representative image — not an HBG project"}
+              </figcaption>
+            ) : null}
+          </figure>
         ))}
       </section>
 
@@ -143,10 +150,10 @@ export function ServiceLeadPage({
       </section>
 
       <ProjectCTA
-        title="REQUEST A QUOTE."
+        title="REQUEST A FREE ESTIMATE."
         copy={`Ready to talk about ${service.navLabel.toLowerCase()}?`}
         estimateHref={quoteHref}
-        estimateLabel="REQUEST A QUOTE"
+        estimateLabel="REQUEST A FREE ESTIMATE"
         showCall
       />
     </>
