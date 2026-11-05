@@ -81,45 +81,55 @@ export function Header() {
           <div className={`nav__dropdown${servicesOpen ? " nav__dropdown--open" : ""}`} ref={dropdownRef}>
             <button
               type="button"
-              className={`nav__dropdown-trigger${servicesActive ? " active" : ""}`}
+              className={`nav__dropdown-trigger${servicesActive ? " active" : ""}${servicesOpen ? " is-open" : ""}`}
               aria-expanded={servicesOpen}
               aria-haspopup="true"
-              onClick={() => setServicesOpen((value) => !value)}
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                setServicesOpen((value) => !value);
+              }}
             >
-              Services <span aria-hidden="true">▾</span>
+              Services <span aria-hidden="true">{servicesOpen ? "▴" : "▾"}</span>
             </button>
-            <div className="nav__dropdown-panel nav__dropdown-panel--categories" role="menu">
-              <div className="nav__dropdown-toolbar">
-                <span className="nav__dropdown-toolbar-label">Services</span>
-                <button
-                  type="button"
-                  className="nav__dropdown-close"
-                  aria-label="Close services menu"
-                  onClick={() => setServicesOpen(false)}
-                >
-                  Close
-                </button>
-              </div>
-              {serviceCategories.map((category) => (
-                <div className="nav__dropdown-group" key={category.id}>
-                  <p className="nav__dropdown-heading">{category.title}</p>
-                  {category.items.map((item) => (
-                    <Link
-                      key={`${category.id}-${item.label}`}
-                      href={item.href}
-                      role="menuitem"
-                      className={pathname === item.href ? "active" : ""}
-                      onClick={() => {
-                        setOpen(false);
-                        setServicesOpen(false);
-                      }}
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
+            {servicesOpen ? (
+              <div className="nav__dropdown-panel nav__dropdown-panel--categories" role="menu">
+                <div className="nav__dropdown-toolbar">
+                  <span className="nav__dropdown-toolbar-label">Services</span>
+                  <button
+                    type="button"
+                    className="nav__dropdown-close"
+                    aria-label="Close services menu"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      setServicesOpen(false);
+                    }}
+                  >
+                    Close ✕
+                  </button>
                 </div>
-              ))}
-            </div>
+                {serviceCategories.map((category) => (
+                  <div className="nav__dropdown-group" key={category.id}>
+                    <p className="nav__dropdown-heading">{category.title}</p>
+                    {category.items.map((item) => (
+                      <Link
+                        key={`${category.id}-${item.label}`}
+                        href={item.href}
+                        role="menuitem"
+                        className={pathname === item.href ? "active" : ""}
+                        onClick={() => {
+                          setOpen(false);
+                          setServicesOpen(false);
+                        }}
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            ) : null}
           </div>
           {primaryLinks.map(([label, href]) => (
             <Link
