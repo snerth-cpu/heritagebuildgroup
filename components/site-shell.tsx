@@ -93,9 +93,13 @@ export function Header() {
               Services <span aria-hidden="true">{servicesOpen ? "▴" : "▾"}</span>
             </button>
             {servicesOpen ? (
-              <div className="nav__dropdown-panel nav__dropdown-panel--categories" role="menu">
-                <div className="nav__dropdown-toolbar">
-                  <span className="nav__dropdown-toolbar-label">Services</span>
+              <div
+                className="nav__dropdown-panel nav__dropdown-panel--mega"
+                role="menu"
+                aria-label="Services"
+              >
+                <div className="nav__mega-toolbar">
+                  <span className="nav__mega-toolbar-label">Services</span>
                   <button
                     type="button"
                     className="nav__dropdown-close"
@@ -106,28 +110,35 @@ export function Header() {
                       setServicesOpen(false);
                     }}
                   >
-                    Close ✕
+                    Close
                   </button>
                 </div>
-                {serviceCategories.map((category) => (
-                  <div className="nav__dropdown-group" key={category.id}>
-                    <p className="nav__dropdown-heading">{category.title}</p>
-                    {category.items.map((item) => (
-                      <Link
-                        key={`${category.id}-${item.label}`}
-                        href={item.href}
-                        role="menuitem"
-                        className={pathname === item.href ? "active" : ""}
-                        onClick={() => {
-                          setOpen(false);
-                          setServicesOpen(false);
-                        }}
-                      >
-                        {item.label}
-                      </Link>
-                    ))}
-                  </div>
-                ))}
+                <div className="nav__mega-grid">
+                  {serviceCategories.map((category) => (
+                    <div className="nav__mega-col" key={category.id}>
+                      <p className="nav__dropdown-heading" id={`nav-cat-${category.id}`}>
+                        {category.title}
+                      </p>
+                      <ul className="nav__mega-list" aria-labelledby={`nav-cat-${category.id}`}>
+                        {category.items.map((item) => (
+                          <li key={`${category.id}-${item.label}`}>
+                            <Link
+                              href={item.href}
+                              role="menuitem"
+                              className={pathname === item.href ? "active" : ""}
+                              onClick={() => {
+                                setOpen(false);
+                                setServicesOpen(false);
+                              }}
+                            >
+                              {item.label}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
               </div>
             ) : null}
           </div>

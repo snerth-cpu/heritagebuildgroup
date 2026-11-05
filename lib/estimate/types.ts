@@ -83,22 +83,41 @@ export type EstimateFieldErrors = Partial<
   >
 >;
 
-/** Labels aligned with Jobber / site service names. */
+/** Labels aligned with site service names. Legacy keys retained for saved leads. */
 export const PROJECT_TYPE_LABELS: Record<ProjectType, string> = {
   metal_roofing: "Metal Roofing",
+  shingle_roofing: "Asphalt Shingle Roofing",
   metal_siding: "Metal Siding",
-  board_and_batten: "Barn Siding (Board & Batten)",
-  pole_building: "Pole Building",
-  garage: "Garage",
-  shingle_roofing: "Shingle Roofing",
   vinyl_siding: "Vinyl Siding",
   fiber_cement_siding: "Fiber-Cement Siding",
   window_replacement: "Window Replacement",
   door_replacement: "Exterior Door Replacement",
-  garage_door: "Garage Door",
+  garage_door: "Garage Door Installation / Replacement",
+  pole_building: "Pole Buildings",
+  garage: "Garages",
+  board_and_batten: "Barn Siding",
   window_door_replacement: "Window / Door Replacement",
-  other: "Other",
+  other: "Other / Not Sure",
 };
+
+/**
+ * Ordered options shown on the estimate form.
+ * Legacy types remain valid in PROJECT_TYPES for stored leads.
+ */
+export const ESTIMATE_FORM_PROJECT_TYPES: ProjectType[] = [
+  "metal_roofing",
+  "shingle_roofing",
+  "metal_siding",
+  "vinyl_siding",
+  "fiber_cement_siding",
+  "window_replacement",
+  "door_replacement",
+  "garage_door",
+  "pole_building",
+  "garage",
+  "board_and_batten",
+  "other",
+];
 
 /** Map site service slugs → form project type. */
 export function projectTypeFromServiceSlug(slug?: string | null): ProjectType | undefined {

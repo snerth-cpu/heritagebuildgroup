@@ -27,8 +27,7 @@ export type ServicePhoto = {
 };
 
 /** Shared caption for non-HBG imagery on expanded service pages. */
-export const REPRESENTATIVE_IMAGE_CAPTION =
-  "Representative example — not an HBG Construction project photo.";
+export const REPRESENTATIVE_IMAGE_CAPTION = "Representative image — not an HBG project";
 
 export type LeadService = {
   slug: ServiceSlug;
@@ -392,7 +391,7 @@ export const leadServices: LeadService[] = [
       {
         eyebrow: "STORAGE & SHOP",
         title: "More than parking.",
-        copy: "When the garage doubles as storage or a workshop, layout and durability come first.",
+        copy: "When the garage doubles as storage or shop space, layout and durability come first.",
       },
     ],
     photos: [
@@ -822,7 +821,7 @@ export const leadServices: LeadService[] = [
         answer: `We serve ${LEAD_SERVICE_AREA}.`,
       },
     ],
-    projectTypeLabel: "Garage Door",
+    projectTypeLabel: "Garage Door Installation / Replacement",
     asksScope: false,
     asksBuildingStatus: true,
   },

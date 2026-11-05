@@ -15,7 +15,7 @@ export type ServiceNavItem = {
 };
 
 export type ServiceCategory = {
-  id: "roofing" | "siding" | "windows-doors" | "garages" | "pole-buildings";
+  id: "roofing" | "siding" | "windows-doors" | "buildings-garages";
   title: string;
   eyebrow: string;
   summary: string;
@@ -27,7 +27,7 @@ export const serviceCategories: ServiceCategory[] = [
     id: "roofing",
     title: "Roofing",
     eyebrow: "ROOFING",
-    summary: "Metal and asphalt shingle roofing for homes, barns, and outbuildings.",
+    summary: "Metal and asphalt shingle roofing for homes and outbuildings.",
     items: [
       {
         label: "Metal Roofing",
@@ -89,7 +89,7 @@ export const serviceCategories: ServiceCategory[] = [
         realProjectPhoto: false,
       },
       {
-        label: "Garage Doors",
+        label: "Garage Door Installation & Replacement",
         href: "/garage-doors",
         imageKind: "garageDoor",
         realProjectPhoto: false,
@@ -97,31 +97,30 @@ export const serviceCategories: ServiceCategory[] = [
     ],
   },
   {
-    id: "garages",
-    title: "Garages",
-    eyebrow: "GARAGES",
-    summary: "Detached garage construction for parking, storage, and shop space.",
+    id: "buildings-garages",
+    title: "Buildings & Garages",
+    eyebrow: "BUILDINGS & GARAGES",
+    summary: "Pole buildings, barns, and detached garage construction.",
     items: [
       {
-        label: "Detached Garages",
-        href: "/garages",
-        imageKind: "installation",
-        realProjectPhoto: true,
-      },
-    ],
-  },
-  {
-    id: "pole-buildings",
-    title: "Pole Buildings",
-    eyebrow: "POLE BUILDINGS",
-    summary: "Pole building kits and construction for barns and working buildings.",
-    items: [
-      {
-        label: "Pole Buildings & Barns",
+        label: "Pole Buildings",
         href: "/pole-buildings",
         imageKind: "pole",
         realProjectPhoto: true,
         contain: true,
+      },
+      {
+        label: "Barns",
+        href: "/barn-siding",
+        imageKind: "siding",
+        realProjectPhoto: true,
+        contain: true,
+      },
+      {
+        label: "Garages",
+        href: "/garages",
+        imageKind: "installation",
+        realProjectPhoto: true,
       },
     ],
   },

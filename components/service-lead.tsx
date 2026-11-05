@@ -44,7 +44,7 @@ export function ServiceLeadPage({
         kind={service.heroKind}
         contain={service.heroContain}
         estimateHref={quoteHref}
-        estimateLabel="REQUEST A QUOTE"
+        estimateLabel="REQUEST A FREE ESTIMATE"
         showCall
       />
 
@@ -57,7 +57,7 @@ export function ServiceLeadPage({
               <p key={paragraph}>{paragraph}</p>
             ))}
             <div className="button-row service-lead__actions">
-              <Button href={quoteHref}>REQUEST A QUOTE</Button>
+              <Button href={quoteHref}>REQUEST A FREE ESTIMATE</Button>
               <PhoneLink className="text-button text-button--ink" prefix="CALL " />
             </div>
           </div>
@@ -90,7 +90,7 @@ export function ServiceLeadPage({
             )}
             {photo.representative || photo.caption ? (
               <figcaption className="asset-panel__caption">
-                {photo.caption || "Representative example — not an HBG Construction project photo."}
+                {photo.caption || "Representative image — not an HBG project"}
               </figcaption>
             ) : null}
           </figure>
@@ -150,10 +150,10 @@ export function ServiceLeadPage({
       </section>
 
       <ProjectCTA
-        title="REQUEST A QUOTE."
+        title="REQUEST A FREE ESTIMATE."
         copy={`Ready to talk about ${service.navLabel.toLowerCase()}?`}
         estimateHref={quoteHref}
-        estimateLabel="REQUEST A QUOTE"
+        estimateLabel="REQUEST A FREE ESTIMATE"
         showCall
       />
     </>

@@ -57,7 +57,7 @@ export default function Home() {
           </h1>
           <p className="hero__offer">Roofing, Siding &amp; Contracting</p>
           <p className="hero__copy">
-            Exterior contracting for homes and working buildings across Western Pennsylvania and Northeast Ohio.
+            Serving Western Pennsylvania and Northeast Ohio.
           </p>
           <p className="hero__trust">{BUSINESS_TRUST_LINE}</p>
           <div className="button-row">
@@ -73,7 +73,7 @@ export default function Home() {
             <p className="eyebrow">EXTERIOR SERVICES</p>
             <h2>WHAT WE DO</h2>
           </div>
-          <p>Roofing, siding, windows &amp; doors, garages, and pole buildings.</p>
+          <p>Roofing, siding, windows &amp; doors, buildings, and garages.</p>
         </div>
 
         <div className="home-categories">
@@ -88,14 +88,9 @@ export default function Home() {
                 {category.items.map((item) => (
                   <Link href={item.href} className="home-service" key={`${category.id}-${item.label}`}>
                     <AssetPanel kind={item.imageKind} contain={item.contain} />
-                    <div>
+                    <div className="home-service__body">
                       <h4>{item.label}</h4>
-                      {!item.realProjectPhoto ? (
-                        <p className="home-service__note">Representative example</p>
-                      ) : (
-                        <p className="home-service__note">HBG project photo</p>
-                      )}
-                      <span>LEARN MORE ↗</span>
+                      <span className="home-service__cta">LEARN MORE ↗</span>
                     </div>
                   </Link>
                 ))}
@@ -104,6 +99,12 @@ export default function Home() {
           ))}
         </div>
 
+        <div className="home-services__cta">
+          <Button href={ESTIMATE_HREF}>REQUEST A FREE ESTIMATE</Button>
+          <Link className="simple-link" href="/projects">
+            OUR WORK ↗
+          </Link>
+        </div>
       </section>
 
       <section className="home-transformation">

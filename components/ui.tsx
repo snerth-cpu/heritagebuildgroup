@@ -81,7 +81,7 @@ export function AssetPanel({
   const image = projectImages[kind] || projectImages.finished;
   const showCaption =
     caption ||
-    (REPRESENTATIVE_KINDS.has(kind) ? "Representative example — not an HBG Construction project photo." : undefined);
+    (REPRESENTATIVE_KINDS.has(kind) ? "Representative image — not an HBG project" : undefined);
   if (contain) {
     return (
       <figure className={`asset-panel asset-panel--${kind} asset-panel--contain ${className}`}>
