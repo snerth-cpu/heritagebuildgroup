@@ -89,6 +89,17 @@ export function Header() {
               Services <span aria-hidden="true">▾</span>
             </button>
             <div className="nav__dropdown-panel nav__dropdown-panel--categories" role="menu">
+              <div className="nav__dropdown-toolbar">
+                <span className="nav__dropdown-toolbar-label">Services</span>
+                <button
+                  type="button"
+                  className="nav__dropdown-close"
+                  aria-label="Close services menu"
+                  onClick={() => setServicesOpen(false)}
+                >
+                  Close
+                </button>
+              </div>
               {serviceCategories.map((category) => (
                 <div className="nav__dropdown-group" key={category.id}>
                   <p className="nav__dropdown-heading">{category.title}</p>

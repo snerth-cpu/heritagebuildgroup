@@ -15,7 +15,7 @@ export type ServiceNavItem = {
 };
 
 export type ServiceCategory = {
-  id: "roofing" | "siding" | "windows-doors" | "pole-buildings";
+  id: "roofing" | "siding" | "windows-doors" | "garages" | "pole-buildings";
   title: string;
   eyebrow: string;
   summary: string;
@@ -97,26 +97,27 @@ export const serviceCategories: ServiceCategory[] = [
     ],
   },
   {
-    id: "pole-buildings",
-    title: "Pole Buildings",
-    eyebrow: "POLE BUILDINGS",
-    summary: "Garages, barns, and workshops—kits and construction.",
+    id: "garages",
+    title: "Garages",
+    eyebrow: "GARAGES",
+    summary: "Detached garage construction for parking, storage, and shop space.",
     items: [
       {
-        label: "Garages",
+        label: "Detached Garages",
         href: "/garages",
         imageKind: "installation",
         realProjectPhoto: true,
       },
+    ],
+  },
+  {
+    id: "pole-buildings",
+    title: "Pole Buildings",
+    eyebrow: "POLE BUILDINGS",
+    summary: "Pole building kits and construction for barns and working buildings.",
+    items: [
       {
-        label: "Barns",
-        href: "/pole-buildings",
-        imageKind: "pole",
-        realProjectPhoto: true,
-        contain: true,
-      },
-      {
-        label: "Workshops",
+        label: "Pole Buildings & Barns",
         href: "/pole-buildings",
         imageKind: "pole",
         realProjectPhoto: true,

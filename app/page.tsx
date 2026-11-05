@@ -55,9 +55,9 @@ export default function Home() {
             <Mark size="hero" priority />
             <span className="visually-hidden">HBG Construction</span>
           </h1>
-          <p className="hero__offer">Exterior Construction — Roofing, Siding, Windows &amp; Doors, Pole Buildings</p>
+          <p className="hero__offer">Roofing, Siding &amp; Contracting</p>
           <p className="hero__copy">
-            Full exterior construction for homes and working buildings across Western Pennsylvania and Northeast Ohio.
+            Exterior contracting for homes and working buildings across Western Pennsylvania and Northeast Ohio.
           </p>
           <p className="hero__trust">{BUSINESS_TRUST_LINE}</p>
           <div className="button-row">
@@ -71,9 +71,9 @@ export default function Home() {
         <div className="home-heading home-heading--split">
           <div>
             <p className="eyebrow">EXTERIOR SERVICES</p>
-            <h2>WHAT WE BUILD</h2>
+            <h2>WHAT WE DO</h2>
           </div>
-          <p>Roofing, siding, windows &amp; doors, and pole buildings—organized so you can find the right scope fast.</p>
+          <p>Roofing, siding, windows &amp; doors, garages, and pole buildings.</p>
         </div>
 
         <div className="home-categories">
