@@ -320,7 +320,8 @@
 .asset-panel__caption{position:absolute;left:0;right:0;bottom:0;z-index:2;margin:0;padding:10px 14px;background:rgba(20,22,18,.72);color:#f4f2ec;font-size:12px;letter-spacing:.04em;line-height:1.35}
 .asset-panel--contain{position:relative}
 .asset-panel--contain .asset-panel__caption{position:relative;background:#1c1e1a}
-.nav__dropdown-panel--categories{display:flex;flex-direction:column;gap:14px;width:min(320px,90vw);max-height:min(70vh,560px);overflow:auto;padding:12px 14px 16px}
+/* Layout only when open — never set display:flex here or the menu cannot close */
+.nav__dropdown--open .nav__dropdown-panel--categories{flex-direction:column;gap:14px;width:min(320px,90vw);max-height:min(70vh,560px);overflow:auto;padding:12px 14px 16px}
 .nav__dropdown-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:2px 4px 8px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:2px}
 .nav__dropdown-toolbar-label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.7}
 .nav__dropdown-close{appearance:none;border:0;background:transparent;color:inherit;font:inherit;font-size:13px;letter-spacing:.06em;cursor:pointer;padding:4px 0;opacity:.85}
@@ -328,12 +329,12 @@
 .header--light .nav__dropdown-toolbar{border-bottom-color:var(--line)}
 .nav__dropdown-group{display:flex;flex-direction:column;gap:0}
 .nav__dropdown-heading{margin:0 0 4px;padding:0 4px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.7}
-.nav__dropdown-panel--categories a{padding:8px 4px;font-size:15px}
+.nav__dropdown--open .nav__dropdown-panel--categories a{padding:8px 4px;font-size:15px}
 .home-featured-links{display:flex;justify-content:flex-start;margin-top:36px}
 .home-category__grid--1{grid-template-columns:minmax(0,420px)}
 @media(max-width:980px){
   .home-category__grid--2,.home-category__grid--3{grid-template-columns:1fr 1fr}
-  .nav__dropdown-panel--categories{width:100%;max-height:none;overflow:visible;padding:8px 0 4px 4px}
+  .nav__dropdown--open .nav__dropdown-panel--categories{width:100%;max-height:none;overflow:visible;padding:8px 0 4px 4px}
   .nav__dropdown-toolbar{border-bottom-color:rgba(255,255,255,.2);padding:0 0 8px}
 }
 @media(max-width:620px){
