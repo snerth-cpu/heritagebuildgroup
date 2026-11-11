@@ -54,6 +54,12 @@ export type LeadService = {
   photos: ServicePhoto[];
   related: { label: string; href: string }[];
   faqs: ServiceFaq[];
+  /** Optional How It Works heading override (site style: condensed uppercase). */
+  processTitle?: string;
+  /** Optional How It Works steps: [number, title, copy]. */
+  processSteps?: readonly [string, string, string][];
+  /** Optional service-area intro copy under the area links heading. */
+  serviceAreaCopy?: string;
   /** Jobber project-type label visitors should pick (and that Jobber should offer). */
   projectTypeLabel: string;
   /** Whether supply/install options apply on this page. */
@@ -79,30 +85,30 @@ export const leadServices: LeadService[] = [
     path: "/metal-roofing",
     navLabel: "Metal Roofing",
     cardTitle: "METAL ROOFING",
-    cardCopy: "Complete metal roof replacement and installation for homes, garages, barns, and commercial buildings.",
+    cardCopy: "Metal roof replacement and installation for homes, garages, barns, and commercial buildings.",
     cardKind: "roof",
     headline: "Metal Roof Replacement & Installation",
     heroTitle: "METAL ROOF REPLACEMENT & INSTALLATION.",
-    kicker: "METAL ROOFING • CONTRACTOR INSTALLED",
-    heroCopy: `Professional metal roofing for homes, garages, barns, and commercial buildings. Choose from exposed-fastener and standing seam roofing systems. Serving ${LEAD_SERVICE_AREA}.`,
+    kicker: "METAL ROOFING",
+    heroCopy: `HBG Construction installs exposed-fastener and standing seam metal roofing for homes, garages, barns, and commercial buildings throughout ${LEAD_SERVICE_AREA}.`,
     heroKind: "roof",
     metaTitle: "Metal Roof Replacement & Installation",
-    metaDescription: `Full-service metal roof replacement and installation for homes, garages, barns, and commercial buildings in ${LEAD_SERVICE_AREA}. Materials and installation by HBG Construction.`,
-    lead: "HBG Construction provides full-service metal roofing—we supply the materials and install the roof as one complete project.",
+    metaDescription: `Metal roof replacement and installation for homes, garages, barns, and commercial buildings in ${LEAD_SERVICE_AREA}. Request a free estimate from HBG Construction.`,
+    lead: "Metal roofing for new construction and roof replacements.",
     body: [
-      "We replace worn roofs and install new metal roofing systems end to end: panels, trim, flashings, and transitions scoped as one job.",
-      "Exposed-fastener and standing seam options are planned around roof shape, drainage, penetrations, and where the roof meets walls—so the finished roof looks and performs as one system.",
+      "HBG Construction installs exposed-fastener and standing seam metal roofs for homes, garages, barns, and commercial buildings.",
+      "From roofing materials and flashing to final installation, we handle the complete project.",
     ],
     depth: [
       {
-        eyebrow: "HOMES & BUILDINGS",
-        title: "Replacement and new installs.",
-        copy: "Homes, garages, barns, and commercial buildings—scoped so the finished roof fits the structure and how you use it.",
+        eyebrow: "HOMES & OUTBUILDINGS",
+        title: "Metal roofing for homes, garages & barns.",
+        copy: "Installation and replacement with roofing options suited to your building and project.",
       },
       {
-        eyebrow: "FULL SERVICE",
-        title: "Materials and installation included.",
-        copy: "Every metal roofing project includes the roofing system and our crew. We do not offer labor-only or materials-only jobs.",
+        eyebrow: "INSTALLATION",
+        title: "Complete metal roofing installation.",
+        copy: "We coordinate the roofing materials, trim, and installation needed to complete your project.",
       },
     ],
     photos: [
@@ -126,23 +132,30 @@ export const leadServices: LeadService[] = [
       {
         question: "Do you replace and install metal roofs?",
         answer:
-          "Yes. HBG Construction provides full-service metal roof replacement and installation—materials and labor together—for homes, garages, barns, and commercial buildings. We do not offer labor-only or materials-only work.",
+          "Yes. HBG Construction installs metal roofs on new buildings and replaces existing roofs on homes, garages, barns, and commercial buildings.",
       },
       {
         question: "What metal roofing systems do you install?",
         answer:
-          "We install exposed-fastener and standing seam metal roofing systems. Color, panel style, and trim are part of the written scope before work starts.",
+          "We install exposed-fastener and standing seam metal roofing. Both are available in a range of profiles and colors.",
       },
       {
         question: "Where do you install metal roofs?",
-        answer: `We serve ${LEAD_SERVICE_AREA}. We do not claim statewide coverage.`,
+        answer: `We install metal roofing throughout ${LEAD_SERVICE_AREA}.`,
       },
       {
         question: "How do I get a metal roofing estimate?",
         answer:
-          "Request a free estimate, or call. Share the building type, ZIP code, and a short project description. Photos help when you have them.",
+          "Request a free estimate or call. Share the building type, ZIP code, and a short description of the work. Photos help when you have them.",
       },
     ],
+    processTitle: "FROM ESTIMATE TO INSTALLATION.",
+    processSteps: [
+      ["01", "Tell us about the project", "Share the building type, ZIP code, and what you need."],
+      ["02", "Receive an estimate", "We review the details and put the estimate in writing."],
+      ["03", "Schedule the installation", "When you are ready, we schedule the crew and materials."],
+    ],
+    serviceAreaCopy: `Metal roofing across ${LEAD_SERVICE_AREA}.`,
     projectTypeLabel: "Metal Roofing",
     asksScope: false,
     asksBuildingStatus: true,
