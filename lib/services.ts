@@ -79,30 +79,30 @@ export const leadServices: LeadService[] = [
     path: "/metal-roofing",
     navLabel: "Metal Roofing",
     cardTitle: "METAL ROOFING",
-    cardCopy: "Supply and install standing seam and metal roofing for homes, barns, and garages.",
+    cardCopy: "Complete metal roof replacement and installation for homes, garages, barns, and commercial buildings.",
     cardKind: "roof",
-    headline: "Metal Roof Installation for Homes, Barns & Garages",
-    heroTitle: "METAL ROOF INSTALLATION FOR HOMES, BARNS & GARAGES.",
-    kicker: "METAL ROOFING • SUPPLY & INSTALL",
-    heroCopy: `We supply and install metal roofing for homes, barns, and garages across ${LEAD_SERVICE_AREA}.`,
+    headline: "Metal Roof Replacement & Installation",
+    heroTitle: "METAL ROOF REPLACEMENT & INSTALLATION.",
+    kicker: "METAL ROOFING • CONTRACTOR INSTALLED",
+    heroCopy: `Professional metal roofing for homes, garages, barns, and commercial buildings. Choose from exposed-fastener and standing seam roofing systems. Serving ${LEAD_SERVICE_AREA}.`,
     heroKind: "roof",
-    metaTitle: "Metal Roof Installation | Homes, Barns & Garages",
-    metaDescription: `Metal roof supply and installation for homes, barns, and garages in ${LEAD_SERVICE_AREA}. Request a quote from HBG Construction.`,
-    lead: "HBG Construction supplies and installs metal roofing—not materials-only drop-offs by default.",
+    metaTitle: "Metal Roof Replacement & Installation",
+    metaDescription: `Hire HBG Construction for complete metal roof replacement and installation—materials and labor—for homes, garages, barns, and commercial buildings in ${LEAD_SERVICE_AREA}.`,
+    lead: "Hire a contractor for a complete metal roofing project—materials and installation together, not a materials-only drop-off by default.",
     body: [
-      "We plan the roof around shape, drainage, penetrations, and where the roof meets walls or other materials.",
-      "Standing seam and metal roofing both get a written scope before work starts. Color, panel style, and trim are part of that plan.",
+      "We replace worn roofs and install new metal roofing systems end to end: panels, trim, flashings, and transitions scoped as one job.",
+      "Exposed-fastener and standing seam options are planned around roof shape, drainage, penetrations, and where the roof meets walls—so the finished roof looks and performs as one system.",
     ],
     depth: [
       {
-        eyebrow: "HOMES & OUTBUILDINGS",
-        title: "Roofs that fit the building.",
-        copy: "Houses, barns, and garages—scoped so the finished roof looks and performs as one system.",
+        eyebrow: "HOMES & BUILDINGS",
+        title: "Replacement and new installs.",
+        copy: "Homes, garages, barns, and commercial buildings—scoped so the finished roof fits the structure and how you use it.",
       },
       {
-        eyebrow: "SUPPLY & INSTALL",
-        title: "Materials and crew together.",
-        copy: "We supply the metal roofing system and install it. Ask if you need installation only or materials only.",
+        eyebrow: "COMPLETE PROJECTS",
+        title: "Materials and installation.",
+        copy: "HBG supplies the metal roofing system and installs it. Tell us if you need installation only; most customers hire us for the full project.",
       },
     ],
     photos: [
@@ -124,18 +124,23 @@ export const leadServices: LeadService[] = [
     ],
     faqs: [
       {
-        question: "Do you supply and install metal roofing?",
+        question: "Do you replace and install metal roofs?",
         answer:
-          "Yes. HBG Construction supplies and installs metal roofing for homes, barns, and garages. Tell us if you need installation only or materials only.",
+          "Yes. HBG Construction handles complete metal roof replacement and installation—materials and labor—for homes, garages, barns, and commercial buildings. Tell us if you need installation only.",
+      },
+      {
+        question: "What metal roofing systems do you install?",
+        answer:
+          "We install exposed-fastener and standing seam metal roofing systems. Color, panel style, and trim are part of the written scope before work starts.",
       },
       {
         question: "Where do you install metal roofs?",
         answer: `We serve ${LEAD_SERVICE_AREA}. We do not claim statewide coverage.`,
       },
       {
-        question: "How do I get a metal roofing quote?",
+        question: "How do I get a metal roofing estimate?",
         answer:
-          "Request a Quote, or call. Share the building type, ZIP code, and a short project description. Photos help when you have them.",
+          "Request a free estimate, or call. Share the building type, ZIP code, and a short project description. Photos help when you have them.",
       },
     ],
     projectTypeLabel: "Metal Roofing",
