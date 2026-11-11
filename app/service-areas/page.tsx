@@ -15,6 +15,7 @@ const descriptions = [
   "Metal roofing and siding for homes, commercial properties, and growing areas north of Pittsburgh.",
   "Residential and commercial roofing, siding, and post-frame work for suburban, small-town, and rural properties.",
   "Durable metal roofing, siding, and buildings for homes, businesses, and working properties across Mercer County.",
+  "Metal exteriors and post-frame construction for homes, barns, garages, and commercial properties across Erie County.",
 ];
 
 export default function Page() {
@@ -47,11 +48,6 @@ export default function Page() {
               <strong>EXPLORE AREA ↗</strong>
             </Link>
           ))}
-          <div className="area-hub__listed">
-            <span>05</span>
-            <h2>Erie County</h2>
-            <p>Metal exteriors and post-frame construction for homes, barns, garages, and commercial properties across Erie County.</p>
-          </div>
         </div>
       </section>
       <section className="location-copy wrap">

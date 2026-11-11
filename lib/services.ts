@@ -875,6 +875,7 @@ export function leadServiceSchema(service: LeadService) {
       { "@type": "City", name: "Cranberry Township", containedInPlace: { "@type": "State", name: "Pennsylvania" } },
       { "@type": "AdministrativeArea", name: "Butler County, Pennsylvania" },
       { "@type": "AdministrativeArea", name: "Mercer County, Pennsylvania" },
+      { "@type": "AdministrativeArea", name: "Erie County, Pennsylvania" },
       { "@type": "AdministrativeArea", name: "Northeast Ohio" },
     ],
   };

@@ -54,6 +54,7 @@ const serviceSchema = {
     { "@type": "City", name: "Cranberry Township", containedInPlace: { "@type": "State", name: "Pennsylvania" } },
     { "@type": "AdministrativeArea", name: "Butler County, Pennsylvania" },
     { "@type": "AdministrativeArea", name: "Mercer County, Pennsylvania" },
+    { "@type": "AdministrativeArea", name: "Erie County, Pennsylvania" },
     { "@type": "AdministrativeArea", name: "Northeast Ohio" },
   ],
 };
@@ -135,8 +136,9 @@ export default function Page() {
             Serving Western Pennsylvania and Northeast Ohio—including{" "}
             <Link href="/service-areas/pittsburgh-pa" className="text-link">Pittsburgh</Link>,{" "}
             <Link href="/service-areas/cranberry-township-pa" className="text-link">Cranberry Township</Link>,{" "}
-            <Link href="/service-areas/butler-county-pa" className="text-link">Butler County</Link>, and{" "}
-            <Link href="/service-areas/mercer-county-pa" className="text-link">Mercer County</Link>.
+            <Link href="/service-areas/butler-county-pa" className="text-link">Butler County</Link>,{" "}
+            <Link href="/service-areas/mercer-county-pa" className="text-link">Mercer County</Link>, and{" "}
+            <Link href="/service-areas/erie-county-pa" className="text-link">Erie County</Link>.
           </>
         }
       />

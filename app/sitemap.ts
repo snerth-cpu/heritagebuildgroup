@@ -23,6 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ["/service-areas/cranberry-township-pa", .7, "monthly"],
     ["/service-areas/butler-county-pa", .7, "monthly"],
     ["/service-areas/mercer-county-pa", .7, "monthly"],
+    ["/service-areas/erie-county-pa", .7, "monthly"],
     ["/projects", .8, "monthly"],
     ["/projects/complete-metal-exterior-transformation", .7, "monthly"],
     ["/projects/black-board-and-batten-barn", .7, "monthly"],
