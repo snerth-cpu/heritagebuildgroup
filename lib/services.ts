@@ -87,8 +87,8 @@ export const leadServices: LeadService[] = [
     heroCopy: `Professional metal roofing for homes, garages, barns, and commercial buildings. Choose from exposed-fastener and standing seam roofing systems. Serving ${LEAD_SERVICE_AREA}.`,
     heroKind: "roof",
     metaTitle: "Metal Roof Replacement & Installation",
-    metaDescription: `Hire HBG Construction for complete metal roof replacement and installation—materials and labor—for homes, garages, barns, and commercial buildings in ${LEAD_SERVICE_AREA}.`,
-    lead: "Hire a contractor for a complete metal roofing project—materials and installation together, not a materials-only drop-off by default.",
+    metaDescription: `Full-service metal roof replacement and installation for homes, garages, barns, and commercial buildings in ${LEAD_SERVICE_AREA}. Materials and installation by HBG Construction.`,
+    lead: "HBG Construction provides full-service metal roofing—we supply the materials and install the roof as one complete project.",
     body: [
       "We replace worn roofs and install new metal roofing systems end to end: panels, trim, flashings, and transitions scoped as one job.",
       "Exposed-fastener and standing seam options are planned around roof shape, drainage, penetrations, and where the roof meets walls—so the finished roof looks and performs as one system.",
@@ -100,9 +100,9 @@ export const leadServices: LeadService[] = [
         copy: "Homes, garages, barns, and commercial buildings—scoped so the finished roof fits the structure and how you use it.",
       },
       {
-        eyebrow: "COMPLETE PROJECTS",
-        title: "Materials and installation.",
-        copy: "HBG supplies the metal roofing system and installs it. Tell us if you need installation only; most customers hire us for the full project.",
+        eyebrow: "FULL SERVICE",
+        title: "Materials and installation included.",
+        copy: "Every metal roofing project includes the roofing system and our crew. We do not offer labor-only or materials-only jobs.",
       },
     ],
     photos: [
@@ -126,7 +126,7 @@ export const leadServices: LeadService[] = [
       {
         question: "Do you replace and install metal roofs?",
         answer:
-          "Yes. HBG Construction handles complete metal roof replacement and installation—materials and labor—for homes, garages, barns, and commercial buildings. Tell us if you need installation only.",
+          "Yes. HBG Construction provides full-service metal roof replacement and installation—materials and labor together—for homes, garages, barns, and commercial buildings. We do not offer labor-only or materials-only work.",
       },
       {
         question: "What metal roofing systems do you install?",
@@ -144,7 +144,7 @@ export const leadServices: LeadService[] = [
       },
     ],
     projectTypeLabel: "Metal Roofing",
-    asksScope: true,
+    asksScope: false,
     asksBuildingStatus: true,
   },
   {
