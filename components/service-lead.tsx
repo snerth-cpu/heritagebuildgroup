@@ -109,17 +109,13 @@ export function ServiceLeadPage({
 
       <Process
         kicker="HOW IT WORKS"
-        title="FROM QUOTE TO SCHEDULE."
-        steps={LEAD_PROCESS}
+        title={service.processTitle || "FROM QUOTE TO SCHEDULE."}
+        steps={service.processSteps || LEAD_PROCESS}
       />
 
       <ServiceAreaLinks
         heading={`${service.navLabel} service area`}
-        copy={
-          <>
-            {service.navLabel} across {LEAD_SERVICE_AREA}. We do not claim statewide coverage.
-          </>
-        }
+        copy={service.serviceAreaCopy || `${service.navLabel} across ${LEAD_SERVICE_AREA}.`}
       />
 
       <section className="faq wrap" aria-label="FAQ">
