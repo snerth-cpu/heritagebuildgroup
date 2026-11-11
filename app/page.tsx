@@ -175,6 +175,7 @@ export default function Home() {
           <Link href="/service-areas/cranberry-township-pa">CRANBERRY TOWNSHIP</Link>
           <Link href="/service-areas/butler-county-pa">BUTLER COUNTY</Link>
           <Link href="/service-areas/mercer-county-pa">MERCER COUNTY</Link>
+          <Link href="/service-areas/erie-county-pa">ERIE COUNTY</Link>
           <span>NORTHEAST OHIO</span>
         </div>
         <Link className="simple-link service-area__all" href="/service-areas">

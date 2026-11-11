@@ -72,6 +72,7 @@ export const serviceAreas = [
   { name: "Cranberry Township", label: "Cranberry Township", href: "/service-areas/cranberry-township-pa" },
   { name: "Butler County", label: "Butler County", href: "/service-areas/butler-county-pa" },
   { name: "Mercer County", label: "Mercer County", href: "/service-areas/mercer-county-pa" },
+  { name: "Erie County", label: "Erie County", href: "/service-areas/erie-county-pa" },
 ] as const;
 
 /** Areas we serve, including those without a dedicated landing page. */
@@ -81,6 +82,7 @@ export const serviceAreaNames = [
   "Cranberry Township",
   "Butler County",
   "Mercer County",
+  "Erie County",
   "Northeast Ohio",
 ] as const;
 
@@ -105,6 +107,7 @@ export const localBusinessSchema = {
     { "@type": "City", name: "Cranberry Township", containedInPlace: { "@type": "State", name: "Pennsylvania" } },
     { "@type": "AdministrativeArea", name: "Butler County, Pennsylvania" },
     { "@type": "AdministrativeArea", name: "Mercer County, Pennsylvania" },
+    { "@type": "AdministrativeArea", name: "Erie County, Pennsylvania" },
     { "@type": "AdministrativeArea", name: "Northeast Ohio" },
   ],
   knowsAbout: [

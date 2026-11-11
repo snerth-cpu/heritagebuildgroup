@@ -17,7 +17,7 @@ export function LocationPage({ location }: { location: LocationContent }) {
       <div className="location-project-note"><h2>Planning a project in {location.name}?</h2><p>{location.projectNote}</p><ServiceLinks /></div>
     </section>
     <Process />
-    <section className="nearby wrap"><p className="eyebrow">EXPLORE THE REGION</p><div><Link href="/service-areas">All Service Areas</Link><Link href="/service-areas/pittsburgh-pa">Pittsburgh</Link><Link href="/service-areas/cranberry-township-pa">Cranberry Township</Link><Link href="/service-areas/butler-county-pa">Butler County</Link><Link href="/service-areas/mercer-county-pa">Mercer County</Link></div></section>
+    <section className="nearby wrap"><p className="eyebrow">EXPLORE THE REGION</p><div><Link href="/service-areas">All Service Areas</Link><Link href="/service-areas/pittsburgh-pa">Pittsburgh</Link><Link href="/service-areas/cranberry-township-pa">Cranberry Township</Link><Link href="/service-areas/butler-county-pa">Butler County</Link><Link href="/service-areas/mercer-county-pa">Mercer County</Link><Link href="/service-areas/erie-county-pa">Erie County</Link></div></section>
     <ProjectCTA />
   </>;
 }
