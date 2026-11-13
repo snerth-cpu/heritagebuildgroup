@@ -4,6 +4,7 @@ export const PROJECT_TYPES = [
   "board_and_batten",
   "pole_building",
   "garage",
+  "pole_buildings_garages",
   "shingle_roofing",
   "vinyl_siding",
   "fiber_cement_siding",
@@ -11,6 +12,8 @@ export const PROJECT_TYPES = [
   "door_replacement",
   "garage_door",
   "window_door_replacement",
+  "decks",
+  "additions_renovations",
   "other",
 ] as const;
 
@@ -86,7 +89,7 @@ export type EstimateFieldErrors = Partial<
 /** Labels aligned with site service names. Legacy keys retained for saved leads. */
 export const PROJECT_TYPE_LABELS: Record<ProjectType, string> = {
   metal_roofing: "Metal Roofing",
-  shingle_roofing: "Asphalt Shingle Roofing",
+  shingle_roofing: "Shingle Roofing",
   metal_siding: "Metal Siding",
   vinyl_siding: "Vinyl Siding",
   fiber_cement_siding: "Fiber-Cement Siding",
@@ -95,9 +98,12 @@ export const PROJECT_TYPE_LABELS: Record<ProjectType, string> = {
   garage_door: "Garage Door Installation / Replacement",
   pole_building: "Pole Buildings",
   garage: "Garages",
+  pole_buildings_garages: "Pole Buildings & Garages",
   board_and_batten: "Barn Siding",
-  window_door_replacement: "Window / Door Replacement",
-  other: "Other / Not Sure",
+  window_door_replacement: "Windows & Doors",
+  decks: "Decks",
+  additions_renovations: "Additions & Renovations",
+  other: "Other",
 };
 
 /**
@@ -109,13 +115,10 @@ export const ESTIMATE_FORM_PROJECT_TYPES: ProjectType[] = [
   "shingle_roofing",
   "metal_siding",
   "vinyl_siding",
-  "fiber_cement_siding",
-  "window_replacement",
-  "door_replacement",
-  "garage_door",
-  "pole_building",
-  "garage",
-  "board_and_batten",
+  "pole_buildings_garages",
+  "decks",
+  "additions_renovations",
+  "window_door_replacement",
   "other",
 ];
 
@@ -125,25 +128,24 @@ export function projectTypeFromServiceSlug(slug?: string | null): ProjectType | 
     case "metal-roofing":
       return "metal_roofing";
     case "metal-siding":
-      return "metal_siding";
     case "barn-siding":
-      return "board_and_batten";
+      return "metal_siding";
     case "pole-buildings":
-      return "pole_building";
     case "garages":
-      return "garage";
+      return "pole_buildings_garages";
     case "shingle-roofing":
       return "shingle_roofing";
     case "vinyl-siding":
       return "vinyl_siding";
     case "fiber-cement-siding":
-      return "fiber_cement_siding";
+      return "other";
     case "window-replacement":
-      return "window_replacement";
     case "door-replacement":
-      return "door_replacement";
+      return "window_door_replacement";
     case "garage-doors":
-      return "garage_door";
+      return "other";
+    case "additions":
+      return "additions_renovations";
     default:
       return undefined;
   }

@@ -18,7 +18,6 @@ import {
 } from "@/lib/estimate/types";
 import { normalizePhone } from "@/lib/estimate/validate";
 
-const MAX_PHOTOS = 4;
 const PHONE_MAX_DIGITS = 10;
 
 /** Digits-only U.S. phone (no country code), capped at 10. */
@@ -30,10 +29,6 @@ type FormState = {
   name: string;
   phone: string;
   email: string;
-  address: string;
-  unit: string;
-  city: string;
-  state: string;
   zip: string;
   projectType: ProjectType | "";
   description: string;
@@ -44,10 +39,6 @@ const INITIAL: FormState = {
   name: "",
   phone: "",
   email: "",
-  address: "",
-  unit: "",
-  city: "",
-  state: "",
   zip: "",
   projectType: "",
   description: "",
@@ -70,7 +61,6 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
     ...INITIAL,
     projectType: projectTypeFromServiceSlug(serviceSlug) || "",
   }));
-  const [photos, setPhotos] = useState<File[]>([]);
   const [errors, setErrors] = useState<EstimateFieldErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [submittedId, setSubmittedId] = useState<string | null>(null);
@@ -121,18 +111,6 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
     });
   };
 
-  const onPhotosChange = (fileList: FileList | null) => {
-    markFormStart();
-    const next = fileList ? Array.from(fileList).slice(0, MAX_PHOTOS) : [];
-    setPhotos(next);
-    setErrors((prev) => {
-      if (!prev.photos) return prev;
-      const nextErrors = { ...prev };
-      delete nextErrors.photos;
-      return nextErrors;
-    });
-  };
-
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (submitting) return;
@@ -151,8 +129,6 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
         service_slug: serviceSlug || serviceFromSearch(),
       }),
     );
-    formData.delete("photos");
-    for (const photo of photos) formData.append("photos", photo);
 
     try {
       const res = await fetch("/api/estimate", { method: "POST", body: formData });
@@ -174,6 +150,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
       const id = payload.id;
       setSubmittedId(id);
 
+      // Fire only after a confirmed successful save — never on click alone.
       void trackGenerateLeadOnce(id, {
         ...(values.projectType ? { project_type: values.projectType } : {}),
         ...(serviceSlug || serviceFromSearch()
@@ -201,17 +178,16 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
       <div id="estimate-form" className="estimate-form estimate-form--native success" role="status">
         <span aria-hidden="true">✓</span>
         <p className="eyebrow">REQUEST RECEIVED</p>
-        <h2>Thanks — we got your quote request.</h2>
+        <h2>Thanks — we got your estimate request.</h2>
         <p>
-          A confirmation is on the way to the email you entered. We will also follow up by phone or
-          email. Reference: <code>{submittedId.slice(0, 8)}</code>
+          A confirmation is on the way to the email you entered. We will also follow up by phone.
+          Reference: <code>{submittedId.slice(0, 8)}</code>
         </p>
         <button
           type="button"
           className="text-button"
           onClick={() => {
             setSubmittedId(null);
-            setPhotos([]);
             startedAt.current = Date.now();
             setValues({
               ...INITIAL,
@@ -236,221 +212,139 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
   return (
     <form
       id="estimate-form"
-      className="estimate-form estimate-form--native"
+      className="estimate-form estimate-form--native estimate-form--simple"
       autoComplete="on"
       onSubmit={onSubmit}
       noValidate
       onFocus={markFormStart}
       onPointerDown={markFormStart}
     >
-      <fieldset className="estimate-section">
-        <legend>Contact</legend>
-        <label htmlFor={`${formId}-name`}>
-          Name
-          <input
-            id={`${formId}-name`}
-            name="name"
-            type="text"
-            autoComplete="name"
-            required
-            value={values.name}
-            onChange={(e) => setField("name", e.target.value)}
-            aria-invalid={Boolean(errors.name)}
-            aria-describedby={errors.name ? `${formId}-name-err` : undefined}
-          />
-          {errors.name ? (
-            <span id={`${formId}-name-err`} className="field-error">
-              {errors.name}
-            </span>
-          ) : null}
-        </label>
-        <div className="form-row">
-          <label htmlFor={`${formId}-email`}>
-            Email
-            <input
-              id={`${formId}-email`}
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-              value={values.email}
-              onChange={(e) => setField("email", e.target.value)}
-              aria-invalid={Boolean(errors.email)}
-              aria-describedby={errors.email ? `${formId}-email-err` : undefined}
-            />
-            {errors.email ? (
-              <span id={`${formId}-email-err`} className="field-error">
-                {errors.email}
-              </span>
-            ) : null}
-          </label>
-          <label htmlFor={`${formId}-phone`}>
-            Phone
-            <input
-              id={`${formId}-phone`}
-              name="phone"
-              type="tel"
-              inputMode="tel"
-              autoComplete="tel"
-              required
-              maxLength={PHONE_MAX_DIGITS}
-              placeholder="7245550100"
-              value={values.phone}
-              onChange={(e) => setField("phone", phoneDigitsInput(e.target.value))}
-              aria-invalid={Boolean(errors.phone)}
-              aria-describedby={errors.phone ? `${formId}-phone-err` : undefined}
-            />
-            {errors.phone ? (
-              <span id={`${formId}-phone-err`} className="field-error">
-                {errors.phone}
-              </span>
-            ) : null}
-          </label>
-        </div>
-      </fieldset>
+      <label htmlFor={`${formId}-name`}>
+        Name
+        <input
+          id={`${formId}-name`}
+          name="name"
+          type="text"
+          autoComplete="name"
+          autoCapitalize="words"
+          required
+          value={values.name}
+          onChange={(e) => setField("name", e.target.value)}
+          aria-invalid={Boolean(errors.name)}
+          aria-describedby={errors.name ? `${formId}-name-err` : undefined}
+        />
+        {errors.name ? (
+          <span id={`${formId}-name-err`} className="field-error">
+            {errors.name}
+          </span>
+        ) : null}
+      </label>
 
-      <fieldset className="estimate-section">
-        <legend>Project address</legend>
-        <label htmlFor={`${formId}-address`}>
-          Street address
-          <input
-            id={`${formId}-address`}
-            name="address"
-            type="text"
-            autoComplete="address-line1"
-            required
-            value={values.address}
-            onChange={(e) => setField("address", e.target.value)}
-            aria-invalid={Boolean(errors.address)}
-            aria-describedby={errors.address ? `${formId}-address-err` : undefined}
-          />
-          {errors.address ? (
-            <span id={`${formId}-address-err`} className="field-error">
-              {errors.address}
-            </span>
-          ) : null}
-        </label>
-        <label htmlFor={`${formId}-unit`}>
-          Apt / unit <span className="optional">(optional)</span>
-          <input
-            id={`${formId}-unit`}
-            name="unit"
-            type="text"
-            autoComplete="address-line2"
-            value={values.unit}
-            onChange={(e) => setField("unit", e.target.value)}
-            aria-invalid={Boolean(errors.unit)}
-            placeholder="Suite, apt, building"
-          />
-          {errors.unit ? <span className="field-error">{errors.unit}</span> : null}
-        </label>
-        <div className="form-row form-row--three">
-          <label htmlFor={`${formId}-city`}>
-            City
-            <input
-              id={`${formId}-city`}
-              name="city"
-              type="text"
-              autoComplete="address-level2"
-              required
-              value={values.city}
-              onChange={(e) => setField("city", e.target.value)}
-              aria-invalid={Boolean(errors.city)}
-            />
-            {errors.city ? <span className="field-error">{errors.city}</span> : null}
-          </label>
-          <label htmlFor={`${formId}-state`}>
-            State
-            <input
-              id={`${formId}-state`}
-              name="state"
-              type="text"
-              autoComplete="address-level1"
-              required
-              value={values.state}
-              onChange={(e) => setField("state", e.target.value)}
-              aria-invalid={Boolean(errors.state)}
-              placeholder="PA"
-            />
-            {errors.state ? <span className="field-error">{errors.state}</span> : null}
-          </label>
-          <label htmlFor={`${formId}-zip`}>
-            ZIP
-            <input
-              id={`${formId}-zip`}
-              name="zip"
-              type="text"
-              inputMode="numeric"
-              autoComplete="postal-code"
-              required
-              value={values.zip}
-              onChange={(e) => setField("zip", e.target.value)}
-              aria-invalid={Boolean(errors.zip)}
-              aria-describedby={errors.zip ? `${formId}-zip-err` : undefined}
-            />
-            {errors.zip ? (
-              <span id={`${formId}-zip-err`} className="field-error">
-                {errors.zip}
-              </span>
-            ) : null}
-          </label>
-        </div>
-      </fieldset>
+      <label htmlFor={`${formId}-phone`}>
+        Phone Number
+        <input
+          id={`${formId}-phone`}
+          name="phone"
+          type="tel"
+          inputMode="tel"
+          autoComplete="tel"
+          required
+          maxLength={PHONE_MAX_DIGITS}
+          placeholder="7245550100"
+          value={values.phone}
+          onChange={(e) => setField("phone", phoneDigitsInput(e.target.value))}
+          aria-invalid={Boolean(errors.phone)}
+          aria-describedby={errors.phone ? `${formId}-phone-err` : undefined}
+        />
+        {errors.phone ? (
+          <span id={`${formId}-phone-err`} className="field-error">
+            {errors.phone}
+          </span>
+        ) : null}
+      </label>
 
-      <fieldset className="estimate-section">
-        <legend>Project</legend>
-        <label htmlFor={`${formId}-project`}>
-          Project type
-          <select
-            id={`${formId}-project`}
-            name="projectType"
-            required
-            value={values.projectType}
-            onChange={(e) => setField("projectType", e.target.value as ProjectType | "")}
-            aria-invalid={Boolean(errors.projectType)}
-          >
-            <option value="">Select…</option>
-            {ESTIMATE_FORM_PROJECT_TYPES.map((key) => (
-              <option key={key} value={key}>
-                {PROJECT_TYPE_LABELS[key]}
-              </option>
-            ))}
-          </select>
-          {errors.projectType ? <span className="field-error">{errors.projectType}</span> : null}
-        </label>
-        <label htmlFor={`${formId}-description`}>
-          Project details
-          <textarea
-            id={`${formId}-description`}
-            name="description"
-            rows={4}
-            required
-            value={values.description}
-            onChange={(e) => setField("description", e.target.value)}
-            aria-invalid={Boolean(errors.description)}
-            placeholder="What are you looking to build or replace? Sizes, materials, or access notes help."
-          />
-          {errors.description ? <span className="field-error">{errors.description}</span> : null}
-        </label>
-        <label className="upload upload--optional" htmlFor={`${formId}-photos`}>
-          Photos <span className="optional">(optional)</span>
-          <input
-            id={`${formId}-photos`}
-            name="photos"
-            type="file"
-            accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.jpg,.jpeg,.png,.webp,.heic,.heif"
-            multiple
-            onChange={(e) => onPhotosChange(e.target.files)}
-          />
-          <small>Optional · up to {MAX_PHOTOS} · JPEG/PNG/WebP/HEIC · 4 MB each</small>
-          {photos.length ? (
-            <small>
-              Selected: {photos.map((f) => f.name).join(", ")}
-            </small>
-          ) : null}
-          {errors.photos ? <span className="field-error">{errors.photos}</span> : null}
-        </label>
-      </fieldset>
+      <label htmlFor={`${formId}-email`}>
+        Email Address
+        <input
+          id={`${formId}-email`}
+          name="email"
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          required
+          value={values.email}
+          onChange={(e) => setField("email", e.target.value)}
+          aria-invalid={Boolean(errors.email)}
+          aria-describedby={errors.email ? `${formId}-email-err` : undefined}
+        />
+        {errors.email ? (
+          <span id={`${formId}-email-err`} className="field-error">
+            {errors.email}
+          </span>
+        ) : null}
+      </label>
+
+      <label htmlFor={`${formId}-zip`}>
+        Project ZIP Code
+        <input
+          id={`${formId}-zip`}
+          name="zip"
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          autoComplete="postal-code"
+          required
+          maxLength={10}
+          value={values.zip}
+          onChange={(e) => setField("zip", e.target.value.replace(/[^\d-]/g, "").slice(0, 10))}
+          aria-invalid={Boolean(errors.zip)}
+          aria-describedby={errors.zip ? `${formId}-zip-err` : undefined}
+        />
+        {errors.zip ? (
+          <span id={`${formId}-zip-err`} className="field-error">
+            {errors.zip}
+          </span>
+        ) : null}
+      </label>
+
+      <label htmlFor={`${formId}-project`}>
+        Project Type
+        <select
+          id={`${formId}-project`}
+          name="projectType"
+          required
+          value={values.projectType}
+          onChange={(e) => setField("projectType", e.target.value as ProjectType | "")}
+          aria-invalid={Boolean(errors.projectType)}
+          aria-describedby={errors.projectType ? `${formId}-project-err` : undefined}
+        >
+          <option value="">Select…</option>
+          {ESTIMATE_FORM_PROJECT_TYPES.map((key) => (
+            <option key={key} value={key}>
+              {PROJECT_TYPE_LABELS[key]}
+            </option>
+          ))}
+        </select>
+        {errors.projectType ? (
+          <span id={`${formId}-project-err`} className="field-error">
+            {errors.projectType}
+          </span>
+        ) : null}
+      </label>
+
+      <label htmlFor={`${formId}-description`}>
+        Tell Us About Your Project <span className="optional">(optional)</span>
+        <textarea
+          id={`${formId}-description`}
+          name="description"
+          rows={3}
+          value={values.description}
+          onChange={(e) => setField("description", e.target.value)}
+          aria-invalid={Boolean(errors.description)}
+          placeholder="Building type, approximate size, or anything else we should know."
+        />
+        {errors.description ? <span className="field-error">{errors.description}</span> : null}
+      </label>
 
       {/* Honeypot — visually hidden, not tabbable for assistive tech */}
       <div className="hp" aria-hidden="true">
@@ -474,11 +368,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
           onChange={(e) => setField("consent", e.target.checked)}
           aria-invalid={Boolean(errors.consent)}
         />
-        <span>
-          I agree that HBG Construction may contact me about this quote request using the phone and
-          email I provided. Information is only used to respond to this request and will not be sold
-          or shared for marketing.
-        </span>
+        <span>I agree that HBG Construction may contact me about this estimate request.</span>
       </label>
       {errors.consent ? <span className="field-error">{errors.consent}</span> : null}
 
@@ -489,12 +379,11 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
       ) : null}
 
       <button type="submit" className="submit" disabled={submitting}>
-        <span>{submitting ? "SENDING…" : "REQUEST A QUOTE"}</span>
+        <span>{submitting ? "SENDING…" : "REQUEST MY FREE ESTIMATE"}</span>
         <span aria-hidden="true">{submitting ? "…" : "↗"}</span>
       </button>
-      <p className="form-note">
-        Submitted information will only be used to respond to your quote request. It will not be sold
-        or shared for marketing purposes.
+      <p className="form-note form-note--reassure">
+        No obligation. We&apos;ll contact you to discuss your project.
       </p>
       <p className="form-note">PA Registered & Fully Insured</p>
     </form>

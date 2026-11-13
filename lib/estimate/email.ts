@@ -15,16 +15,16 @@ function leadEmailBody(lead: LeadRecord) {
     "",
     `Name: ${lead.name}`,
     `Phone: ${lead.phone}`,
-    `Email: ${lead.email}`,
-    `Street: ${lead.address}`,
+    `Email: ${lead.email || "(not provided)"}`,
+    `ZIP: ${lead.zip}`,
+    `Street: ${lead.address || "(not provided)"}`,
     `Unit: ${lead.unit || "(none)"}`,
     `City: ${lead.city || "(not provided)"}`,
     `State: ${lead.state || "(not provided)"}`,
-    `ZIP: ${lead.zip}`,
     `Project type: ${PROJECT_TYPE_LABELS[lead.projectType]}`,
     "",
     "Description:",
-    lead.description,
+    lead.description || "(not provided)",
     "",
     `Photos attached in storage: ${lead.photos.length}`,
     lead.photos.map((p) => `- ${p.filename} (${p.contentType}, ${p.size} bytes)`).join("\n") ||
@@ -38,15 +38,15 @@ function leadEmailBody(lead: LeadRecord) {
 
 function customerConfirmationBody(lead: LeadRecord) {
   const project = PROJECT_TYPE_LABELS[lead.projectType];
-  const location = [lead.address, lead.city, lead.state, lead.zip].filter(Boolean).join(", ");
+  const location = [lead.address, lead.city, lead.state, lead.zip].filter(Boolean).join(", ") || lead.zip;
   return [
     `Hi ${lead.name.split(/\s+/)[0] || "there"},`,
     "",
-    "Thanks for requesting a quote from HBG Construction. We received your request and will follow up using the phone or email you provided.",
+    "Thanks for requesting a free estimate from HBG Construction. We received your request and will follow up soon.",
     "",
     "What you submitted:",
     `• Project type: ${project}`,
-    `• Location: ${location}`,
+    `• Project ZIP: ${location}`,
     `• Reference: ${lead.id.slice(0, 8)}`,
     "",
     "Questions in the meantime?",

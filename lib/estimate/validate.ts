@@ -84,31 +84,35 @@ export function validateEstimateFormData(
   if (!PHONE_DIGITS_RE.test(phoneDigits)) errors.phone = "Enter a valid 10-digit U.S. phone number.";
 
   const email = trim(form.get("email")).toLowerCase();
-  if (!EMAIL_RE.test(email) || email.length > 200) errors.email = "Enter a valid email address.";
+  if (!EMAIL_RE.test(email) || email.length > 200) {
+    errors.email = "Enter a valid email address.";
+  }
 
+  // Street / city / state are optional — collected later when scheduling.
   const address = trim(form.get("address"));
-  if (address.length < 5) errors.address = "Enter the project street address.";
   if (address.length > 200) errors.address = "Address is too long.";
 
   const unit = trim(form.get("unit"));
   if (unit.length > 40) errors.unit = "Unit / apt is too long.";
 
   const city = trim(form.get("city"));
-  if (city.length < 2) errors.city = "Enter the city.";
   if (city.length > 100) errors.city = "City is too long.";
 
   const stateRaw = trim(form.get("state"));
-  const state = /^[A-Za-z]{2}$/.test(stateRaw) ? stateRaw.toUpperCase() : stateRaw;
-  if (!/^[A-Z]{2}$/.test(state)) errors.state = "Enter a 2-letter state (e.g. PA).";
+  const state = stateRaw
+    ? /^[A-Za-z]{2}$/.test(stateRaw)
+      ? stateRaw.toUpperCase()
+      : stateRaw
+    : "";
+  if (state && !/^[A-Z]{2}$/.test(state)) errors.state = "Enter a 2-letter state (e.g. PA), or leave blank.";
 
   const zip = trim(form.get("zip"));
-  if (!ZIP_RE.test(zip)) errors.zip = "Enter a valid ZIP code.";
+  if (!ZIP_RE.test(zip)) errors.zip = "Enter a valid 5-digit ZIP code.";
 
   const projectType = trim(form.get("projectType")) as ProjectType;
   if (!PROJECT_TYPES.includes(projectType)) errors.projectType = "Select a project type.";
 
   const description = trim(form.get("description"));
-  if (description.length < 10) errors.description = "Add a short project description (at least a sentence).";
   if (description.length > 4000) errors.description = "Description is too long.";
 
   const consent = trim(form.get("consent"));
@@ -180,7 +184,7 @@ export function validateEstimateFormData(
       state: state || undefined,
       zip,
       projectType,
-      description,
+      description: description || "",
       consent: true,
       attribution,
       photos,
