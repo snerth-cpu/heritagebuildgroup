@@ -6,9 +6,9 @@ import { PhoneLink } from "@/components/phone-link";
 import { BUSINESS_EMAIL, pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "Request a Quote | Metal Roofing, Siding & Buildings",
+  title: "Get a Free Estimate | Roofing, Siding & Contracting",
   description:
-    "Request a quote from HBG Construction for metal roofing, metal siding, barn siding, pole buildings, or garages in Western Pennsylvania and Northeast Ohio.",
+    "Request a free estimate from HBG Construction for metal roofing, siding, pole buildings, garages, and exterior projects in Western Pennsylvania and Northeast Ohio.",
   path: "/estimate",
 });
 
@@ -25,27 +25,14 @@ export default async function Page({ searchParams }: PageProps) {
       <div className="wrap estimate__grid">
         <aside>
           <Mark size="section" className="brand--ink" />
-          <p className="eyebrow">REQUEST A QUOTE</p>
-          <h1>TELL US ABOUT<br />YOUR PROJECT.</h1>
-          <p>
-            Share your name, email, phone, project address, and what you need built or replaced.
-            Optional photos help when you have them.
-          </p>
+          <p className="eyebrow">FREE ESTIMATE</p>
+          <h1>GET A FREE ESTIMATE.</h1>
+          <p>Tell us a little about your project, and we&apos;ll be in touch to discuss the details.</p>
           {selected ? (
             <p className="estimate-selected" role="status">
               Suggested project type: <strong>{selected.projectTypeLabel}</strong>
-              {selected.asksScope
-                ? " — note supply and install, installation only, or materials only in the description if needed."
-                : null}
-              {selected.asksBuildingStatus
-                ? " — say whether this is an existing building or new construction."
-                : null}
             </p>
-          ) : (
-            <p className="estimate-selected">
-              Choose a project type below or in the form so we can route your request.
-            </p>
-          )}
+          ) : null}
           <nav className="estimate-services" aria-label="Select project type">
             {leadServices.map((service) => {
               const active = selected?.slug === service.slug;
@@ -65,22 +52,6 @@ export default async function Page({ searchParams }: PageProps) {
             <PhoneLink />
             <a href={`mailto:${BUSINESS_EMAIL}`}>{BUSINESS_EMAIL}</a>
           </p>
-          <div className="estimate__aside">
-            <span>01</span>
-            <p>
-              <strong>Required</strong>
-              <br />
-              Name · Email · Phone · Street · City · State · ZIP · Project type · Details
-            </p>
-          </div>
-          <div className="estimate__aside">
-            <span>02</span>
-            <p>
-              <strong>Optional</strong>
-              <br />
-              Apt / unit · Photos
-            </p>
-          </div>
         </aside>
         <EstimateForm serviceSlug={selected?.slug} />
       </div>
