@@ -71,7 +71,6 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
   const [errors, setErrors] = useState<EstimateFieldErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [submittedId, setSubmittedId] = useState<string | null>(null);
-  const [submittedEmail, setSubmittedEmail] = useState("");
 
   useEffect(() => {
     const fromService = projectTypeFromServiceSlug(serviceSlug);
@@ -158,7 +157,6 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
 
       const id = payload.id;
       setSubmittedId(id);
-      setSubmittedEmail(values.email.trim());
 
       // Fire only after a confirmed successful save — never on click alone.
       void trackGenerateLeadOnce(id, {
@@ -198,7 +196,6 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
           className="text-button"
           onClick={() => {
             setSubmittedId(null);
-            setSubmittedEmail("");
             startedAt.current = Date.now();
             setValues({
               ...INITIAL,
