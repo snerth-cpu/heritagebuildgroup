@@ -25,6 +25,15 @@ function phoneDigitsInput(raw: string) {
   return normalizePhone(raw).slice(0, PHONE_MAX_DIGITS);
 }
 
+/** Format as (XXX) XXX-XXXX while typing; accepts pasted formatted numbers. */
+function formatPhoneInput(raw: string) {
+  const digits = phoneDigitsInput(raw);
+  if (!digits) return "";
+  if (digits.length <= 3) return `(${digits}`;
+  if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
 type FormState = {
   name: string;
   phone: string;
@@ -32,7 +41,6 @@ type FormState = {
   zip: string;
   projectType: ProjectType | "";
   description: string;
-  consent: boolean;
 };
 
 const INITIAL: FormState = {
@@ -42,7 +50,6 @@ const INITIAL: FormState = {
   zip: "",
   projectType: "",
   description: "",
-  consent: false,
 };
 
 function serviceFromSearch() {
@@ -118,8 +125,9 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
     setErrors({});
 
     // Build from the live form so the honeypot reflects what bots typed.
+    // Consent is granted by submitting after the notice under the button.
     const formData = new FormData(event.currentTarget);
-    formData.set("consent", values.consent ? "yes" : "");
+    formData.set("consent", "yes");
     formData.set("_form_started_at", String(startedAt.current));
     formData.set(
       "attribution",
@@ -220,7 +228,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
       onPointerDown={markFormStart}
     >
       <label htmlFor={`${formId}-name`}>
-        Name
+        Name <span className="req" aria-hidden="true">*</span>
         <input
           id={`${formId}-name`}
           name="name"
@@ -241,7 +249,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
       </label>
 
       <label htmlFor={`${formId}-phone`}>
-        Phone Number
+        Phone Number <span className="req" aria-hidden="true">*</span>
         <input
           id={`${formId}-phone`}
           name="phone"
@@ -249,10 +257,9 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
           inputMode="tel"
           autoComplete="tel"
           required
-          maxLength={PHONE_MAX_DIGITS}
-          placeholder="7245550100"
+          maxLength={14}
           value={values.phone}
-          onChange={(e) => setField("phone", phoneDigitsInput(e.target.value))}
+          onChange={(e) => setField("phone", formatPhoneInput(e.target.value))}
           aria-invalid={Boolean(errors.phone)}
           aria-describedby={errors.phone ? `${formId}-phone-err` : undefined}
         />
@@ -264,7 +271,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
       </label>
 
       <label htmlFor={`${formId}-email`}>
-        Email Address
+        Email Address <span className="req" aria-hidden="true">*</span>
         <input
           id={`${formId}-email`}
           name="email"
@@ -285,7 +292,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
       </label>
 
       <label htmlFor={`${formId}-zip`}>
-        Project ZIP Code
+        Project ZIP Code <span className="req" aria-hidden="true">*</span>
         <input
           id={`${formId}-zip`}
           name="zip"
@@ -295,6 +302,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
           autoComplete="postal-code"
           required
           maxLength={10}
+          placeholder="16066"
           value={values.zip}
           onChange={(e) => setField("zip", e.target.value.replace(/[^\d-]/g, "").slice(0, 10))}
           aria-invalid={Boolean(errors.zip)}
@@ -308,7 +316,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
       </label>
 
       <label htmlFor={`${formId}-project`}>
-        Project Type
+        Project Type <span className="req" aria-hidden="true">*</span>
         <select
           id={`${formId}-project`}
           name="projectType"
@@ -359,19 +367,6 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
         />
       </div>
 
-      <label className="consent" htmlFor={`${formId}-consent`}>
-        <input
-          id={`${formId}-consent`}
-          name="consent"
-          type="checkbox"
-          checked={values.consent}
-          onChange={(e) => setField("consent", e.target.checked)}
-          aria-invalid={Boolean(errors.consent)}
-        />
-        <span>I agree that HBG Construction may contact me about this estimate request.</span>
-      </label>
-      {errors.consent ? <span className="field-error">{errors.consent}</span> : null}
-
       {errors.form ? (
         <p className="form-error" role="alert">
           {errors.form}
@@ -382,6 +377,9 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
         <span>{submitting ? "SENDING…" : "REQUEST MY FREE ESTIMATE"}</span>
         <span aria-hidden="true">{submitting ? "…" : "↗"}</span>
       </button>
+      <p className="form-note form-note--consent">
+        By submitting, you agree that HBG Construction may contact you about your estimate request.
+      </p>
       <p className="form-note form-note--reassure">
         No obligation. We&apos;ll contact you to discuss your project.
       </p>

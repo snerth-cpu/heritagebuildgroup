@@ -265,10 +265,16 @@
 .home-services__grid--five .home-service .asset-panel{height:240px}
 .home-services__grid--five .home-service h3{font-size:24px}
 .home-services__grid--five .home-service p{min-height:72px;font-size:14px}
-.estimate-services{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 28px}
-.estimate-services a{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid var(--line);font-family:var(--condensed);font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+.estimate-aside__copy{max-width:420px;font-size:16px;line-height:1.55;color:#5d5f5a}
+.estimate-services{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 22px}
+.estimate-services a{display:inline-flex;align-items:center;min-height:34px;padding:0 11px;border:1px solid rgba(23,24,23,.14);color:#5d5f5a;font-family:var(--condensed);font-size:12px;letter-spacing:.06em;text-transform:uppercase}
 .estimate-services a.is-active,.estimate-services a[aria-current="page"]{background:var(--ink);color:#fff;border-color:var(--ink)}
-.estimate-selected{max-width:420px;color:#5d5f5a;margin:0 0 8px}
+.estimate-services a:hover{border-color:rgba(23,24,23,.35);color:var(--ink)}
+.estimate-selected{max-width:420px;color:#5d5f5a;margin:0 0 8px;font-size:14px}
+.estimate-contact{display:flex;flex-wrap:wrap;gap:10px 22px;margin:22px 0 0}
+.estimate-contact a{font-family:var(--condensed);font-size:16px;letter-spacing:.05em;min-height:44px;display:inline-flex;align-items:center;border-bottom:1px solid var(--line);padding-bottom:2px}
+.estimate-contact a:hover{border-color:currentColor}
+.estimate-contact__phone{font-size:17px;letter-spacing:.06em}
 .estimate-success{margin-top:28px;padding:18px 20px;border:1px solid var(--line);background:#fff;max-width:420px}
 .estimate-form--native{scroll-margin-top:112px}
 .estimate-form--native fieldset.estimate-section{border:0;margin:0 0 28px;padding:0 0 8px;border-bottom:1px solid var(--line)}
@@ -288,27 +294,35 @@
 .estimate-form--native .upload--optional{margin-top:8px;padding-top:14px;border-top:1px dashed var(--line);opacity:.92}
 .estimate-form--native .upload--optional small{display:block;margin-top:8px;font-size:11px;letter-spacing:0;text-transform:none;color:#777;line-height:1.4}
 .estimate-form--simple{display:flex;flex-direction:column;gap:0}
-.estimate-form--simple>label{margin-bottom:20px}
+.estimate-form--simple>label{margin-bottom:15px}
+.estimate-form--simple .req{color:var(--bronze);font-weight:500;margin-left:2px}
 .estimate-form--simple input[type="text"],
 .estimate-form--simple input[type="email"],
 .estimate-form--simple input[type="tel"],
 .estimate-form--simple select,
 .estimate-form--simple textarea{
   min-height:48px;
-  margin-top:10px;
-  padding:14px 0;
+  margin-top:7px;
+  padding:12px 0;
   font-size:16px;
-  line-height:1.4
+  line-height:1.4;
+  color:var(--ink)
 }
-.estimate-form--simple textarea{min-height:96px;resize:vertical}
-.estimate-form--simple .submit{min-height:58px;margin-top:4px;font-size:15px;letter-spacing:.1em}
-.estimate-form--simple .form-note--reassure{margin-top:14px;margin-bottom:0;color:#5d5f5a;font-size:12px;letter-spacing:.02em;text-transform:none}
+.estimate-form--simple input::placeholder,
+.estimate-form--simple textarea::placeholder{color:#9a9b96;opacity:1}
+.estimate-form--simple textarea{min-height:88px;resize:vertical}
+.estimate-form--simple .submit{min-height:56px;margin-top:2px;font-size:15px;letter-spacing:.1em}
+.estimate-form--simple .form-note--consent,
+.estimate-form--simple .form-note--reassure{margin-top:12px;margin-bottom:0;color:#5d5f5a;font-size:12px;letter-spacing:.02em;text-transform:none;line-height:1.45}
+.estimate-form--simple .form-note--reassure{margin-top:8px}
 .estimate-form--simple .form-note+.form-note{margin-top:6px}
 @media(max-width:980px){
   .estimate-form--native .form-row--three{grid-template-columns:1fr}
-  .estimate{padding:130px 0 90px}
-  .estimate-form--simple{padding:32px 18px}
-  .estimate-services{margin:18px 0 22px}
+  .estimate{padding:120px 0 80px}
+  .estimate h1{font-size:clamp(42px,11vw,64px);margin:22px 0 14px}
+  .estimate-form--simple{padding:28px 16px}
+  .estimate-services{margin:14px 0 18px}
+  .estimate-aside__copy{font-size:15px}
 }
 @media(max-width:980px){
   .process__grid--three{grid-template-columns:1fr 1fr}
