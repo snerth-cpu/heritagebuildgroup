@@ -83,10 +83,9 @@ export function validateEstimateFormData(
   const phoneDigits = normalizePhone(trim(form.get("phone")));
   if (!PHONE_DIGITS_RE.test(phoneDigits)) errors.phone = "Enter a valid 10-digit U.S. phone number.";
 
-  const emailRaw = trim(form.get("email")).toLowerCase();
-  const email = emailRaw;
-  if (email && (!EMAIL_RE.test(email) || email.length > 200)) {
-    errors.email = "Enter a valid email address, or leave this field blank.";
+  const email = trim(form.get("email")).toLowerCase();
+  if (!EMAIL_RE.test(email) || email.length > 200) {
+    errors.email = "Enter a valid email address.";
   }
 
   // Street / city / state are optional — collected later when scheduling.

@@ -64,7 +64,6 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
   const [errors, setErrors] = useState<EstimateFieldErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [submittedId, setSubmittedId] = useState<string | null>(null);
-  const [submittedEmail, setSubmittedEmail] = useState("");
 
   useEffect(() => {
     const fromService = projectTypeFromServiceSlug(serviceSlug);
@@ -150,7 +149,6 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
 
       const id = payload.id;
       setSubmittedId(id);
-      setSubmittedEmail(values.email.trim());
 
       // Fire only after a confirmed successful save — never on click alone.
       void trackGenerateLeadOnce(id, {
@@ -182,9 +180,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
         <p className="eyebrow">REQUEST RECEIVED</p>
         <h2>Thanks — we got your estimate request.</h2>
         <p>
-          {submittedEmail
-            ? "A confirmation is on the way to the email you entered. We will also follow up by phone."
-            : "We will follow up by phone to discuss your project."}{" "}
+          A confirmation is on the way to the email you entered. We will also follow up by phone.
           Reference: <code>{submittedId.slice(0, 8)}</code>
         </p>
         <button
@@ -192,7 +188,6 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
           className="text-button"
           onClick={() => {
             setSubmittedId(null);
-            setSubmittedEmail("");
             startedAt.current = Date.now();
             setValues({
               ...INITIAL,
@@ -269,13 +264,14 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
       </label>
 
       <label htmlFor={`${formId}-email`}>
-        Email Address <span className="optional">(optional)</span>
+        Email Address
         <input
           id={`${formId}-email`}
           name="email"
           type="email"
           inputMode="email"
           autoComplete="email"
+          required
           value={values.email}
           onChange={(e) => setField("email", e.target.value)}
           aria-invalid={Boolean(errors.email)}
