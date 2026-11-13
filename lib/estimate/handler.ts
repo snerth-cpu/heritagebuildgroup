@@ -76,7 +76,9 @@ export async function handleEstimateGet() {
     backend,
     diagnostics: {
       ...diagnostics,
-      hasLeadsAdminToken: Boolean(process.env.LEADS_ADMIN_TOKEN),
+      hasLeadsAdminToken: Boolean(
+        (process.env.LEADS_ADMIN_TOKEN || "").replace(/^\uFEFF/, "").trim().replace(/^["']|["']$/g, ""),
+      ),
       hasResendApiKey: Boolean(process.env.RESEND_API_KEY),
       hasEstimateFromEmail: Boolean(process.env.ESTIMATE_FROM_EMAIL),
     },
