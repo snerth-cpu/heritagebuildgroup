@@ -51,7 +51,7 @@ export default async function Page({ searchParams }: PageProps) {
             })}
           </nav>
           <p className="estimate-contact">
-            <PhoneLink className="estimate-contact__phone" prefix="Call " />
+            <PhoneLink className="estimate-contact__phone" prefix={"Call\u00A0"} />
             <a href={`mailto:${BUSINESS_EMAIL}`}>{BUSINESS_EMAIL}</a>
           </p>
         </aside>

@@ -25,6 +25,15 @@ function phoneDigitsInput(raw: string) {
   return normalizePhone(raw).slice(0, PHONE_MAX_DIGITS);
 }
 
+/** Format as (XXX) XXX-XXXX while typing; accepts pasted formatted numbers. */
+function formatPhoneInput(raw: string) {
+  const digits = phoneDigitsInput(raw);
+  if (!digits) return "";
+  if (digits.length <= 3) return `(${digits}`;
+  if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
 type FormState = {
   name: string;
   phone: string;
@@ -181,9 +190,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
         <p className="eyebrow">REQUEST RECEIVED</p>
         <h2>Thanks — we got your estimate request.</h2>
         <p>
-          {submittedEmail
-            ? "A confirmation is on the way to the email you entered. We will also follow up by phone."
-            : "We will follow up by phone to discuss your project."}{" "}
+          A confirmation is on the way to the email you entered. We will also follow up by phone.
           Reference: <code>{submittedId.slice(0, 8)}</code>
         </p>
         <button
@@ -253,10 +260,9 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
           inputMode="tel"
           autoComplete="tel"
           required
-          maxLength={PHONE_MAX_DIGITS}
-          placeholder="(724) 555-0100"
+          maxLength={14}
           value={values.phone}
-          onChange={(e) => setField("phone", phoneDigitsInput(e.target.value))}
+          onChange={(e) => setField("phone", formatPhoneInput(e.target.value))}
           aria-invalid={Boolean(errors.phone)}
           aria-describedby={errors.phone ? `${formId}-phone-err` : undefined}
         />
@@ -268,13 +274,14 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
       </label>
 
       <label htmlFor={`${formId}-email`}>
-        Email Address <span className="optional">(optional)</span>
+        Email Address <span className="req" aria-hidden="true">*</span>
         <input
           id={`${formId}-email`}
           name="email"
           type="email"
           inputMode="email"
           autoComplete="email"
+          required
           value={values.email}
           onChange={(e) => setField("email", e.target.value)}
           aria-invalid={Boolean(errors.email)}
