@@ -32,7 +32,6 @@ type FormState = {
   zip: string;
   projectType: ProjectType | "";
   description: string;
-  consent: boolean;
 };
 
 const INITIAL: FormState = {
@@ -42,7 +41,6 @@ const INITIAL: FormState = {
   zip: "",
   projectType: "",
   description: "",
-  consent: false,
 };
 
 function serviceFromSearch() {
@@ -64,6 +62,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
   const [errors, setErrors] = useState<EstimateFieldErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [submittedId, setSubmittedId] = useState<string | null>(null);
+  const [submittedEmail, setSubmittedEmail] = useState("");
 
   useEffect(() => {
     const fromService = projectTypeFromServiceSlug(serviceSlug);
@@ -118,8 +117,9 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
     setErrors({});
 
     // Build from the live form so the honeypot reflects what bots typed.
+    // Consent is granted by submitting after the notice under the button.
     const formData = new FormData(event.currentTarget);
-    formData.set("consent", values.consent ? "yes" : "");
+    formData.set("consent", "yes");
     formData.set("_form_started_at", String(startedAt.current));
     formData.set(
       "attribution",
@@ -149,6 +149,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
 
       const id = payload.id;
       setSubmittedId(id);
+      setSubmittedEmail(values.email.trim());
 
       // Fire only after a confirmed successful save — never on click alone.
       void trackGenerateLeadOnce(id, {
@@ -180,7 +181,9 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
         <p className="eyebrow">REQUEST RECEIVED</p>
         <h2>Thanks — we got your estimate request.</h2>
         <p>
-          A confirmation is on the way to the email you entered. We will also follow up by phone.
+          {submittedEmail
+            ? "A confirmation is on the way to the email you entered. We will also follow up by phone."
+            : "We will follow up by phone to discuss your project."}{" "}
           Reference: <code>{submittedId.slice(0, 8)}</code>
         </p>
         <button
@@ -188,6 +191,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
           className="text-button"
           onClick={() => {
             setSubmittedId(null);
+            setSubmittedEmail("");
             startedAt.current = Date.now();
             setValues({
               ...INITIAL,
@@ -220,7 +224,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
       onPointerDown={markFormStart}
     >
       <label htmlFor={`${formId}-name`}>
-        Name
+        Name <span className="req" aria-hidden="true">*</span>
         <input
           id={`${formId}-name`}
           name="name"
@@ -241,7 +245,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
       </label>
 
       <label htmlFor={`${formId}-phone`}>
-        Phone Number
+        Phone Number <span className="req" aria-hidden="true">*</span>
         <input
           id={`${formId}-phone`}
           name="phone"
@@ -250,7 +254,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
           autoComplete="tel"
           required
           maxLength={PHONE_MAX_DIGITS}
-          placeholder="7245550100"
+          placeholder="(724) 555-0100"
           value={values.phone}
           onChange={(e) => setField("phone", phoneDigitsInput(e.target.value))}
           aria-invalid={Boolean(errors.phone)}
@@ -264,14 +268,13 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
       </label>
 
       <label htmlFor={`${formId}-email`}>
-        Email Address
+        Email Address <span className="optional">(optional)</span>
         <input
           id={`${formId}-email`}
           name="email"
           type="email"
           inputMode="email"
           autoComplete="email"
-          required
           value={values.email}
           onChange={(e) => setField("email", e.target.value)}
           aria-invalid={Boolean(errors.email)}
@@ -285,7 +288,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
       </label>
 
       <label htmlFor={`${formId}-zip`}>
-        Project ZIP Code
+        Project ZIP Code <span className="req" aria-hidden="true">*</span>
         <input
           id={`${formId}-zip`}
           name="zip"
@@ -295,6 +298,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
           autoComplete="postal-code"
           required
           maxLength={10}
+          placeholder="16066"
           value={values.zip}
           onChange={(e) => setField("zip", e.target.value.replace(/[^\d-]/g, "").slice(0, 10))}
           aria-invalid={Boolean(errors.zip)}
@@ -308,7 +312,7 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
       </label>
 
       <label htmlFor={`${formId}-project`}>
-        Project Type
+        Project Type <span className="req" aria-hidden="true">*</span>
         <select
           id={`${formId}-project`}
           name="projectType"
@@ -359,19 +363,6 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
         />
       </div>
 
-      <label className="consent" htmlFor={`${formId}-consent`}>
-        <input
-          id={`${formId}-consent`}
-          name="consent"
-          type="checkbox"
-          checked={values.consent}
-          onChange={(e) => setField("consent", e.target.checked)}
-          aria-invalid={Boolean(errors.consent)}
-        />
-        <span>I agree that HBG Construction may contact me about this estimate request.</span>
-      </label>
-      {errors.consent ? <span className="field-error">{errors.consent}</span> : null}
-
       {errors.form ? (
         <p className="form-error" role="alert">
           {errors.form}
@@ -382,6 +373,9 @@ export function EstimateForm({ serviceSlug }: { serviceSlug?: string }) {
         <span>{submitting ? "SENDING…" : "REQUEST MY FREE ESTIMATE"}</span>
         <span aria-hidden="true">{submitting ? "…" : "↗"}</span>
       </button>
+      <p className="form-note form-note--consent">
+        By submitting, you agree that HBG Construction may contact you about your estimate request.
+      </p>
       <p className="form-note form-note--reassure">
         No obligation. We&apos;ll contact you to discuss your project.
       </p>

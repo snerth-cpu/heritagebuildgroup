@@ -23,11 +23,13 @@ export default async function Page({ searchParams }: PageProps) {
   return (
     <section className="estimate">
       <div className="wrap estimate__grid">
-        <aside>
+        <aside className="estimate-aside">
           <Mark size="section" className="brand--ink" />
           <p className="eyebrow">FREE ESTIMATE</p>
           <h1>GET A FREE ESTIMATE.</h1>
-          <p>Tell us a little about your project, and we&apos;ll be in touch to discuss the details.</p>
+          <p className="estimate-aside__copy">
+            Tell us a little about your project, and we&apos;ll be in touch to discuss the details.
+          </p>
           {selected ? (
             <p className="estimate-selected" role="status">
               Suggested project type: <strong>{selected.projectTypeLabel}</strong>
@@ -49,7 +51,7 @@ export default async function Page({ searchParams }: PageProps) {
             })}
           </nav>
           <p className="estimate-contact">
-            <PhoneLink />
+            <PhoneLink className="estimate-contact__phone" prefix="Call " />
             <a href={`mailto:${BUSINESS_EMAIL}`}>{BUSINESS_EMAIL}</a>
           </p>
         </aside>
